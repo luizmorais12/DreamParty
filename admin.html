@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo | Lavinia - 15 Anos</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/tiara.png">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="admin-body">
+
+  <!-- TELA DE LOGIN (PROTEÇÃO) -->
+  <div id="admin-login-screen" class="admin-login-container">
+    <div class="card glass-panel admin-login-box" style="background: white;">
+      <div class="text-center mb-4">
+        <i class="fa-solid fa-crown text-gold fs-1 mb-2"></i>
+        <h2 class="font-celebration text-rose-gold mb-1" style="font-size: 2.8rem;">Lavinia</h2>
+        <span class="text-uppercase font-heading small text-muted">Acesso Administrativo</span>
+      </div>
+      <div class="alert alert-danger d-none" id="login-error-alert" role="alert">
+        Chave de acesso incorreta. Tente novamente!
+      </div>
+      <form id="admin-login-form" onsubmit="handleAdminLogin(event)">
+        <div class="mb-4">
+          <label for="admin-password" class="form-label">Senha de Acesso</label>
+          <input type="password" class="form-control text-center py-3" id="admin-password" required placeholder="Insira a senha do painel">
+          <div class="form-text text-center small mt-2">Dica: A senha padrão é <b>lavinia15</b></div>
+        </div>
+        <button type="submit" class="btn btn-rose w-100 py-3 scale-hover">
+          <i class="fa-solid fa-right-to-bracket me-2"></i>Entrar no Painel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- PAINEL INTERNO (OCULTO POR PADRÃO) -->
+  <div id="admin-main-panel" class="d-none">
+    <div class="container-fluid">
+      <div class="row">
+        
+        <!-- SIDEBAR -->
+        <aside class="col-md-3 col-lg-2 px-0 admin-sidebar position-fixed">
+          <div class="admin-logo font-celebration">Lavinia 15</div>
+          <nav class="mt-3" aria-label="Navegação administrativa">
+            <a href="#" class="admin-nav-item active" onclick="switchSection('dashboard', this)">
+              <i class="fa-solid fa-chart-line"></i> Dashboard
+            </a>
+            <a href="#" class="admin-nav-item" onclick="switchSection('convidados', this)">
+              <i class="fa-solid fa-users"></i> Convidados
+            </a>
+            <a href="#" class="admin-nav-item" onclick="switchSection('moderacao', this)">
+              <i class="fa-solid fa-envelope-open-text"></i> Mensagens
+            </a>
+            <a href="#" class="admin-nav-item" onclick="switchSection('presentes', this)">
+              <i class="fa-solid fa-gift"></i> Presentes
+            </a>
+            <a href="#" class="admin-nav-item" onclick="switchSection('conteudo', this)">
+              <i class="fa-solid fa-sliders"></i> Conteúdo Site
+            </a>
+            <hr class="mx-3 text-muted">
+            <a href="index.html" target="_blank" class="admin-nav-item text-rose-gold">
+              <i class="fa-solid fa-house"></i> Visualizar Site
+            </a>
+            <a href="#" class="admin-nav-item text-danger" onclick="handleAdminLogout()">
+              <i class="fa-solid fa-right-from-bracket"></i> Sair do Painel
+            </a>
+          </nav>
+        </aside>
+
+        <!-- AREA DE CONTEUDO -->
+        <main class="col-md-9 ms-md-auto col-lg-10 px-0">
+          
+          <!-- TOP HEADER -->
+          <header class="admin-header">
+            <div>
+              <h1 class="h4 mb-0 font-heading fw-600">Painel de Controle</h1>
+              <small class="text-muted" id="admin-welcome-date">Carregando data...</small>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+              <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                <i class="fa-solid fa-circle-check me-1"></i> Banco de Dados Local Ativo
+              </span>
+              <button class="btn btn-outline-secondary btn-sm" onclick="resetDatabaseToDefault()" title="Resetar banco de dados para os dados originais">
+                <i class="fa-solid fa-arrows-rotate me-1"></i> Resetar Dados
+              </button>
+            </div>
+          </header>
+
+          <!-- CONTEUDO FLUIDO -->
+          <div class="admin-content-area">
+
+            <!-- ==========================================
+                 SEÇÃO 1: DASHBOARD
+                 ========================================== -->
+            <section id="sec-dashboard" class="admin-section">
+              <div class="row g-4 mb-4">
+                <div class="col-sm-6 col-xl-3">
+                  <div class="admin-stat-card">
+                    <div>
+                      <h6 class="text-muted text-uppercase small font-heading">Total Convidados</h6>
+                      <h3 class="fw-700 mb-0 font-heading mt-1" id="dash-total-guests">0</h3>
+                    </div>
+                    <div class="admin-stat-icon"><i class="fa-solid fa-users"></i></div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                  <div class="admin-stat-card">
+                    <div>
+                      <h6 class="text-muted text-uppercase small font-heading">Adultos</h6>
+                      <h3 class="fw-700 mb-0 font-heading mt-1 text-primary" id="dash-adults">0</h3>
+                    </div>
+                    <div class="admin-stat-icon bg-primary-subtle text-primary"><i class="fa-solid fa-user-tie"></i></div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                  <div class="admin-stat-card">
+                    <div>
+                      <h6 class="text-muted text-uppercase small font-heading">Crianças</h6>
+                      <h3 class="fw-700 mb-0 font-heading mt-1 text-info" id="dash-kids">0</h3>
+                    </div>
+                    <div class="admin-stat-icon bg-info-subtle text-info"><i class="fa-solid fa-child"></i></div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                  <div class="admin-stat-card">
+                    <div>
+                      <h6 class="text-muted text-uppercase small font-heading">Presentes Escolhidos</h6>
+                      <h3 class="fw-700 mb-0 font-heading mt-1 text-warning" id="dash-gifts">0/0</h3>
+                    </div>
+                    <div class="admin-stat-icon bg-warning-subtle text-warning"><i class="fa-solid fa-gift"></i></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-lg-7">
+                  <div class="card admin-card">
+                    <div class="admin-card-header font-heading"><i class="fa-solid fa-chart-pie me-2 text-rose-gold"></i>Proporção de Convidados</div>
+                    <div class="card-body p-4" style="height: 320px; position: relative;">
+                      <canvas id="guestsChart"></canvas>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-5">
+                  <div class="card admin-card">
+                    <div class="admin-card-header font-heading"><i class="fa-solid fa-message me-2 text-rose-gold"></i>Notificações Rápidas</div>
+                    <div class="card-body p-4" style="height: 320px; overflow-y: auto;">
+                      <div class="list-group list-group-flush" id="dash-notifications">
+                        <!-- Notificações geradas via JS -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ==========================================
+                 SEÇÃO 2: CONVIDADOS (TABELA E EXPORTAÇÕES)
+                 ========================================== -->
+            <section id="sec-convidados" class="admin-section d-none">
+              <div class="card admin-card">
+                <div class="admin-card-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+                  <span class="font-heading"><i class="fa-solid fa-list-check me-2 text-rose-gold"></i>Lista de Confirmações (RSVP)</span>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-sm btn-outline-danger" onclick="exportData('pdf')"><i class="fa-solid fa-file-pdf me-1"></i> PDF</button>
+                    <button class="btn btn-sm btn-outline-success" onclick="exportData('excel')"><i class="fa-solid fa-file-excel me-1"></i> Excel</button>
+                    <button class="btn btn-sm btn-outline-primary" onclick="exportData('csv')"><i class="fa-solid fa-file-csv me-1"></i> CSV</button>
+                    <button class="btn btn-sm btn-rose" data-bs-toggle="modal" data-bs-target="#addGuestModal"><i class="fa-solid fa-user-plus me-1"></i> Adicionar Convidado</button>
+                  </div>
+                </div>
+                <div class="card-body p-4">
+                  
+                  <!-- Filtro de Busca -->
+                  <div class="row mb-3 g-2">
+                    <div class="col-md-8">
+                      <input type="text" class="form-control" id="search-guest-input" placeholder="Buscar por nome, e-mail ou telefone..." onkeyup="filterGuestTable()">
+                    </div>
+                    <div class="col-md-4">
+                      <select class="form-select" id="filter-diet-select" onchange="filterGuestTable()">
+                        <option value="">Todas as restrições</option>
+                        <option value="sem">Sem Restrições</option>
+                        <option value="com">Com Restrições</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Tabela -->
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle" id="guests-table">
+                      <thead class="table-light font-heading fs-6">
+                        <tr>
+                          <th>Nome</th>
+                          <th>Telefone</th>
+                          <th>E-mail</th>
+                          <th class="text-center">Acomp. Adultos</th>
+                          <th class="text-center">Acomp. Crianças</th>
+                          <th>Acompanhantes</th>
+                          <th>Restrições</th>
+                          <th>Confirmado em</th>
+                          <th class="text-center">Ações</th>
+                        </tr>
+                      </thead>
+                      <tbody id="guests-table-body" class="small">
+                        <!-- Gerado dinamicamente via JS -->
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+              </div>
+            </section>
+
+            <!-- ==========================================
+                 SEÇÃO 3: MODERAÇÃO DE MENSAGENS
+                 ========================================== -->
+            <section id="sec-moderacao" class="admin-section d-none">
+              <div class="card admin-card">
+                <div class="admin-card-header font-heading"><i class="fa-solid fa-comments me-2 text-rose-gold"></i>Moderação de Livro de Visitas</div>
+                <div class="card-body p-4">
+                  <div class="row g-4" id="messages-moderation-grid">
+                    <!-- Cards de moderação inseridos por JS -->
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ==========================================
+                 SEÇÃO 4: LISTA DE PRESENTES
+                 ========================================== -->
+            <section id="sec-presentes" class="admin-section d-none">
+              <div class="card admin-card">
+                <div class="admin-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                  <span class="font-heading"><i class="fa-solid fa-gift me-2 text-rose-gold"></i>Gerenciador da Lista de Presentes</span>
+                  <button class="btn btn-sm btn-rose" onclick="openAddGiftModal()"><i class="fa-solid fa-plus me-1"></i> Novo Presente</button>
+                </div>
+                <div class="card-body p-4">
+                  <div class="row g-4" id="gifts-admin-grid">
+                    <!-- Cards de presentes em modo de edição -->
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ==========================================
+                 SEÇÃO 5: CONFIGURAÇÕES DE CONTEÚDO
+                 ========================================== -->
+            <section id="sec-conteudo" class="admin-section d-none">
+              <div class="row g-4">
+                
+                <!-- Informações do Evento -->
+                <div class="col-lg-6">
+                  <div class="card admin-card h-100">
+                    <div class="admin-card-header font-heading"><i class="fa-solid fa-calendar-days me-2 text-rose-gold"></i>Informações Principais & Datas</div>
+                    <div class="card-body p-4">
+                      <form id="form-config-geral" onsubmit="saveGeneralConfig(event)">
+                        <div class="mb-3">
+                          <label for="cfg-name" class="form-label">Nome da Debutante</label>
+                          <input type="text" class="form-control" id="cfg-name" required>
+                        </div>
+                        <div class="mb-3">
+                          <label for="cfg-quote" class="form-label">Frase de Efeito (Hero)</label>
+                          <textarea class="form-control" id="cfg-quote" rows="2" required></textarea>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-md-6">
+                            <label for="cfg-party-date" class="form-label">Data da Festa</label>
+                            <input type="datetime-local" class="form-control" id="cfg-party-date" required>
+                          </div>
+                          <div class="col-md-6">
+                            <label for="cfg-birthday-date" class="form-label">Data do Aniversário</label>
+                            <input type="datetime-local" class="form-control" id="cfg-birthday-date" required>
+                          </div>
+                        </div>
+                        <button type="submit" class="btn btn-rose w-100 py-2">Salvar Configurações Gerais</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Configuração de Pix & Local -->
+                <div class="col-lg-6">
+                  <div class="card admin-card h-100">
+                    <div class="admin-card-header font-heading"><i class="fa-solid fa-map-location-dot me-2 text-rose-gold"></i>Configuração de Local & Pix</div>
+                    <div class="card-body p-4">
+                      <form id="form-config-local-pix" onsubmit="saveLocalPixConfig(event)">
+                        <div class="mb-3">
+                          <label for="cfg-pix" class="form-label">Chave Pix para Presente Virtual</label>
+                          <input type="text" class="form-control font-monospace" id="cfg-pix" required>
+                        </div>
+                        <div class="mb-3">
+                          <label for="cfg-dress" class="form-label">Dress Code (Código de Vestimenta)</label>
+                          <input type="text" class="form-control" id="cfg-dress" required>
+                        </div>
+                        <div class="mb-3">
+                          <label for="cfg-address" class="form-label">Endereço Completo</label>
+                          <input type="text" class="form-control" id="cfg-address" required>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-md-6">
+                            <label for="cfg-time" class="form-label">Horário de Recepção</label>
+                            <input type="text" class="form-control" id="cfg-time" placeholder="Ex: 21:00" required>
+                          </div>
+                          <div class="col-md-6">
+                            <label for="cfg-parking" class="form-label">Informações Estacionamento</label>
+                            <input type="text" class="form-control" id="cfg-parking" required>
+                          </div>
+                        </div>
+                        <div class="mb-3">
+                          <label for="cfg-map" class="form-label">URL Embed do Mapa (Google Maps)</label>
+                          <input type="url" class="form-control font-monospace" id="cfg-map" required>
+                        </div>
+                        <button type="submit" class="btn btn-rose w-100 py-2">Salvar Local & Pix</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Gestão da Retrospectiva (Vídeos) -->
+                <div class="col-12">
+                  <div class="card admin-card">
+                    <div class="admin-card-header font-heading"><i class="fa-solid fa-video me-2 text-rose-gold"></i>Retrospectiva & Vídeos</div>
+                    <div class="card-body p-4">
+                      <form id="form-config-video" onsubmit="saveVideoConfig(event)">
+                        <div class="row mb-3">
+                          <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="cfg-video-title" class="form-label">Título do Vídeo</label>
+                            <input type="text" class="form-control" id="cfg-video-title" required>
+                          </div>
+                          <div class="col-md-6">
+                            <label for="cfg-video-url" class="form-label">URL de Incorporação (YouTube Embed)</label>
+                            <input type="url" class="form-control" id="cfg-video-url" placeholder="Ex: https://www.youtube.com/embed/..." required>
+                          </div>
+                        </div>
+                        <button type="submit" class="btn btn-rose py-2 px-4">Atualizar Vídeo</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+          </div>
+        </main>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL MANUAL DE ADICIONAR CONVIDADO -->
+  <div class="modal fade" id="addGuestModal" tabindex="-1" aria-labelledby="addGuestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0">
+        <div class="modal-header border-0 bg-light p-4">
+          <h5 class="modal-title font-heading fw-600 text-rose-gold" id="addGuestModalLabel">Adicionar Convidado Manualmente</h5>
+          <button type="button" class="btn-close" data-bs-close="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="add-guest-form" onsubmit="handleManualGuestAdd(event)">
+            <div class="mb-3">
+              <label for="ag-name" class="form-label">Nome Completo</label>
+              <input type="text" class="form-control" id="ag-name" required>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="ag-phone" class="form-label">Telefone</label>
+                <input type="text" class="form-control" id="ag-phone" placeholder="(XX) XXXXX-XXXX">
+              </div>
+              <div class="col-md-6">
+                <label for="ag-email" class="form-label">E-mail</label>
+                <input type="email" class="form-control" id="ag-email">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="ag-adults" class="form-label">Acompanhantes Adultos</label>
+                <input type="number" class="form-control" id="ag-adults" min="0" value="0">
+              </div>
+              <div class="col-md-6">
+                <label for="ag-kids" class="form-label">Acompanhantes Crianças</label>
+                <input type="number" class="form-control" id="ag-kids" min="0" value="0">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="ag-companions" class="form-label">Nome dos Acompanhantes</label>
+              <input type="text" class="form-control" id="ag-companions" placeholder="Nomes separados por vírgula">
+            </div>
+            <div class="mb-3">
+              <label for="ag-diet" class="form-label">Restrições Alimentares</label>
+              <input type="text" class="form-control" id="ag-diet">
+            </div>
+            <div class="mb-4">
+              <label for="ag-message" class="form-label">Observações / Mensagem</label>
+              <textarea class="form-control" id="ag-message" rows="2"></textarea>
+            </div>
+            <button type="submit" class="btn btn-rose w-100 py-3">Salvar Convidado</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE ADICIONAR / EDITAR PRESENTE -->
+  <div class="modal fade" id="giftModal" tabindex="-1" aria-labelledby="giftModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0">
+        <div class="modal-header border-0 bg-light p-4">
+          <h5 class="modal-title font-heading fw-600 text-rose-gold" id="giftModalLabel">Adicionar/Editar Presente</h5>
+          <button type="button" class="btn-close" data-bs-close="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="gift-form" onsubmit="handleGiftSave(event)">
+            <input type="hidden" id="gift-id-field">
+            <div class="mb-3">
+              <label for="gift-name-field" class="form-label">Nome do Presente *</label>
+              <input type="text" class="form-control" id="gift-name-field" required>
+            </div>
+            <div class="mb-3">
+              <label for="gift-desc-field" class="form-label">Descrição / Detalhe</label>
+              <textarea class="form-control" id="gift-desc-field" rows="2"></textarea>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="gift-value-field" class="form-label">Valor (R$) *</label>
+                <input type="number" step="0.01" class="form-control" id="gift-value-field" required>
+              </div>
+              <div class="col-md-6">
+                <label for="gift-image-field" class="form-label">URL Imagem</label>
+                <input type="url" class="form-control" id="gift-image-field">
+              </div>
+            </div>
+            <div class="form-check mb-4">
+              <input class="form-check-input" type="checkbox" id="gift-chosen-field" onchange="toggleGiftGiverField()">
+              <label class="form-check-input-label" for="gift-chosen-field" style="margin-left: 8px;">Este presente já foi escolhido?</label>
+            </div>
+            <div class="mb-4 d-none" id="gift-chosen-by-wrapper">
+              <label for="gift-chosen-by-field" class="form-label">Nome do Comprador / Ganhador</label>
+              <input type="text" class="form-control" id="gift-chosen-by-field">
+            </div>
+            <button type="submit" class="btn btn-rose w-100 py-3">Salvar Presente</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bibliotecas CDN -->
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Chart.js para gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- html2pdf.js para exportação PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Camada Banco de Dados -->
+  <script src="assets/js/db.js"></script>
+  
+  <!-- Script Administrador -->
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>

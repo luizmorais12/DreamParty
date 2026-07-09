@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lavinia - 15 Anos | Site Oficial</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Bem-vindo ao site oficial de comemoração de 15 anos da Lavinia dos Santos Mattos. Confirme sua presença, confira a lista de presentes e veja os detalhes deste grande dia!">
+  <meta name="keywords" content="Lavinia 15 anos, debutante Lavinia, festa 15 anos, confirmação de presença, lista de presentes 15 anos, jardim encantado">
+  <meta name="author" content="Lavinia dos Santos Mattos">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.lavinia15anos.com.br/">
+  <meta property="og:title" content="Lavinia - 15 Anos | Site Oficial">
+  <meta property="og:description" content="Confirme sua presença e celebre conosco essa noite inesquecível do Jardim Encantado da Lavinia.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1549417229-aa67d3263c09?q=80&w=1200">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/tiara.png">
+  
+  <!-- PWA & Mobile Web App Capable -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  
+  <!-- AOS (Animate on Scroll) CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+  <!-- Barra de Acessibilidade -->
+  <div class="accessibility-bar" id="accessibility-bar">
+    <button onclick="toggleHighContrast()" aria-label="Ativar Alto Contraste" id="accessibility-contrast-btn">
+      <i class="fa-solid fa-circle-half-stroke"></i> Alto Contraste
+    </button>
+    <button onclick="changeFontSize('increase')" aria-label="Aumentar Fonte">
+      <i class="fa-solid fa-text-height"></i> A+
+    </button>
+    <button onclick="changeFontSize('reset')" aria-label="Tamanho de Fonte Padrão">
+      Reset A
+    </button>
+    <button onclick="changeFontSize('decrease')" aria-label="Diminuir Fonte">
+      A-
+    </button>
+    <a href="#rsvp" aria-label="Ir direto para confirmação de presença">Ir para RSVP</a>
+  </div>
+
+  <!-- Cursor Mágico (Trail de Brilho) -->
+  <div id="magic-cursor" class="d-none d-lg-block"></div>
+
+  <!-- Elementos Flutuantes do Jardim -->
+  <div class="bg-garden-elements" id="bg-garden-elements">
+    <!-- Pétalas e borboletas serão adicionadas dinamicamente via JS -->
+  </div>
+
+  <!-- Fundo de Partículas Mágicas (particles.js) -->
+  <div id="particles-js"></div>
+
+  <!-- PLAYERS DE MÚSICA FIXO -->
+  <div class="music-player-fixed" id="music-player-fixed">
+    <div class="music-panel-expand">
+      <div class="music-track-info">
+        <div class="music-track-title" id="music-title">Nenhuma Música</div>
+        <div class="music-track-artist" id="music-artist">--</div>
+      </div>
+      <div class="music-mini-controls">
+        <button class="music-mini-btn" onclick="prevTrack()" aria-label="Música Anterior"><i class="fa-solid fa-backward"></i></button>
+        <button class="music-mini-btn" id="music-mini-play" onclick="toggleMusic()" aria-label="Tocar / Pausar"><i class="fa-solid fa-play"></i></button>
+        <button class="music-mini-btn" onclick="nextTrack()" aria-label="Próxima Música"><i class="fa-solid fa-forward"></i></button>
+      </div>
+      <div class="music-visualizer">
+        <div class="vis-bar"></div>
+        <div class="vis-bar"></div>
+        <div class="vis-bar"></div>
+        <div class="vis-bar"></div>
+      </div>
+    </div>
+    <button class="music-control-btn" id="music-toggle-btn" onclick="toggleMusicPanel()" aria-label="Abrir reprodutor de música">
+      <i class="fa-solid fa-music"></i>
+    </button>
+  </div>
+
+  <!-- Elemento Áudio Invisível -->
+  <audio id="bg-audio" loop></audio>
+
+  <!-- NAVBAR PRINCIPAL -->
+  <nav class="navbar navbar-expand-lg sticky-top" id="main-navbar" aria-label="Menu principal">
+    <div class="container">
+      <a class="navbar-brand font-celebration" href="#" id="nav-brand-title">Lavinia</a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Alternar navegação">
+        <span class="fa-solid fa-bars text-rose-gold" style="color: var(--color-rose-gold); font-size: 1.5rem;"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-center">
+          <li class="nav-item"><a class="nav-link active" href="#inicio">Início</a></li>
+          <li class="nav-item"><a class="nav-link" href="#sobre">Sobre</a></li>
+          <li class="nav-item"><a class="nav-link" href="#galeria">Galeria</a></li>
+          <li class="nav-item"><a class="nav-link" href="#videos">Vídeos</a></li>
+          <li class="nav-item"><a class="nav-link" href="#presentes">Presentes</a></li>
+          <li class="nav-item"><a class="nav-link" href="#local">Local</a></li>
+          <li class="nav-item"><a class="nav-link" href="#cronograma">Cronograma</a></li>
+          <li class="nav-item"><a class="nav-link" href="#rsvp">Confirmação</a></li>
+          <li class="nav-item"><a class="nav-link" href="#mensagens">Mensagens</a></li>
+          <li class="nav-item"><a class="nav-link" href="admin.html" target="_blank" style="color: var(--color-gold) !important;"><i class="fa-solid fa-lock me-1"></i>Painel</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <header class="hero-section" id="inicio" style="background-image: url('https://images.unsplash.com/photo-1549417229-aa67d3263c09?q=80&w=1920');">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content" data-aos="fade-up" data-aos-duration="1500">
+      <span class="hero-subtitle font-heading text-uppercase">Os 15 Anos de</span>
+      <h1 class="hero-title font-celebration" id="hero-celebrant-name">Lavinia dos Santos Mattos</h1>
+      <div class="hero-date" id="hero-celebration-date">01 de Novembro de 2026</div>
+      <p class="hero-quote font-celebration" id="hero-celebration-quote">"Cada sonho merece uma noite para se tornar realidade."</p>
+      
+      <!-- Contagem Regressiva dentro da Hero -->
+      <div class="countdown-container mt-4 mb-5" id="hero-countdown">
+        <div class="countdown-box" id="cd-days-box">
+          <div class="countdown-num" id="cd-days">00</div>
+          <div class="countdown-label">Dias</div>
+        </div>
+        <div class="countdown-box" id="cd-hours-box">
+          <div class="countdown-num" id="cd-hours">00</div>
+          <div class="countdown-label">Horas</div>
+        </div>
+        <div class="countdown-box" id="cd-mins-box">
+          <div class="countdown-num" id="cd-mins">00</div>
+          <div class="countdown-label">Minutos</div>
+        </div>
+        <div class="countdown-box" id="cd-secs-box">
+          <div class="countdown-num" id="cd-secs">00</div>
+          <div class="countdown-label">Segundos</div>
+        </div>
+      </div>
+
+      <div class="hero-buttons">
+        <a href="#rsvp" class="btn btn-rose scale-hover"><i class="fa-solid fa-calendar-check me-2"></i>Confirmar Presença</a>
+        <a href="#presentes" class="btn btn-gold scale-hover"><i class="fa-solid fa-gift me-2"></i>Lista de Presentes</a>
+        <a href="#local" class="btn btn-outline-gold scale-hover ms-2"><i class="fa-solid fa-map-location-dot me-2"></i>Local da Festa</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- SEÇÃO SOBRE A LAVINIA -->
+  <section class="section-padding" id="sobre">
+    <div class="container">
+      <div class="section-title-wrapper" data-aos="fade-up">
+        <span class="section-subtitle">Conheça nossa debutante</span>
+        <h2 class="section-title">Sobre a Lavinia</h2>
+      </div>
+
+      <div class="row align-items-center mb-5">
+        <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right" data-aos-duration="1200">
+          <div class="glass-panel p-4 p-md-5">
+            <h3 class="font-celebration text-rose-gold mb-3" style="font-size: 2.5rem;" id="about-title-display">A Menina dos Olhos de Ouro</h3>
+            <div id="about-text-display">
+              <p>Lavinia é uma jovem incrivelmente talentosa, cheia de vitalidade e com um coração gigante. Ela sempre foi apaixonada pelo mundo da dança, das artes e do desenho, expressando sua imaginação de formas incríveis.</p>
+              <p class="mb-0">Para ela, completar 15 anos é a transição para um novo universo de responsabilidade, novas amizades e a continuação da busca pelos seus sonhos mais sinceros. Essa noite representa a celebração do amor que ela distribui e recebe de todos à sua volta.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6" data-aos="fade-left" data-aos-duration="1200">
+          <div class="position-relative p-2" style="border: 2px solid var(--color-gold); border-radius: 20px;">
+            <img src="https://images.unsplash.com/photo-1549057443-4f9520bfd672?q=80&w=800" alt="Lavinia Sorrindo" class="img-fluid rounded-4 w-100" style="height: 450px; object-fit: cover;" id="about-side-image">
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline de Fotos / Linha do Tempo -->
+      <div class="row mt-5">
+        <div class="col-12 text-center mb-4" data-aos="fade-up">
+          <h3 class="font-heading fs-4 text-uppercase text-rose-gold">Nossa Linha do Tempo</h3>
+          <p class="text-muted">Acompanhe as fases florescentes da nossa debutante</p>
+        </div>
+        <div class="col-12">
+          <div class="timeline-container" id="timeline-wrapper">
+            <!-- Timeline items gerados via JS a partir do DB -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO GALERIA -->
+  <section class="section-padding bg-light" id="galeria">
+    <div class="container">
+      <div class="section-title-wrapper" data-aos="fade-up">
+        <span class="section-subtitle">Recordações registradas</span>
+        <h2 class="section-title">Galeria de Fotos</h2>
+      </div>
+
+      <!-- Filtros -->
+      <div class="gallery-filter" data-aos="fade-up" id="gallery-filters-container">
+        <button class="filter-btn active" onclick="filterGallery('todos', this)">Todos</button>
+        <button class="filter-btn" onclick="filterGallery('ensaio', this)">Ensaio Oficial</button>
+        <button class="filter-btn" onclick="filterGallery('infancia', this)">Infância</button>
+        <button class="filter-btn" onclick="filterGallery('familia', this)">Família</button>
+      </div>
+
+      <!-- Grid de Galeria -->
+      <div class="gallery-grid" id="gallery-grid" data-aos="fade-up" data-aos-delay="200">
+        <!-- Itens inseridos dinamicamente por JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- LIGHTBOX MODAL -->
+  <div class="lightbox-modal" id="lightbox-modal" role="dialog" aria-label="Visualizador de imagem em tela cheia">
+    <div class="lightbox-content">
+      <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+      <img src="" alt="" class="lightbox-img" id="lightbox-img">
+      <div class="lightbox-caption" id="lightbox-caption"></div>
+      <div class="lightbox-nav lightbox-prev" onclick="changeLightboxImage(-1)" aria-label="Imagem anterior">&#10094;</div>
+      <div class="lightbox-nav lightbox-next" onclick="changeLightboxImage(1)" aria-label="Próxima imagem">&#10095;</div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO RETROSPECTIVA E VÍDEOS -->
+  <section class="section-padding" id="videos">
+    <div class="container">
+      <div class="section-title-wrapper" data-aos="fade-up">
+        <span class="section-subtitle">Momentos em movimento</span>
+        <h2 class="section-title">Vídeos & Retrospectiva</h2>
+      </div>
+
+      <div class="video-container-box" data-aos="zoom-in" data-aos-duration="1000" id="video-wrapper">
+        <!-- Renderizado dinamicamente por JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO LISTA DE PRESENTES -->
+  <section class="section-padding bg-light" id="presentes">
+    <div class="container">
+      <div class="section-title-wrapper" data-aos="fade-up">
+        <span class="section-subtitle">Gesto de Carinho</span>
+        <h2 class="section-title">Lista de Presentes</h2>
+        <p class="text-muted mt-3">Para nos ajudar a celebrar esta data, criamos uma lista de mimos simbólicos. Você também pode contribuir via Pix.</p>
+      </div>
+
+      <div class="text-center mb-5" data-aos="fade-up">
+        <button class="btn btn-rose scale-hover px-4" data-bs-toggle="modal" data-bs-target="#pixDonationModal">
+          <i class="fa-brands fa-pix me-2"></i>Presentear com qualquer valor via Pix
+        </button>
+      </div>
+
+      <div class="row g-4" id="gifts-grid">
+        <!-- Cards de presentes carregados dinamicamente via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL DE DOAÇÃO PIX -->
+  <div class="modal fade" id="pixDonationModal" tabindex="-1" aria-labelledby="pixDonationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 glass-panel" style="border-radius: 20px; overflow: hidden; background: white;">
+        <div class="modal-header border-0 bg-light p-4">
+          <h5 class="modal-title font-heading fw-600 text-rose-gold" id="pixDonationModalLabel">Presentear com Pix</h5>
+          <button type="button" class="btn-close" data-bs-close="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="text-center text-muted mb-4">Escolha um dos valores sugeridos ou faça uma transferência livre para a chave cadastrada.</p>
+          
+          <div class="pix-options-grid">
+            <div class="pix-val-card" onclick="selectPixValue(30, this)">
+              <span>Lembrança</span>
+              <strong>R$ 30</strong>
+            </div>
+            <div class="pix-val-card" onclick="selectPixValue(50, this)">
+              <span>Carinho</span>
+              <strong>R$ 50</strong>
+            </div>
+            <div class="pix-val-card selected" onclick="selectPixValue(100, this)">
+              <span>Flores</span>
+              <strong>R$ 100</strong>
+            </div>
+            <div class="pix-val-card" onclick="selectPixValue(200, this)">
+              <span>Festa</span>
+              <strong>R$ 200</strong>
+            </div>
+            <div class="pix-val-card" onclick="selectPixValue(500, this)">
+              <span>Princesa</span>
+              <strong>R$ 500</strong>
+            </div>
+          </div>
+
+          <div class="pix-qr-container">
+            <img src="" alt="QR Code Pix" id="pix-qrcode-img" class="img-fluid mb-3" style="max-height: 180px;">
+            <div class="small text-muted mb-2">Chave Pix cadastrada:</div>
+            <code class="d-block bg-light p-2 rounded text-break mb-3 font-monospace" id="pix-key-display">lavinia15anos@pix.com.br</code>
+            <button class="btn btn-sm btn-outline-gold" onclick="copyPixKey()">
+              <i class="fa-solid fa-copy me-1"></i> Copiar Chave Pix
+            </button>
+            <div class="text-success small mt-2 d-none" id="copy-success-msg">Chave copiada com sucesso!</div>
+          </div>
+
+          <form id="pix-confirm-form" onsubmit="handlePixContribution(event)">
+            <div class="mb-3">
+              <label for="pix-donor-name" class="form-label">Seu Nome</label>
+              <input type="text" class="form-control" id="pix-donor-name" required placeholder="Insira seu nome completo">
+            </div>
+            <button type="submit" class="btn btn-rose w-100 py-3 mt-2">
+              <i class="fa-solid fa-check me-2"></i>Confirmar Envio do Presente
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMAÇÃO DO PRESENTE FÍSICO -->
+  <div class="modal fade" id="confirmGiftModal" tabindex="-1" aria-labelledby="confirmGiftModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0" style="border-radius: 20px; overflow: hidden;">
+        <div class="modal-header border-0 bg-light p-4">
+          <h5 class="modal-title font-heading fw-600 text-rose-gold" id="confirmGiftModalLabel">Presentear com Mimo</h5>
+          <button type="button" class="btn-close" data-bs-close="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="text-center mb-4">
+            <h4 class="font-heading mb-2 text-rose-gold" id="gift-modal-item-name">Nome do Mimo</h4>
+            <p class="text-muted small" id="gift-modal-item-desc">Descrição do mimo</p>
+            <div class="fs-4 fw-600 text-gold" id="gift-modal-item-val">R$ 0,00</div>
+          </div>
+          <form id="physical-gift-form" onsubmit="handleChoosePhysicalGift(event)">
+            <input type="hidden" id="gift-modal-item-id">
+            <div class="mb-3">
+              <label for="gift-giver-name" class="form-label">Seu Nome</label>
+              <input type="text" class="form-control" id="gift-giver-name" required placeholder="Insira seu nome para reservarmos o presente">
+            </div>
+            <button type="submit" class="btn btn-rose w-100 py-3 mt-2">
+              <i class="fa-solid fa-gift me-2"></i>Reservar este Presente
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO LOCAL -->
+  <section class="section-padding" id="local">
+    <div class="container">
+      <div class="section-title-wrapper" data-aos="fade-up">
+        <span class="section-subtitle">Onde a mágica acontece</span>
+        <h2 class="section-title">Local do Evento</h2>
+      </div>
+
+      <div class="row g-4 align-items-stretch">
+        <div class="col-lg-5" data-aos="fade-right" data-aos-duration="1200">
+          <div class="glass-panel location-card-content h-100 d-flex flex-column justify-content-between">
+            <div>
+              <h3 class="font-celebration text-rose-gold mb-4" style="font-size: 2.3rem;">Mansão das Flores</h3>
+              
+              <div class="location-info-item">
+                <div class="location-info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="location-info-text">
+                  <h5>Endereço</h5>
+                  <p id="local-address-display">Mansão das Flores, Av. das Rosas, 1500 - Rio de Janeiro, RJ</p>
+                </div>
+              </div>
+
+              <div class="location-info-item">
+                <div class="location-info-icon"><i class="fa-solid fa-clock"></i></div>
+                <div class="location-info-text">
+                  <h5>Horário de Chegada</h5>
+                  <p id="local-time-display">A recepção terá início pontualmente às 21:00.</p>
+                </div>
+              </div>
+
+              <div class="location-info-item">
+                <div class="location-info-icon"><i class="fa-solid fa-square-parking"></i></div>
+                <div class="location-info-text">
+                  <h5>Estacionamento</h5>
+                  <p id="local-parking-display">Serviço de manobrista gratuito no local para todos os convidados.</p>
+                </div>
+              </div>
+
+              <div class="location-info-item">
+                <div class="location-info-icon"><i class="fa-solid fa-shirt"></i></div>
+                <div class="location-info-text">
+                  <h5>Código de Vestimenta (Dress Code)</h5>
+                  <p id="local-dress-display">Gala / Esporte Fino: Sugerimos tons pastéis claros para harmonizar com o Jardim.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top border-light">
+              <a href="https://maps.google.com" target="_blank" class="btn btn-rose w-100 py-3" id="local-gmaps-link">
+                <i class="fa-solid fa-map-location-dot me-2"></i>Traçar Rota no Waze / Maps
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-7" data-aos="fade-left" data-aos-duration="1200">
+          <div class="map-wrapper h-100">
+            <iframe 
+              id="local-map-iframe"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3673.84478149867!2d-43.22699892377747!3d-22.955986479219894!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997fd59828d11f%3A0x2865910fae13467e!2sParque%20Lage!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" 
+              width="100%" 
+              height="100%" 
+              style="border:0;" 
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO CRONOGRAMA -->
+  <section class="section-padding bg-light" id="cronograma">
+    <div class="container">
+      <div class="section-title-wrapper" data-aos="fade-up">
+        <span class="section-subtitle">Linha do Tempo Festiva</span>
+        <h2 class="section-title">Cronograma da Festa</h2>
+      </div>
+
+      <div class="cron-timeline" id="schedule-wrapper" data-aos="fade-up">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO CONFIRMAÇÃO DE PRESENÇA (RSVP) -->
+  <section class="section-padding" id="rsvp">
+    <div class="container">
+      <div class="section-title-wrapper" data-aos="fade-up">
+        <span class="section-subtitle">Sua presença é fundamental</span>
+        <h2 class="section-title">Confirmação de Presença</h2>
+        <p class="text-muted mt-3">Por favor, confirme sua presença até <b>15 de Outubro de 2026</b> para nos ajudar na organização do buffet.</p>
+      </div>
+
+      <!-- Contador de Convidados Confirmados -->
+      <div class="rsvp-stats-container" data-aos="fade-up">
+        <div class="glass-panel rsvp-stat-box">
+          <div class="rsvp-stat-num" id="stats-total">0</div>
+          <div class="rsvp-stat-label">Total Confirmados</div>
+        </div>
+        <div class="glass-panel rsvp-stat-box">
+          <div class="rsvp-stat-num" id="stats-adults">0</div>
+          <div class="rsvp-stat-label">Adultos</div>
+        </div>
+        <div class="glass-panel rsvp-stat-box">
+          <div class="rsvp-stat-num" id="stats-kids">0</div>
+          <div class="rsvp-stat-label">Crianças</div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="200">
+          <div class="glass-panel p-4 p-md-5">
+            
+            <!-- Alerta de Sucesso -->
+            <div class="alert alert-success d-none mb-4" id="rsvp-success-alert" role="alert">
+              <h4 class="alert-heading"><i class="fa-solid fa-circle-check me-2"></i>Presença Confirmada com Sucesso!</h4>
+              <p>Obrigado por confirmar sua presença no conto de fadas da Lavinia. Estamos preparando uma noite incrível!</p>
+              <hr>
+              <p class="mb-0 small">Caso precise alterar seus dados ou cancelar, por favor entre em contato com os organizadores.</p>
+            </div>
+
+            <!-- Form RSVP -->
+            <form id="rsvp-form" onsubmit="submitRSVP(event)">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="rsvp-name" class="form-label">Nome Completo *</label>
+                  <input type="text" class="form-control" id="rsvp-name" required placeholder="Ex: João da Silva">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="rsvp-phone" class="form-label">Telefone de Contato *</label>
+                  <input type="tel" class="form-control" id="rsvp-phone" required placeholder="Ex: (21) 99999-9999">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="rsvp-email" class="form-label">E-mail de Contato *</label>
+                <input type="email" class="form-control" id="rsvp-email" required placeholder="Ex: joao@email.com">
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="rsvp-adults" class="form-label">Acompanhantes Adultos (Além de você)</label>
+                  <select class="form-select" id="rsvp-adults" onchange="toggleCompanionInput()">
+                    <option value="0">Nenhum</option>
+                    <option value="1">1 Adulto</option>
+                    <option value="2">2 Adultos</option>
+                    <option value="3">3 Adultos</option>
+                    <option value="4">4 Adultos</option>
+                    <option value="5">5 Adultos</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="rsvp-kids" class="form-label">Acompanhantes Crianças (0 a 11 anos)</label>
+                  <select class="form-select" id="rsvp-kids" onchange="toggleCompanionInput()">
+                    <option value="0">Nenhuma</option>
+                    <option value="1">1 Criança</option>
+                    <option value="2">2 Crianças</option>
+                    <option value="3">3 Crianças</option>
+                    <option value="4">4 Crianças</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-3 d-none" id="companion-names-wrapper">
+                <label for="rsvp-companion-names" class="form-label">Nome Completo dos Acompanhantes (Separados por vírgula)</label>
+                <textarea class="form-control" id="rsvp-companion-names" rows="2" placeholder="Ex: Maria da Silva, Lucas da Silva"></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label for="rsvp-diet" class="form-label">Restrições Alimentares / Alergias (Opcional)</label>
+                <input type="text" class="form-control" id="rsvp-diet" placeholder="Ex: Celíaco, Vegano, Alergia a frutos do mar">
+              </div>
+
+              <div class="mb-4">
+                <label for="rsvp-message" class="form-label">Mensagem para a Debutante (Opcional)</label>
+                <textarea class="form-control" id="rsvp-message" rows="3" placeholder="Escreva uma bela mensagem para a Lavinia..."></textarea>
+              </div>
+
+              <div class="text-center">
+                <button type="submit" class="btn btn-rose w-100 py-3 scale-hover">
+                  <i class="fa-solid fa-check-double me-2"></i>Confirmar Minha Presença
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO LIVRO DE MENSAGENS -->
+  <section class="section-padding bg-light" id="mensagens">
+    <div class="container">
+      <div class="section-title-wrapper" data-aos="fade-up">
+        <span class="section-subtitle">Deixe seu carinho escrito</span>
+        <h2 class="section-title">Livro de Visitas</h2>
+      </div>
+
+      <div class="row g-4">
+        <!-- Deixar Mensagem -->
+        <div class="col-lg-5" data-aos="fade-right" data-aos-duration="1200">
+          <div class="glass-panel p-4 p-md-5">
+            <h3 class="font-heading fs-5 mb-4 text-rose-gold text-uppercase">Deixar Mensagem</h3>
+            
+            <div class="alert alert-success d-none mb-3" id="msg-success-alert" role="alert">
+              <i class="fa-solid fa-circle-check me-2"></i>Mensagem enviada com sucesso! Ela aparecerá na galeria após a moderação da equipe.
+            </div>
+
+            <form id="msg-guestbook-form" onsubmit="submitMessage(event)">
+              <div class="mb-3">
+                <label for="msg-author" class="form-label">Seu Nome *</label>
+                <input type="text" class="form-control" id="msg-author" required placeholder="Ex: Madrinha Sandra">
+              </div>
+              <div class="mb-3">
+                <label for="msg-relation" class="form-label">Grau de Parentesco / Relação *</label>
+                <input type="text" class="form-control" id="msg-relation" required placeholder="Ex: Tio, Amigo de escola, Madrinha">
+              </div>
+              <div class="mb-4">
+                <label for="msg-text" class="form-label">Sua Mensagem *</label>
+                <textarea class="form-control" id="msg-text" rows="4" required placeholder="Deixe suas felicitações..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-rose w-100 py-3 scale-hover">
+                <i class="fa-solid fa-paper-plane me-2"></i>Enviar Mensagem
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Lista de Mensagens Aprovadas -->
+        <div class="col-lg-7" data-aos="fade-left" data-aos-duration="1200">
+          <div class="glass-panel p-4 p-md-5 h-100 d-flex flex-column">
+            <h3 class="font-heading fs-5 mb-4 text-rose-gold text-uppercase">Mensagens de Carinho</h3>
+            <div class="messages-wrapper flex-grow-1" id="messages-list-wrapper">
+              <!-- Mensagens renderizadas via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO CONTATO -->
+  <section class="section-padding bg-white" id="contato">
+    <div class="container text-center">
+      <div class="section-title-wrapper mb-4" data-aos="fade-up">
+        <span class="section-subtitle">Dúvidas ou Informações</span>
+        <h2 class="section-title">Contato</h2>
+      </div>
+      <div class="max-width: 600px; margin: 0 auto;" data-aos="fade-up" data-aos-delay="200">
+        <p class="mb-4">Fique à vontade para entrar em contato com os pais ou com o cerimonial da festa para tirar quaisquer dúvidas.</p>
+        <div class="d-flex justify-content-center gap-4 flex-wrap">
+          <a href="https://wa.me/5521999999999" target="_blank" class="btn btn-outline-gold scale-hover">
+            <i class="fa-brands fa-whatsapp me-2 text-success"></i>Falar com Cerimonial
+          </a>
+          <a href="mailto:contato@lavinia15anos.com.br" class="btn btn-outline-gold scale-hover">
+            <i class="fa-solid fa-envelope me-2"></i>Enviar E-mail
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RODAPÉ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-logo font-celebration">Lavinia</div>
+      <p class="mb-2">Festa de 15 Anos • 01 de Novembro de 2026</p>
+      
+      <div class="footer-socials">
+        <a href="#" class="footer-social-btn" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="footer-social-btn" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="footer-social-btn" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+      </div>
+
+      <div class="footer-text mt-4">
+        &copy; 2026 Lavinia dos Santos Mattos. Todos os direitos reservados. <br>
+        Desenvolvido com <i class="fa-solid fa-heart text-danger"></i> para uma noite inesquecível.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bibliotecas CDN Otimizadas -->
+  <!-- Bootstrap 5 JS Bundle (com Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Particles.js para efeito mágico de partículas -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  
+  <!-- GSAP (GreenSock) para microanimações refinadas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  
+  <!-- AOS (Animate on Scroll) -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  
+  <!-- Swiper para sliders -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+  <!-- Camada DB (LocalStorage) -->
+  <script src="assets/js/db.js"></script>
+  
+  <!-- Script Principal Pública -->
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

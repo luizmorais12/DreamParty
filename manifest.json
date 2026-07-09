@@ -1,0 +1,31 @@
+{
+  "short_name": "Lavinia15",
+  "name": "Lavinia - 15 Anos | Jardim Encantado",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/color/96/tiara.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "https://img.icons8.com/color/144/tiara.png",
+      "type": "image/png",
+      "sizes": "144x144"
+    },
+    {
+      "src": "https://img.icons8.com/color/192/tiara.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://img.icons8.com/color/512/tiara.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "index.html",
+  "background_color": "#FDF3F8",
+  "theme_color": "#B76E79",
+  "display": "standalone",
+  "orientation": "portrait"
+}
