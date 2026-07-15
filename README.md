@@ -72,7 +72,7 @@ Atualmente o banco possui estrutura para:
 
 Acesse o projeto:
 
-**https://marciagorete.netlify.app/**
+**https://laviniasantos.netlify.app/**
 
 ---
 
