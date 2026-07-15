@@ -35,6 +35,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       navbar.classList.remove("navbar-scrolled");
     }
   });
+
+  // Fecha o menu colapsável do mobile ao clicar em um link
+  const navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+  const navbarCollapse = document.getElementById("navbarContent");
+  if (navbarCollapse) {
+    navLinks.forEach(link => {
+      link.addEventListener("click", () => {
+        if (window.innerWidth < 992) {
+          const toggler = document.querySelector(".navbar-toggler");
+          if (toggler && !toggler.classList.contains("collapsed")) {
+            toggler.click();
+          }
+        }
+      });
+    });
+  }
 });
 
 /* ==========================================================================
@@ -300,12 +316,6 @@ async function initMusicPlayer() {
   if (currentTrackIndex === -1) currentTrackIndex = 0;
 
   await loadTrack(currentTrackIndex);
-
-  document.body.addEventListener("click", () => {
-    if (!isPlaying && audio.paused) {
-      playMusic();
-    }
-  }, { once: true });
 }
 
 async function loadTrack(index) {

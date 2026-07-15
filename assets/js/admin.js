@@ -80,6 +80,11 @@ window.resetDatabaseToDefault = resetDatabaseToDefault;
    3. SIDEBAR NAVIGATION
    ========================================================================== */
 async function switchSection(sectionId, element) {
+  // Esconde a sidebar no mobile ao trocar de seção
+  if (window.innerWidth < 768) {
+    toggleAdminSidebar(false);
+  }
+
   const sections = document.querySelectorAll(".admin-section");
   sections.forEach(sec => sec.classList.add("d-none"));
 
@@ -783,3 +788,21 @@ async function exportData(type) {
   }
 }
 window.exportData = exportData;
+
+/* ==========================================================================
+   10. CONTROLE DO MENU LATERAL RESPONSIVO (MOBILE)
+   ========================================================================== */
+function toggleAdminSidebar(show) {
+  const sidebar = document.getElementById("admin-sidebar");
+  const overlay = document.getElementById("admin-sidebar-overlay");
+  if (!sidebar) return;
+  
+  if (show) {
+    sidebar.classList.add("show");
+    if (overlay) overlay.classList.add("show");
+  } else {
+    sidebar.classList.remove("show");
+    if (overlay) overlay.classList.remove("show");
+  }
+}
+window.toggleAdminSidebar = toggleAdminSidebar;

@@ -1518,3 +1518,69 @@ h1, h2, h3, h4, h5, h6 {
 .scale-hover:hover {
   transform: scale(1.02);
 }
+
+/* ==========================================================================
+   PAINEL ADMINISTRATIVO RESPONSIVO (MOBILE)
+   ========================================================================== */
+.admin-sidebar-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--color-rose-gold);
+  cursor: pointer;
+  padding: 5px 10px;
+  line-height: 1;
+  transition: var(--transition-smooth);
+}
+.admin-sidebar-close-btn:hover {
+  transform: scale(1.15);
+}
+
+@media (max-width: 767.98px) {
+  .admin-sidebar {
+    position: fixed !important;
+    top: 0;
+    left: -280px !important; /* Esconde fora da tela */
+    width: 270px !important;
+    height: 100vh !important;
+    z-index: 2000 !important;
+    transition: left 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    box-shadow: 5px 0 25px rgba(183, 110, 121, 0.25) !important;
+  }
+  
+  .admin-sidebar.show {
+    left: 0 !important;
+  }
+  
+  /* Ajuste do conteúdo principal para mobile */
+  main.col-md-9 {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+  }
+
+  .admin-header {
+    padding: 15px 20px !important;
+  }
+
+  .admin-content-area {
+    padding: 20px !important;
+  }
+  
+  /* Overlay escuro de fundo */
+  .admin-sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(44, 44, 44, 0.45);
+    backdrop-filter: blur(3px);
+    z-index: 1999;
+  }
+  
+  .admin-sidebar-overlay.show {
+    display: block;
+  }
+}
