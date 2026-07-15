@@ -1,67 +1,124 @@
-# 🎉 Lavinia 15 Anos
+# 🎉 DreamParty — Site para Festas de 15 Anos
 
-Um site desenvolvido para uma festa de 15 anos, reunindo todas as informações do evento em uma única plataforma. O objetivo é proporcionar uma experiência moderna, elegante e intuitiva para os convidados.
+Uma plataforma moderna desenvolvida para centralizar todas as informações de uma festa de 15 anos em um único lugar. O projeto oferece uma experiência elegante e intuitiva para os convidados, permitindo confirmar presença, enviar mensagens e acessar informações importantes do evento.
 
-## ✨ Funcionalidades
+## 🚀 Funcionalidades
 
-* ⏳ Contagem regressiva para o grande dia
-* 📸 Galeria de fotos responsiva
-* 🎥 Área para retrospectiva em vídeo
-* 🎁 Lista de presentes
-* ✅ Confirmação de presença (RSVP)
-* 💌 Mural de mensagens dos convidados
-* 📍 Informações sobre o evento e localização
-* 📱 Layout responsivo para desktop, tablet e celular
-* ✨ Animações e transições para uma experiência mais agradável
+- ⏳ Contagem regressiva para o grande dia
+- 📸 Galeria de fotos responsiva
+- 🎥 Área para retrospectiva em vídeo
+- 🎁 Lista de presentes
+- ✅ Confirmação de presença (RSVP)
+- 💌 Mural de mensagens dos convidados
+- 📍 Informações sobre o evento e localização
+- 📱 Layout totalmente responsivo
+- ✨ Animações e transições modernas
+- ☁️ Integração com banco de dados Supabase
+- 🔒 Persistência das confirmações de presença
+- 💾 Armazenamento seguro das informações dos convidados
+
+---
 
 ## 🛠️ Tecnologias Utilizadas
 
-* HTML5
-* CSS3
-* JavaScript
-* Bootstrap 5
-* AOS (Animate On Scroll)
-* GSAP
-* Font Awesome
-* Google Fonts
+### Front-end
+
+- HTML5
+- CSS3
+- JavaScript (ES6+)
+- Bootstrap 5
+- AOS (Animate On Scroll)
+- GSAP
+- Font Awesome
+- Google Fonts
+
+### Back-end / Banco de Dados
+
+- Supabase
+- PostgreSQL
+
+---
+
+## 📂 Estrutura do Banco de Dados
+
+O projeto utiliza o **Supabase** como Backend as a Service (BaaS), responsável por armazenar os dados enviados pelos convidados.
+
+Atualmente o banco possui estrutura para:
+
+- Confirmações de presença
+- Dados dos convidados
+- Mensagens enviadas pelos convidados
+
+---
 
 ## 🚧 Status do Projeto
 
-O projeto está em desenvolvimento.
+🟢 Em desenvolvimento ativo.
 
-Próximas implementações:
+### Próximas implementações
 
-* Integração com banco de dados
-* Painel administrativo
-* Gerenciamento da lista de presentes
-* Persistência das confirmações de presença
-* Exportação de convidados em PDF e Excel
-* Melhorias de performance e acessibilidade
+- 🔐 Painel administrativo
+- 📊 Dashboard com estatísticas dos convidados
+- 🎁 Gerenciamento da lista de presentes
+- 📄 Exportação de convidados em PDF
+- 📊 Exportação para Excel
+- 📧 Envio automático de e-mails
+- ⚡ Melhorias de performance
+- ♿ Melhorias de acessibilidade
 
-## 📸 Preview
+---
 
-> Adicione aqui um GIF ou imagens do projeto.
+## 🌐 Demonstração
 
-## 🚀 Como executar
+Acesse o projeto:
+
+**https://marciagorete.netlify.app/**
+
+---
+
+## 💻 Como executar
 
 Clone o repositório:
 
 ```bash
-git clone https://github.com/SEU-USUARIO/NOME-DO-REPOSITORIO.git
+git clone https://github.com/luizmorais12/DreamParty.git
 ```
 
-Acesse a pasta do projeto:
+Entre na pasta:
 
 ```bash
-cd NOME-DO-REPOSITORIO
+cd DreamParty
 ```
 
-Abra o arquivo `index.html` no navegador ou utilize a extensão **Live Server** do VS Code.
+Abra o arquivo `index.html` ou utilize a extensão **Live Server** do Visual Studio Code.
+
+---
 
 ## 💡 Objetivo
 
-Este projeto foi desenvolvido para praticar conceitos de desenvolvimento Front-end, criando uma interface moderna para eventos e explorando recursos como animações, responsividade e uma experiência de navegação mais envolvente.
+Este projeto foi desenvolvido para aprimorar conhecimentos em desenvolvimento Front-end e integração com banco de dados, aplicando boas práticas de desenvolvimento, responsividade, animações e persistência de dados utilizando Supabase.
+
+---
+
+## 📌 Funcionalidades em desenvolvimento
+
+- Área administrativa
+- Controle de convidados
+- Gerenciamento da lista de presentes
+- Relatórios
+- Dashboard
+
+---
 
 ## 📄 Licença
 
-Este projeto foi desenvolvido para fins de estudo e portfólio.
+Projeto desenvolvido para fins de estudo, portfólio e demonstração de habilidades em desenvolvimento web.
+
+---
+
+### 👨‍💻 Desenvolvido por
+
+**Luiz Henrique Morais**
+
+- GitHub: https://github.com/luizmorais12
+- LinkedIn: https://linkedin.com/in/luizmorais-dev
