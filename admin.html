@@ -87,7 +87,7 @@
               <small class="text-muted" id="admin-welcome-date">Carregando data...</small>
             </div>
             <div class="d-flex align-items-center gap-3">
-              <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+              <span id="db-status-badge" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
                 <i class="fa-solid fa-circle-check me-1"></i> Banco de Dados Local Ativo
               </span>
               <button class="btn btn-outline-secondary btn-sm" onclick="resetDatabaseToDefault()" title="Resetar banco de dados para os dados originais">
@@ -347,6 +347,34 @@
                   </div>
                 </div>
 
+                <!-- Integração Supabase -->
+                <div class="col-12">
+                  <div class="card admin-card">
+                    <div class="admin-card-header font-heading"><i class="fa-solid fa-database me-2 text-rose-gold"></i>Integração com Banco de Dados Supabase</div>
+                    <div class="card-body p-4">
+                      <div class="alert alert-info mb-4" role="alert">
+                        <h5 class="alert-heading"><i class="fa-solid fa-circle-info me-2"></i>Como Funciona?</h5>
+                        <p class="small mb-2">Ao preencher os campos abaixo com as credenciais do seu projeto Supabase, o site passará a salvar e ler as informações em nuvem automaticamente. Se as chaves forem apagadas ou estiverem inválidas, o site continuará funcionando localmente (LocalStorage) de forma transparente.</p>
+                        <p class="small mb-0 fw-bold">Instrução: Antes de conectar, crie as tabelas necessárias utilizando o arquivo <a href="supabase_schema.sql" download class="alert-link">supabase_schema.sql</a> em seu painel do Supabase.</p>
+                      </div>
+                      <form id="form-config-supabase" onsubmit="saveSupabaseConfig(event)">
+                        <div class="row mb-3">
+                          <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="cfg-sb-url" class="form-label">URL do Projeto Supabase (API URL)</label>
+                            <input type="url" class="form-control font-monospace" id="cfg-sb-url" placeholder="Ex: https://xxxx.supabase.co">
+                          </div>
+                          <div class="col-md-6">
+                            <label for="cfg-sb-key" class="form-label">Chave Pública Anon (Anon API Key)</label>
+                            <input type="password" class="form-control font-monospace" id="cfg-sb-key" placeholder="Insira a chave pública anon do seu projeto">
+                          </div>
+                        </div>
+                        <button type="submit" class="btn btn-rose py-2 px-4">Salvar e Conectar Supabase</button>
+                        <button type="button" class="btn btn-outline-danger py-2 px-4 ms-2" onclick="clearSupabaseConfig()">Desconectar Supabase</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </section>
 
@@ -463,6 +491,9 @@
   
   <!-- html2pdf.js para exportação PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Camada Banco de Dados -->
   <script src="assets/js/db.js"></script>

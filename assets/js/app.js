@@ -1,8 +1,8 @@
-// app.js - Script Principal da Área Pública
+// app.js - Script Principal da Área Pública (Integrado com Supabase / LocalStorage)
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Inicializa a Base de Dados
-  let database = DB.get();
+document.addEventListener("DOMContentLoaded", async () => {
+  // Inicializa a conexão com o banco de dados (detecta se há Supabase configurado)
+  await DB.init();
 
   // Inicializa AOS (Animate on Scroll)
   AOS.init({
@@ -16,15 +16,15 @@ document.addEventListener("DOMContentLoaded", () => {
   initParticles();
   initPetalsAndButterflies();
   
-  // Renderização Dinâmica do Conteúdo do Banco
-  renderDynamicContent();
+  // Renderização Dinâmica do Conteúdo
+  await renderDynamicContent();
 
   // Inicializa Controle de Música
-  initMusicPlayer();
+  await initMusicPlayer();
 
   // Inicializa Contadores e RSVP
-  initCountdown();
-  updateRSVPStats();
+  await initCountdown();
+  await updateRSVPStats();
 
   // Scroll Reveal Navbar Effect
   window.addEventListener("scroll", () => {
@@ -182,18 +182,15 @@ function initPetalsAndButterflies() {
   const container = document.getElementById("bg-garden-elements");
   if (!container) return;
 
-  // Gerar pétalas caindo continuamente
   const maxPetals = window.innerWidth < 768 ? 12 : 25;
   for (let i = 0; i < maxPetals; i++) {
     createPetal(container);
   }
 
-  // Gerar borboletas periodicamente
   setInterval(() => {
     createButterfly(container);
   }, 12000);
   
-  // Criar as duas primeiras imediatamente
   setTimeout(() => createButterfly(container), 2000);
   setTimeout(() => createButterfly(container), 6000);
 }
@@ -202,23 +199,20 @@ function createPetal(container) {
   const petal = document.createElement("div");
   petal.classList.add("petal");
 
-  const size = Math.random() * 15 + 8; // tamanhos variados
+  const size = Math.random() * 15 + 8;
   const left = Math.random() * window.innerWidth;
-  const duration = Math.random() * 12 + 8; // velocidade de queda
-  const delay = Math.random() * 10 * -1; // delay negativo para já iniciar em movimento
+  const duration = Math.random() * 12 + 8;
+  const delay = Math.random() * 10 * -1;
 
   petal.style.width = `${size}px`;
   petal.style.height = `${size * 0.8}px`;
   petal.style.left = `${left}px`;
   petal.style.animationDuration = `${duration}s`;
   petal.style.animationDelay = `${delay}s`;
-
-  // Rotação inicial aleatória
   petal.style.transform = `rotate(${Math.random() * 360}deg)`;
 
   container.appendChild(petal);
 
-  // Reposicionar quando terminar animação
   petal.addEventListener("animationiteration", () => {
     petal.style.left = `${Math.random() * window.innerWidth}px`;
   });
@@ -238,7 +232,6 @@ function createButterfly(container) {
 
   container.appendChild(butterfly);
 
-  // Remover após finalizar a rota de animação
   setTimeout(() => {
     butterfly.remove();
   }, duration * 1000);
@@ -248,8 +241,8 @@ function createButterfly(container) {
    4. CONTAGEM REGRESSIVA (COUNTDOWN)
    ========================================================================== */
 let countdownInterval;
-function initCountdown() {
-  const db = DB.get();
+async function initCountdown() {
+  const db = await DB.get();
   const partyDate = new Date(db.config.partyDate).getTime();
 
   const daysEl = document.getElementById("cd-days");
@@ -279,7 +272,6 @@ function initCountdown() {
     minsEl.textContent = String(minutes).padStart(2, "0");
     secsEl.textContent = String(seconds).padStart(2, "0");
 
-    // Animações especiais caso falte menos de 30 dias
     if (days < 30) {
       const boxes = document.querySelectorAll(".countdown-box");
       boxes.forEach(box => box.classList.add("countdown-near"));
@@ -296,39 +288,34 @@ function initCountdown() {
 let isPlaying = false;
 let currentTrackIndex = 0;
 
-function initMusicPlayer() {
+async function initMusicPlayer() {
   const audio = document.getElementById("bg-audio");
-  const db = DB.get();
+  const db = await DB.get();
   const tracks = db.config.musicTracks;
 
   if (!audio || !tracks || tracks.length === 0) return;
 
-  // Encontra a faixa padrão ou inicia da primeira
   const defaultTrackId = db.config.currentTrackId || "1";
   currentTrackIndex = tracks.findIndex(t => t.id === defaultTrackId);
   if (currentTrackIndex === -1) currentTrackIndex = 0;
 
-  loadTrack(currentTrackIndex);
+  await loadTrack(currentTrackIndex);
 
-  // Tentativa de Autoplay
   document.body.addEventListener("click", () => {
     if (!isPlaying && audio.paused) {
-      // Inicia música suavemente no primeiro toque
       playMusic();
     }
   }, { once: true });
 }
 
-function loadTrack(index) {
+async function loadTrack(index) {
   const audio = document.getElementById("bg-audio");
-  const db = DB.get();
+  const db = await DB.get();
   const track = db.config.musicTracks[index];
 
   if (!audio || !track) return;
 
   audio.src = track.url;
-  
-  // Atualiza Informações do Player
   document.getElementById("music-title").textContent = track.title;
   document.getElementById("music-artist").textContent = track.artist;
 }
@@ -339,7 +326,6 @@ function toggleMusicPanel() {
 }
 
 function toggleMusic() {
-  const audio = document.getElementById("bg-audio");
   if (isPlaying) {
     pauseMusic();
   } else {
@@ -363,7 +349,7 @@ function playMusic() {
       }
     })
     .catch(e => {
-      console.warn("Autoplay bloqueado pelo navegador. O usuário precisa interagir primeiro.");
+      console.warn("Autoplay bloqueado pelo navegador.");
     });
 }
 
@@ -382,27 +368,26 @@ function pauseMusic() {
   }
 }
 
-function nextTrack() {
-  const db = DB.get();
+async function nextTrack() {
+  const db = await DB.get();
   const tracks = db.config.musicTracks;
   currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
-  loadTrack(currentTrackIndex);
+  await loadTrack(currentTrackIndex);
   if (isPlaying) {
     playMusic();
   }
 }
 
-function prevTrack() {
-  const db = DB.get();
+async function prevTrack() {
+  const db = await DB.get();
   const tracks = db.config.musicTracks;
   currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-  loadTrack(currentTrackIndex);
+  await loadTrack(currentTrackIndex);
   if (isPlaying) {
     playMusic();
   }
 }
 
-// Globalizar funções do player
 window.toggleMusicPanel = toggleMusicPanel;
 window.toggleMusic = toggleMusic;
 window.nextTrack = nextTrack;
@@ -411,15 +396,14 @@ window.prevTrack = prevTrack;
 /* ==========================================================================
    6. RENDERIZAÇÃO DE CONTEÚDO DINÂMICO
    ========================================================================== */
-function renderDynamicContent() {
-  const db = DB.get();
+async function renderDynamicContent() {
+  const db = await DB.get();
 
   // Configurações Gerais
-  document.getElementById("nav-brand-title").textContent = db.config.name.split(" ")[0]; // Primeiro nome
+  document.getElementById("nav-brand-title").textContent = db.config.name.split(" ")[0];
   document.getElementById("hero-celebrant-name").textContent = db.config.name;
   document.getElementById("hero-celebration-quote").textContent = `"${db.config.quote}"`;
 
-  // Formata Data Hero
   const optDate = { day: 'numeric', month: 'long', year: 'numeric' };
   const dFesta = new Date(db.config.partyDate);
   document.getElementById("hero-celebration-date").textContent = dFesta.toLocaleDateString('pt-BR', optDate);
@@ -432,22 +416,11 @@ function renderDynamicContent() {
   document.getElementById("local-map-iframe").src = db.config.location.mapUrl;
   document.getElementById("local-gmaps-link").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(db.config.location.address)}`;
 
-  // Timeline (Sobre)
   renderTimeline(db.timeline);
-
-  // Galeria de Fotos
   renderGallery(db.gallery);
-
-  // Vídeos
   renderVideos(db.videos);
-
-  // Lista de Presentes
   renderGifts(db.gifts);
-
-  // Livro de Mensagens
   renderMessages(db.messages);
-
-  // Cronograma
   renderSchedule(db.schedule);
 }
 
@@ -458,7 +431,6 @@ function renderTimeline(timelineData) {
 
   timelineData.forEach((item, index) => {
     const fadeDir = index % 2 === 0 ? "fade-right" : "fade-left";
-    
     const timelineItem = document.createElement("div");
     timelineItem.classList.add("timeline-item", "row");
     timelineItem.innerHTML = `
@@ -476,7 +448,6 @@ function renderTimeline(timelineData) {
   });
 }
 
-// Galeria de Fotos & Lightbox
 let activeGalleryItems = [];
 function renderGallery(galleryData) {
   const grid = document.getElementById("gallery-grid");
@@ -503,13 +474,11 @@ function renderGallery(galleryData) {
 }
 
 function filterGallery(category, btn) {
-  // Ajusta classe ativa nos botões
   const buttons = document.querySelectorAll("#gallery-filters-container .filter-btn");
   buttons.forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
 
   const items = document.querySelectorAll("#gallery-grid .gallery-item");
-  
   items.forEach(item => {
     const itemCat = item.getAttribute("data-category");
     if (category === "todos" || itemCat === category) {
@@ -523,7 +492,6 @@ function filterGallery(category, btn) {
 }
 window.filterGallery = filterGallery;
 
-// Lightbox Logic
 let currentLightboxIndex = 0;
 function openLightbox(index) {
   const modal = document.getElementById("lightbox-modal");
@@ -537,9 +505,8 @@ function openLightbox(index) {
   caption.innerHTML = `<h5>${activeGalleryItems[index].title}</h5><p class="text-uppercase font-monospace small" style="color: var(--color-gold); font-size: 0.75rem;">${activeGalleryItems[index].category}</p>`;
   
   modal.style.display = "flex";
-  document.body.style.overflow = "hidden"; // Desativa scroll do body
+  document.body.style.overflow = "hidden";
 
-  // Adiciona transição
   img.style.transform = "scale(0.9)";
   setTimeout(() => img.style.transform = "scale(1)", 50);
 }
@@ -548,7 +515,7 @@ function closeLightbox() {
   const modal = document.getElementById("lightbox-modal");
   if (!modal) return;
   modal.style.display = "none";
-  document.body.style.overflow = "auto"; // Reativa scroll do body
+  document.body.style.overflow = "auto";
 }
 
 function changeLightboxImage(dir) {
@@ -566,7 +533,6 @@ function changeLightboxImage(dir) {
   }
 }
 
-// Fechar com ESC e clique fora
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeLightbox();
   if (e.key === "ArrowLeft") changeLightboxImage(-1);
@@ -580,7 +546,6 @@ window.openLightbox = openLightbox;
 window.closeLightbox = closeLightbox;
 window.changeLightboxImage = changeLightboxImage;
 
-// Vídeos & Retrospectiva
 function renderVideos(videosData) {
   const wrapper = document.getElementById("video-wrapper");
   if (!wrapper || videosData.length === 0) return;
@@ -593,7 +558,6 @@ function renderVideos(videosData) {
   `;
 }
 
-// Lista de Presentes
 function renderGifts(giftsData) {
   const grid = document.getElementById("gifts-grid");
   if (!grid) return;
@@ -640,52 +604,45 @@ function openGiftReservation(id, name, desc, val) {
 }
 window.openGiftReservation = openGiftReservation;
 
-function handleChoosePhysicalGift(event) {
+async function handleChoosePhysicalGift(event) {
   event.preventDefault();
   const id = document.getElementById("gift-modal-item-id").value;
   const name = document.getElementById("gift-giver-name").value;
 
   if (!name.trim()) return;
 
-  const db = DB.get();
-  const giftIndex = db.gifts.findIndex(g => g.id === id);
+  const db = await DB.get();
+  const gift = db.gifts.find(g => g.id === id);
   
-  if (giftIndex !== -1) {
-    db.gifts[giftIndex].chosen = true;
-    db.gifts[giftIndex].chosenBy = name;
-    DB.save(db);
+  if (gift) {
+    gift.chosen = true;
+    gift.chosenBy = name;
+    
+    await DB.saveGift(gift);
 
-    // Fecha modal
     const modalEl = document.getElementById("confirmGiftModal");
     const modal = bootstrap.Modal.getInstance(modalEl);
     modal.hide();
 
-    // Reset Form
     document.getElementById("physical-gift-form").reset();
-
-    // Re-renderiza presentes
-    renderGifts(db.gifts);
+    
+    // Atualiza listagem de presentes após gravação
+    const updatedDb = await DB.get();
+    renderGifts(updatedDb.gifts);
   }
 }
 window.handleChoosePhysicalGift = handleChoosePhysicalGift;
 
-// Pix Modal Logic
 let selectedPixAmount = 100;
-function selectPixValue(amount, element) {
+async function selectPixValue(amount, element) {
   selectedPixAmount = amount;
   
-  // Limpa selecionados
   const cards = document.querySelectorAll(".pix-val-card");
   cards.forEach(c => c.classList.remove("selected"));
-
-  // Seleciona o atual
   element.classList.add("selected");
 
-  // Altera QR Code Pix (Simulado)
-  const db = DB.get();
+  const db = await DB.get();
   const qrcode = document.getElementById("pix-qrcode-img");
-  
-  // Gerador de QRCode dinâmico com valor Pix
   const pixData = `00020101021126580014br.gov.bcb.pix0119${db.config.pixKey}5204000053039865405${amount.toFixed(2)}5802BR5925LAVINIA%20DOS%20SANTOS%20MATTOS6009SAO%20PAULO62070503***63041A2D`;
   qrcode.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixData)}`;
 }
@@ -701,15 +658,11 @@ function copyPixKey() {
 }
 window.copyPixKey = copyPixKey;
 
-function handlePixContribution(event) {
+async function handlePixContribution(event) {
   event.preventDefault();
   const donorName = document.getElementById("pix-donor-name").value;
   if (!donorName.trim()) return;
 
-  const db = DB.get();
-  
-  // Registra a doação como um RSVP virtual ou cria uma entrada nos presentes
-  // Simularemos salvando na lista de convidados ou mensagens
   const newRsvp = {
     id: "r_pix_" + Date.now(),
     name: donorName + " (Pix Presente R$" + selectedPixAmount + ")",
@@ -723,30 +676,24 @@ function handlePixContribution(event) {
     dateConfirmed: new Date().toISOString()
   };
   
-  db.rsvps.push(newRsvp);
-  DB.save(db);
+  await DB.saveRsvp(newRsvp);
 
-  // Fecha modal Pix
   const modalEl = document.getElementById("pixDonationModal");
   const modal = bootstrap.Modal.getInstance(modalEl);
   modal.hide();
 
-  // Reset Form
   document.getElementById("pix-confirm-form").reset();
-
-  // Alerta
   alert("Obrigado pelo seu Pix de presente! A confirmação simbólica foi salva com sucesso.");
-  updateRSVPStats();
+  
+  await updateRSVPStats();
 }
 window.handlePixContribution = handlePixContribution;
 
-// Livro de Mensagens
 function renderMessages(messagesData) {
   const wrapper = document.getElementById("messages-list-wrapper");
   if (!wrapper) return;
   wrapper.innerHTML = "";
 
-  // Filtra mensagens aprovadas pelo administrador
   const approvedMsgs = messagesData.filter(m => m.approved);
 
   if (approvedMsgs.length === 0) {
@@ -754,13 +701,11 @@ function renderMessages(messagesData) {
     return;
   }
 
-  // Ordena por data (mais recentes primeiro)
   approvedMsgs.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   approvedMsgs.forEach(msg => {
     const card = document.createElement("div");
     card.classList.add("card", "glass-panel", "message-card");
-    
     const formattedDate = new Date(msg.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
     card.innerHTML = `
@@ -775,7 +720,7 @@ function renderMessages(messagesData) {
   });
 }
 
-function submitMessage(event) {
+async function submitMessage(event) {
   event.preventDefault();
   const author = document.getElementById("msg-author").value;
   const relation = document.getElementById("msg-relation").value;
@@ -783,24 +728,19 @@ function submitMessage(event) {
 
   if (!author.trim() || !relation.trim() || !text.trim()) return;
 
-  const db = DB.get();
   const newMsg = {
     id: "m_" + Date.now(),
     author: author,
     relation: relation,
     text: text,
     date: new Date().toISOString(),
-    approved: false // Requer aprovação do admin
+    approved: false // Necessita aprovação do moderador
   };
 
-  db.messages.push(newMsg);
-  DB.save(db);
+  await DB.saveMessage(newMsg);
 
-  // Sucesso Alert
   const successAlert = document.getElementById("msg-success-alert");
   successAlert.classList.remove("d-none");
-  
-  // Reseta form
   document.getElementById("msg-guestbook-form").reset();
   
   setTimeout(() => {
@@ -809,7 +749,6 @@ function submitMessage(event) {
 }
 window.submitMessage = submitMessage;
 
-// Cronograma
 function renderSchedule(scheduleData) {
   const wrapper = document.getElementById("schedule-wrapper");
   if (!wrapper) return;
@@ -848,15 +787,13 @@ function toggleCompanionInput() {
 }
 window.toggleCompanionInput = toggleCompanionInput;
 
-function updateRSVPStats() {
-  const db = DB.get();
+async function updateRSVPStats() {
+  const db = await DB.get();
   
   let totalAdults = 0;
   let totalKids = 0;
 
   db.rsvps.forEach(rsvp => {
-    // Conta o próprio convidado que confirmou se adultsCount ou total confirmados for cadastrado
-    // O próprio é 1 adulto.
     totalAdults += 1 + parseInt(rsvp.adultsCount || 0);
     totalKids += parseInt(rsvp.kidsCount || 0);
   });
@@ -872,7 +809,7 @@ function updateRSVPStats() {
   if (statsKids) statsKids.textContent = totalKids;
 }
 
-function submitRSVP(event) {
+async function submitRSVP(event) {
   event.preventDefault();
   
   const name = document.getElementById("rsvp-name").value;
@@ -886,8 +823,6 @@ function submitRSVP(event) {
 
   if (!name.trim() || !phone.trim() || !email.trim()) return;
 
-  const db = DB.get();
-
   const newRsvp = {
     id: "r_" + Date.now(),
     name: name,
@@ -896,37 +831,33 @@ function submitRSVP(event) {
     adultsCount: adults,
     kidsCount: kids,
     companionNames: companions,
-    dietaryRestrictions: diet,
+    dietaryRestrictions: diet || "Sem restrições",
     message: message,
     dateConfirmed: new Date().toISOString()
   };
 
-  db.rsvps.push(newRsvp);
+  await DB.saveRsvp(newRsvp);
   
-  // Se houver uma mensagem opcional, também envia para moderação do Livro de Visitas
   if (message.trim()) {
-    db.messages.push({
+    await DB.saveMessage({
       id: "m_rsvp_" + Date.now(),
       author: name,
       relation: "Convidado",
       text: message,
       date: new Date().toISOString(),
-      approved: false // Requer moderação
+      approved: false
     });
   }
 
-  DB.save(db);
-
-  // Esconde Form e Exibe Alerta de Sucesso
   document.getElementById("rsvp-form").classList.add("d-none");
   document.getElementById("rsvp-success-alert").classList.remove("d-none");
-
-  // Rola suavemente até o topo da seção RSVP
   document.getElementById("rsvp").scrollIntoView({ behavior: "smooth" });
 
-  // Atualiza Estatísticas
-  updateRSVPStats();
-  renderMessages(db.messages);
+  await updateRSVPStats();
+  
+  // Re-render mensagens
+  const updatedDb = await DB.get();
+  renderMessages(updatedDb.messages);
 }
 window.submitRSVP = submitRSVP;
 
@@ -956,7 +887,6 @@ function toggleHighContrast() {
 }
 window.toggleHighContrast = toggleHighContrast;
 
-// Verifica alto contraste salvo ao carregar
 if (localStorage.getItem("high-contrast-active") === "true") {
   document.body.classList.add("high-contrast");
 }

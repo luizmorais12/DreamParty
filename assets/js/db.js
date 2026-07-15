@@ -1,6 +1,11 @@
-// db.js - Gerenciamento de Persistência no LocalStorage
+// db.js - Gerenciamento de Persistência com Supabase e Fallback em LocalStorage
 
 const DB_KEY = 'lavinia_15_anos_db';
+
+// CONFIGURAÇÃO GLOBAL DO SUPABASE (Opcional - Para quando publicar o site na internet)
+// Insira as chaves abaixo para que todos os seus convidados conectem ao mesmo banco automaticamente.
+const SUPABASE_URL_DEFAULT = 'https://mfxjhsszkywwkpqfuepp.supabase.co';
+const SUPABASE_ANON_KEY_DEFAULT = 'sb_publishable_uMlijmLuk7X_3NfD1bsPyQ_Eos7A9t2';
 
 const defaultDatabase = {
   config: {
@@ -92,8 +97,8 @@ const defaultDatabase = {
   ]
 };
 
-// Carrega ou inicializa a base de dados
-function loadDB() {
+// Funções locais auxiliares de LocalStorage
+function loadDBLocal() {
   const data = localStorage.getItem(DB_KEY);
   if (!data) {
     localStorage.setItem(DB_KEY, JSON.stringify(defaultDatabase));
@@ -102,28 +107,377 @@ function loadDB() {
   try {
     return JSON.parse(data);
   } catch (e) {
-    console.error("Erro ao carregar banco de dados. Resetando...", e);
+    console.error("Erro ao carregar banco de dados local. Resetando...", e);
     localStorage.setItem(DB_KEY, JSON.stringify(defaultDatabase));
     return defaultDatabase;
   }
 }
 
-// Salva a base de dados
-function saveDB(db) {
+function saveDBLocal(db) {
   localStorage.setItem(DB_KEY, JSON.stringify(db));
 }
 
-// Métodos auxiliares
+// Objeto de banco de dados global com integração do Supabase
 const DB = {
-  get: () => loadDB(),
-  save: (data) => saveDB(data),
-  
-  // Resetar aos padrões
-  reset: () => {
+  isSupabase: false,
+  supabaseClient: null,
+
+  // Inicializa a conexão com o Supabase se configurado
+  init: async () => {
+    const sbUrl = localStorage.getItem("supabase_url") || SUPABASE_URL_DEFAULT;
+    const sbKey = localStorage.getItem("supabase_anon_key") || SUPABASE_ANON_KEY_DEFAULT;
+    
+    if (sbUrl && sbKey && typeof supabase !== 'undefined') {
+      try {
+        DB.supabaseClient = supabase.createClient(sbUrl, sbKey);
+        // Testar a conexão puxando as configurações
+        const { data, error } = await DB.supabaseClient.from('settings').select('*').limit(1);
+        if (error) throw error;
+        
+        DB.isSupabase = true;
+        console.log("Supabase inicializado e conectado com sucesso!");
+        updateStatusBadge();
+        return true;
+      } catch (e) {
+        console.error("Erro de conexão ao Supabase. Utilizando fallback local:", e);
+        DB.isSupabase = false;
+      }
+    } else {
+      DB.isSupabase = false;
+    }
+    updateStatusBadge();
+    return false;
+  },
+
+  // Retorna os dados agregados (seja do Supabase ou do LocalStorage)
+  get: async () => {
+    if (DB.isSupabase && DB.supabaseClient) {
+      try {
+        const [rsvpsRes, messagesRes, giftsRes, settingsRes] = await Promise.all([
+          DB.supabaseClient.from('rsvps').select('*'),
+          DB.supabaseClient.from('messages').select('*'),
+          DB.supabaseClient.from('gifts').select('*'),
+          DB.supabaseClient.from('settings').select('*').eq('key', 'site_config').maybeSingle()
+        ]);
+
+        if (rsvpsRes.error) throw rsvpsRes.error;
+        if (messagesRes.error) throw messagesRes.error;
+        if (giftsRes.error) throw giftsRes.error;
+
+        // Recupera valores padrão
+        let config = { ...defaultDatabase.config };
+        let timeline = [...defaultDatabase.timeline];
+        let gallery = [...defaultDatabase.gallery];
+        let videos = [...defaultDatabase.videos];
+        let schedule = [...defaultDatabase.schedule];
+
+        // Se houver config personalizada no Supabase
+        if (settingsRes.data && settingsRes.data.value) {
+          const val = settingsRes.data.value;
+          config = val.config || val;
+          timeline = val.timeline || timeline;
+          gallery = val.gallery || gallery;
+          videos = val.videos || videos;
+          schedule = val.schedule || schedule;
+          
+          config.timeline = timeline;
+          config.gallery = gallery;
+          config.videos = videos;
+          config.schedule = schedule;
+        }
+
+        const messages = (messagesRes.data || []).map(m => ({
+          id: m.id,
+          author: m.author,
+          relation: m.relation,
+          text: m.text,
+          date: m.date,
+          approved: m.approved ?? false
+        }));
+
+        const gifts = (giftsRes.data || []).map(g => ({
+          id: g.id,
+          name: g.name,
+          description: g.description,
+          value: parseFloat(g.value),
+          image: g.image,
+          chosen: g.chosen ?? false,
+          chosenBy: g.chosen_by || ""
+        })).sort((a, b) => b.value - a.value);
+
+        const rsvps = (rsvpsRes.data || []).map(r => ({
+          id: r.id,
+          name: r.name,
+          phone: r.phone,
+          email: r.email,
+          adultsCount: r.adults_count ?? 0,
+          kidsCount: r.kids_count ?? 0,
+          companionNames: r.companion_names || "",
+          dietaryRestrictions: r.dietary_restrictions || "Sem restrições",
+          message: r.message || "",
+          dateConfirmed: r.date_confirmed
+        }));
+
+        return {
+          config,
+          timeline,
+          gallery,
+          videos,
+          gifts,
+          rsvps,
+          messages,
+          schedule
+        };
+      } catch (err) {
+        console.error("Erro na leitura assíncrona do Supabase. Alternando para LocalStorage:", err);
+        return loadDBLocal();
+      }
+    }
+    return loadDBLocal();
+  },
+
+  // Salva configurações gerais (config, timeline, galeria, etc.)
+  saveConfig: async (configData) => {
+    if (DB.isSupabase && DB.supabaseClient) {
+      try {
+        const { error } = await DB.supabaseClient.from('settings').upsert({
+          key: 'site_config',
+          value: configData
+        });
+        if (error) throw error;
+        return true;
+      } catch (err) {
+        console.error("Falha ao salvar configurações no Supabase:", err);
+        return false;
+      }
+    } else {
+      const db = loadDBLocal();
+      db.config = { ...db.config, ...configData };
+      if (configData.timeline) db.timeline = configData.timeline;
+      if (configData.gallery) db.gallery = configData.gallery;
+      if (configData.videos) db.videos = configData.videos;
+      if (configData.schedule) db.schedule = configData.schedule;
+      saveDBLocal(db);
+      return true;
+    }
+  },
+
+  // Grava confirmação RSVP
+  saveRsvp: async (rsvp) => {
+    if (DB.isSupabase && DB.supabaseClient) {
+      try {
+        const { error } = await DB.supabaseClient.from('rsvps').upsert({
+          id: rsvp.id,
+          name: rsvp.name,
+          phone: rsvp.phone,
+          email: rsvp.email,
+          adults_count: parseInt(rsvp.adultsCount),
+          kids_count: parseInt(rsvp.kidsCount),
+          companion_names: rsvp.companionNames,
+          dietary_restrictions: rsvp.dietaryRestrictions,
+          message: rsvp.message,
+          date_confirmed: rsvp.dateConfirmed
+        });
+        if (error) throw error;
+        return true;
+      } catch (err) {
+        console.error("Falha ao salvar RSVP no Supabase:", err);
+        return false;
+      }
+    } else {
+      const db = loadDBLocal();
+      const idx = db.rsvps.findIndex(r => r.id === rsvp.id);
+      if (idx !== -1) {
+        db.rsvps[idx] = rsvp;
+      } else {
+        db.rsvps.push(rsvp);
+      }
+      saveDBLocal(db);
+      return true;
+    }
+  },
+
+  // Deleta confirmação RSVP
+  deleteRsvp: async (id) => {
+    if (DB.isSupabase && DB.supabaseClient) {
+      try {
+        const { error } = await DB.supabaseClient.from('rsvps').delete().eq('id', id);
+        if (error) throw error;
+        return true;
+      } catch (err) {
+        console.error("Falha ao deletar RSVP no Supabase:", err);
+        return false;
+      }
+    } else {
+      const db = loadDBLocal();
+      db.rsvps = db.rsvps.filter(r => r.id !== id);
+      saveDBLocal(db);
+      return true;
+    }
+  },
+
+  // Grava Mensagem (Livro de Visitas)
+  saveMessage: async (msg) => {
+    if (DB.isSupabase && DB.supabaseClient) {
+      try {
+        const { error } = await DB.supabaseClient.from('messages').upsert({
+          id: msg.id,
+          author: msg.author,
+          relation: msg.relation,
+          text: msg.text,
+          date: msg.date,
+          approved: msg.approved
+        });
+        if (error) throw error;
+        return true;
+      } catch (err) {
+        console.error("Falha ao salvar mensagem no Supabase:", err);
+        return false;
+      }
+    } else {
+      const db = loadDBLocal();
+      const idx = db.messages.findIndex(m => m.id === msg.id);
+      if (idx !== -1) {
+        db.messages[idx] = msg;
+      } else {
+        db.messages.push(msg);
+      }
+      saveDBLocal(db);
+      return true;
+    }
+  },
+
+  // Deleta Mensagem
+  deleteMessage: async (id) => {
+    if (DB.isSupabase && DB.supabaseClient) {
+      try {
+        const { error } = await DB.supabaseClient.from('messages').delete().eq('id', id);
+        if (error) throw error;
+        return true;
+      } catch (err) {
+        console.error("Falha ao excluir mensagem no Supabase:", err);
+        return false;
+      }
+    } else {
+      const db = loadDBLocal();
+      db.messages = db.messages.filter(m => m.id !== id);
+      saveDBLocal(db);
+      return true;
+    }
+  },
+
+  // Grava Presente (CRUD ou Escolha)
+  saveGift: async (gift) => {
+    if (DB.isSupabase && DB.supabaseClient) {
+      try {
+        const { error } = await DB.supabaseClient.from('gifts').upsert({
+          id: gift.id,
+          name: gift.name,
+          description: gift.description,
+          value: parseFloat(gift.value),
+          image: gift.image,
+          chosen: gift.chosen,
+          chosen_by: gift.chosenBy
+        });
+        if (error) throw error;
+        return true;
+      } catch (err) {
+        console.error("Falha ao salvar presente no Supabase:", err);
+        return false;
+      }
+    } else {
+      const db = loadDBLocal();
+      const idx = db.gifts.findIndex(g => g.id === gift.id);
+      if (idx !== -1) {
+        db.gifts[idx] = gift;
+      } else {
+        db.gifts.push(gift);
+      }
+      saveDBLocal(db);
+      return true;
+    }
+  },
+
+  // Deleta Presente
+  deleteGift: async (id) => {
+    if (DB.isSupabase && DB.supabaseClient) {
+      try {
+        const { error } = await DB.supabaseClient.from('gifts').delete().eq('id', id);
+        if (error) throw error;
+        return true;
+      } catch (err) {
+        console.error("Falha ao excluir presente no Supabase:", err);
+        return false;
+      }
+    } else {
+      const db = loadDBLocal();
+      db.gifts = db.gifts.filter(g => g.id !== id);
+      saveDBLocal(db);
+      return true;
+    }
+  },
+
+  // Reseta banco de dados para os valores padrão
+  reset: async () => {
+    if (DB.isSupabase && DB.supabaseClient) {
+      try {
+        // Limpa tabelas
+        await Promise.all([
+          DB.supabaseClient.from('rsvps').delete().neq('id', 'null'),
+          DB.supabaseClient.from('messages').delete().neq('id', 'null'),
+          DB.supabaseClient.from('gifts').delete().neq('id', 'null'),
+          DB.supabaseClient.from('settings').delete().eq('key', 'site_config')
+        ]);
+
+        // Insere as configurações padrão
+        await DB.supabaseClient.from('settings').insert({
+          key: 'site_config',
+          value: {
+            config: defaultDatabase.config,
+            timeline: defaultDatabase.timeline,
+            gallery: defaultDatabase.gallery,
+            videos: defaultDatabase.videos,
+            schedule: defaultDatabase.schedule
+          }
+        });
+
+        // Insere mimos, convidados e mensagens padrão
+        for (const r of defaultDatabase.rsvps) {
+          await DB.saveRsvp(r);
+        }
+        for (const m of defaultDatabase.messages) {
+          await DB.saveMessage(m);
+        }
+        for (const g of defaultDatabase.gifts) {
+          await DB.saveGift(g);
+        }
+        console.log("Supabase resetado com sucesso.");
+      } catch (e) {
+        console.error("Falha ao resetar banco do Supabase:", e);
+      }
+    }
+    
+    // Backup local
     localStorage.setItem(DB_KEY, JSON.stringify(defaultDatabase));
     return defaultDatabase;
   }
 };
+
+// Atualiza o crachá indicador de status de conexão no header
+function updateStatusBadge() {
+  const badge = document.getElementById("db-status-badge");
+  if (!badge) return;
+  if (DB.isSupabase) {
+    badge.className = "badge bg-info-subtle text-info border border-info-subtle px-3 py-2 rounded-pill";
+    badge.innerHTML = `<i class="fa-solid fa-cloud me-1"></i> Sincronizado com Supabase`;
+  } else {
+    badge.className = "badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill";
+    badge.innerHTML = `<i class="fa-solid fa-circle-check me-1"></i> Banco de Dados Local Ativo`;
+  }
+}
+
+// Execução imediata de inicialização do DB ao carregar o script
+DB.init();
 
 // Exportar globalmente
 window.DB = DB;

@@ -1,20 +1,23 @@
-// admin.js - Lógica de Controle do Painel Administrativo
+// admin.js - Lógica de Controle do Painel Administrativo (Integrado com Supabase / LocalStorage)
 
 let guestsChartInstance = null;
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   // Configuração da data atual no painel
   const optDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   document.getElementById("admin-welcome-date").textContent = new Date().toLocaleDateString('pt-BR', optDate);
 
+  // Inicializa banco de dados (detecta se há Supabase)
+  await DB.init();
+
   // Verifica Autenticação
-  checkAuth();
+  await checkAuth();
 });
 
 /* ==========================================================================
    1. AUTENTICAÇÃO E LOGIN
    ========================================================================== */
-function checkAuth() {
+async function checkAuth() {
   const loggedIn = sessionStorage.getItem("lavinia_logged_in");
   const loginScreen = document.getElementById("admin-login-screen");
   const mainPanel = document.getElementById("admin-main-panel");
@@ -22,7 +25,7 @@ function checkAuth() {
   if (loggedIn === "true") {
     loginScreen.classList.add("d-none");
     mainPanel.classList.remove("d-none");
-    initAdminPanel();
+    await initAdminPanel();
   } else {
     loginScreen.classList.remove("d-none");
     mainPanel.classList.add("d-none");
@@ -34,7 +37,6 @@ function handleAdminLogin(event) {
   const passwordInput = document.getElementById("admin-password").value;
   const errorAlert = document.getElementById("login-error-alert");
 
-  // Senha padrão de acesso
   if (passwordInput === "lavinia15") {
     sessionStorage.setItem("lavinia_logged_in", "true");
     errorAlert.classList.add("d-none");
@@ -57,17 +59,17 @@ window.handleAdminLogout = handleAdminLogout;
 /* ==========================================================================
    2. INICIALIZAÇÃO GERAL E REVERTER DADOS
    ========================================================================== */
-function initAdminPanel() {
-  updateDashboardStats();
-  renderGuestTable();
-  renderModerationGrid();
-  renderGiftsAdmin();
-  populateConfigForms();
+async function initAdminPanel() {
+  await updateDashboardStats();
+  await renderGuestTable();
+  await renderModerationGrid();
+  await renderGiftsAdmin();
+  await populateConfigForms();
 }
 
-function resetDatabaseToDefault() {
+async function resetDatabaseToDefault() {
   if (confirm("ATENÇÃO: Isso restaurará todos os dados originais do site, excluindo confirmações recentes, mensagens enviadas e edições de texto. Deseja prosseguir?")) {
-    DB.reset();
+    await DB.reset();
     alert("Banco de dados restaurado com sucesso!");
     location.reload();
   }
@@ -77,33 +79,27 @@ window.resetDatabaseToDefault = resetDatabaseToDefault;
 /* ==========================================================================
    3. SIDEBAR NAVIGATION
    ========================================================================== */
-function switchSection(sectionId, element) {
-  // Esconde todas as seções
+async function switchSection(sectionId, element) {
   const sections = document.querySelectorAll(".admin-section");
   sections.forEach(sec => sec.classList.add("d-none"));
 
-  // Exibe a seção ativa
   const targetSec = document.getElementById(`sec-${sectionId}`);
   if (targetSec) {
     targetSec.classList.remove("d-none");
   }
 
-  // Remove classe ativa de todos os nav items
   const navItems = document.querySelectorAll(".admin-nav-item");
   navItems.forEach(item => item.classList.remove("active"));
-
-  // Adiciona classe ativa no selecionado
   element.classList.add("active");
 
-  // Ações de refresh específicas
   if (sectionId === "dashboard") {
-    updateDashboardStats();
+    await updateDashboardStats();
   } else if (sectionId === "convidados") {
-    renderGuestTable();
+    await renderGuestTable();
   } else if (sectionId === "moderacao") {
-    renderModerationGrid();
+    await renderModerationGrid();
   } else if (sectionId === "presentes") {
-    renderGiftsAdmin();
+    await renderGiftsAdmin();
   }
 }
 window.switchSection = switchSection;
@@ -111,14 +107,14 @@ window.switchSection = switchSection;
 /* ==========================================================================
    4. DASHBOARD - ESTATÍSTICAS E GRÁFICOS
    ========================================================================== */
-function updateDashboardStats() {
-  const db = DB.get();
+async function updateDashboardStats() {
+  const db = await DB.get();
 
   let totalAdults = 0;
   let totalKids = 0;
 
   db.rsvps.forEach(rsvp => {
-    totalAdults += 1 + parseInt(rsvp.adultsCount || 0); // 1 (próprio) + acompanhantes
+    totalAdults += 1 + parseInt(rsvp.adultsCount || 0);
     totalKids += parseInt(rsvp.kidsCount || 0);
   });
 
@@ -126,17 +122,14 @@ function updateDashboardStats() {
   const chosenGiftsCount = db.gifts.filter(g => g.chosen).length;
   const totalGiftsCount = db.gifts.length;
 
-  // Atualiza contadores visuais
   document.getElementById("dash-total-guests").textContent = grandTotal;
   document.getElementById("dash-adults").textContent = totalAdults;
   document.getElementById("dash-kids").textContent = totalKids;
   document.getElementById("dash-gifts").textContent = `${chosenGiftsCount}/${totalGiftsCount}`;
 
-  // Prepara Notificações / Feed de atividades
   const feed = document.getElementById("dash-notifications");
   feed.innerHTML = "";
 
-  // Adiciona confirmações recentes
   const sortedRsvps = [...db.rsvps].sort((a,b) => new Date(b.dateConfirmed) - new Date(a.dateConfirmed));
   
   if (sortedRsvps.length === 0) {
@@ -160,7 +153,6 @@ function updateDashboardStats() {
     });
   }
 
-  // Atualiza ou inicializa o Gráfico de Rosca
   renderGuestsChart(totalAdults, totalKids);
 }
 
@@ -180,8 +172,8 @@ function renderGuestsChart(adults, kids) {
         label: 'Convidados',
         data: [adults, kids],
         backgroundColor: [
-          'rgba(183, 110, 121, 0.85)', // Rosé Gold
-          'rgba(212, 175, 55, 0.85)'   // Dourado
+          'rgba(183, 110, 121, 0.85)',
+          'rgba(212, 175, 55, 0.85)'
         ],
         borderColor: [
           '#B76E79',
@@ -211,8 +203,8 @@ function renderGuestsChart(adults, kids) {
 /* ==========================================================================
    5. GESTÃO DE CONVIDADOS (RSVP)
    ========================================================================== */
-function renderGuestTable() {
-  const db = DB.get();
+async function renderGuestTable() {
+  const db = await DB.get();
   const tbody = document.getElementById("guests-table-body");
   if (!tbody) return;
   tbody.innerHTML = "";
@@ -222,14 +214,12 @@ function renderGuestTable() {
     return;
   }
 
-  // Ordena por data decrescente
   const sorted = [...db.rsvps].sort((a,b) => new Date(b.dateConfirmed) - new Date(a.dateConfirmed));
 
   sorted.forEach(rsvp => {
     const row = document.createElement("tr");
     const dConfirmed = new Date(rsvp.dateConfirmed).toLocaleString('pt-BR', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' });
     
-    // Identifica se tem restrições alimentares
     const rLabel = (rsvp.dietaryRestrictions && rsvp.dietaryRestrictions !== "Sem restrições" && rsvp.dietaryRestrictions.trim() !== "")
       ? `<span class="badge bg-warning-subtle text-warning border border-warning-subtle text-wrap">${rsvp.dietaryRestrictions}</span>`
       : `<span class="text-muted small">Nenhuma</span>`;
@@ -253,18 +243,16 @@ function renderGuestTable() {
   });
 }
 
-function deleteGuest(id) {
+async function deleteGuest(id) {
   if (confirm("Tem certeza que deseja excluir esta confirmação? Os dados serão removidos definitivamente.")) {
-    const db = DB.get();
-    db.rsvps = db.rsvps.filter(r => r.id !== id);
-    DB.save(db);
-    renderGuestTable();
-    updateDashboardStats();
+    await DB.deleteRsvp(id);
+    await renderGuestTable();
+    await updateDashboardStats();
   }
 }
 window.deleteGuest = deleteGuest;
 
-function handleManualGuestAdd(event) {
+async function handleManualGuestAdd(event) {
   event.preventDefault();
   
   const name = document.getElementById("ag-name").value;
@@ -278,7 +266,6 @@ function handleManualGuestAdd(event) {
 
   if (!name.trim()) return;
 
-  const db = DB.get();
   const newRsvp = {
     id: "r_man_" + Date.now(),
     name: name,
@@ -292,31 +279,25 @@ function handleManualGuestAdd(event) {
     dateConfirmed: new Date().toISOString()
   };
 
-  db.rsvps.push(newRsvp);
-  DB.save(db);
+  await DB.saveRsvp(newRsvp);
 
-  // Fecha Modal
   const modalEl = document.getElementById("addGuestModal");
   const modal = bootstrap.Modal.getInstance(modalEl);
   modal.hide();
 
-  // Reset Form
   document.getElementById("add-guest-form").reset();
 
-  // Re-render
-  renderGuestTable();
-  updateDashboardStats();
+  await renderGuestTable();
+  await updateDashboardStats();
 }
 window.handleManualGuestAdd = handleManualGuestAdd;
 
-// Filtro da tabela de convidados
 function filterGuestTable() {
   const query = document.getElementById("search-guest-input").value.toLowerCase();
   const dietFilter = document.getElementById("filter-diet-select").value;
   const rows = document.querySelectorAll("#guests-table-body tr");
 
   rows.forEach(row => {
-    // Evita filtrar linha vazia
     if (row.cells.length < 5) return;
 
     const name = row.cells[0].textContent.toLowerCase();
@@ -325,10 +306,7 @@ function filterGuestTable() {
     const companions = row.cells[5].textContent.toLowerCase();
     const diet = row.cells[6].textContent.toLowerCase();
 
-    // Validação da query textual
     const matchesQuery = name.includes(query) || phone.includes(query) || email.includes(query) || companions.includes(query);
-
-    // Validação de restrição alimentar
     let matchesDiet = true;
     if (dietFilter === "com") {
       matchesDiet = !diet.includes("nenhuma");
@@ -348,8 +326,8 @@ window.filterGuestTable = filterGuestTable;
 /* ==========================================================================
    6. MODERAÇÃO DE MENSAGENS (LIVRO DE VISITAS)
    ========================================================================== */
-function renderModerationGrid() {
-  const db = DB.get();
+async function renderModerationGrid() {
+  const db = await DB.get();
   const grid = document.getElementById("messages-moderation-grid");
   if (!grid) return;
   grid.innerHTML = "";
@@ -359,7 +337,6 @@ function renderModerationGrid() {
     return;
   }
 
-  // Ordena por data (mais recentes primeiro)
   const sorted = [...db.messages].sort((a,b) => new Date(b.date) - new Date(a.date));
 
   sorted.forEach(msg => {
@@ -398,25 +375,23 @@ function renderModerationGrid() {
   });
 }
 
-function approveMessage(id) {
-  const db = DB.get();
-  const msgIndex = db.messages.findIndex(m => m.id === id);
-  if (msgIndex !== -1) {
-    db.messages[msgIndex].approved = true;
-    DB.save(db);
-    renderModerationGrid();
-    updateDashboardStats();
+async function approveMessage(id) {
+  const db = await DB.get();
+  const msg = db.messages.find(m => m.id === id);
+  if (msg) {
+    msg.approved = true;
+    await DB.saveMessage(msg);
+    await renderModerationGrid();
+    await updateDashboardStats();
   }
 }
 window.approveMessage = approveMessage;
 
-function deleteMessage(id) {
+async function deleteMessage(id) {
   if (confirm("Excluir esta mensagem de forma definitiva?")) {
-    const db = DB.get();
-    db.messages = db.messages.filter(m => m.id !== id);
-    DB.save(db);
-    renderModerationGrid();
-    updateDashboardStats();
+    await DB.deleteMessage(id);
+    await renderModerationGrid();
+    await updateDashboardStats();
   }
 }
 window.deleteMessage = deleteMessage;
@@ -424,8 +399,8 @@ window.deleteMessage = deleteMessage;
 /* ==========================================================================
    7. GERENCIAMENTO DA LISTA DE PRESENTES
    ========================================================================== */
-function renderGiftsAdmin() {
-  const db = DB.get();
+async function renderGiftsAdmin() {
+  const db = await DB.get();
   const grid = document.getElementById("gifts-admin-grid");
   if (!grid) return;
   grid.innerHTML = "";
@@ -440,7 +415,7 @@ function renderGiftsAdmin() {
     col.classList.add("col-md-6", "col-lg-4");
 
     const badge = item.chosen 
-      ? `<span class="badge bg-danger-subtle text-danger px-3 py-1 rounded-pill border border-danger-subtle">Escolhido por: ${item.chosenBy}</span>`
+      ? `<span class="badge bg-danger-subtle text-danger px-3 py-1 rounded-pill border border-danger-subtle text-wrap">Escolhido por: ${item.chosenBy}</span>`
       : `<span class="badge bg-success-subtle text-success px-3 py-1 rounded-pill border border-success-subtle">Disponível</span>`;
 
     col.innerHTML = `
@@ -452,7 +427,7 @@ function renderGiftsAdmin() {
         <div class="card-body p-4 d-flex flex-column justify-content-between">
           <div>
             <h5 class="font-heading fs-6 fw-bold mb-2">${item.name}</h5>
-            <p class="text-muted small mb-3 text-truncate-2">${item.description}</p>
+            <p class="text-muted small mb-3 text-truncate-2" style="max-height: 40px; overflow:hidden;">${item.description}</p>
             <div class="mb-3">${badge}</div>
           </div>
           <div class="d-flex gap-2">
@@ -478,8 +453,8 @@ function openAddGiftModal() {
 }
 window.openAddGiftModal = openAddGiftModal;
 
-function openEditGiftModal(id) {
-  const db = DB.get();
+async function openEditGiftModal(id) {
+  const db = await DB.get();
   const gift = db.gifts.find(g => g.id === id);
   if (!gift) return;
 
@@ -521,7 +496,7 @@ function toggleGiftGiverField() {
 }
 window.toggleGiftGiverField = toggleGiftGiverField;
 
-function handleGiftSave(event) {
+async function handleGiftSave(event) {
   event.preventDefault();
 
   const id = document.getElementById("gift-id-field").value;
@@ -534,56 +509,32 @@ function handleGiftSave(event) {
 
   if (!name.trim()) return;
 
-  const db = DB.get();
+  const giftData = {
+    id: id || "gift_" + Date.now(),
+    name,
+    description: desc,
+    value,
+    image,
+    chosen,
+    chosenBy: chosen ? chosenBy : ""
+  };
 
-  if (id) {
-    // Editar
-    const index = db.gifts.findIndex(g => g.id === id);
-    if (index !== -1) {
-      db.gifts[index] = {
-        ...db.gifts[index],
-        name,
-        description: desc,
-        value,
-        image,
-        chosen,
-        chosenBy: chosen ? chosenBy : ""
-      };
-    }
-  } else {
-    // Novo
-    const newGift = {
-      id: "gift_" + Date.now(),
-      name,
-      description: desc,
-      value,
-      image,
-      chosen,
-      chosenBy: chosen ? chosenBy : ""
-    };
-    db.gifts.push(newGift);
-  }
+  await DB.saveGift(giftData);
 
-  DB.save(db);
-
-  // Fecha Modal
   const modalEl = document.getElementById("giftModal");
   const modal = bootstrap.Modal.getInstance(modalEl);
   modal.hide();
 
-  // Re-render
-  renderGiftsAdmin();
-  updateDashboardStats();
+  await renderGiftsAdmin();
+  await updateDashboardStats();
 }
 window.handleGiftSave = handleGiftSave;
 
-function deleteGift(id) {
+async function deleteGift(id) {
   if (confirm("Remover este presente da lista definitivamente?")) {
-    const db = DB.get();
-    db.gifts = db.gifts.filter(g => g.id !== id);
-    DB.save(db);
-    renderGiftsAdmin();
-    updateDashboardStats();
+    await DB.deleteGift(id);
+    await renderGiftsAdmin();
+    await updateDashboardStats();
   }
 }
 window.deleteGift = deleteGift;
@@ -591,13 +542,13 @@ window.deleteGift = deleteGift;
 /* ==========================================================================
    8. CONFIGURAÇÕES DO CONTEÚDO DO SITE (FORMULÁRIOS)
    ========================================================================== */
-function populateConfigForms() {
-  const db = DB.get();
+async function populateConfigForms() {
+  const db = await DB.get();
 
   // Geral
   document.getElementById("cfg-name").value = db.config.name;
   document.getElementById("cfg-quote").value = db.config.quote;
-  document.getElementById("cfg-party-date").value = db.config.partyDate.slice(0, 16); // Formata yyyy-MM-ddThh:mm
+  document.getElementById("cfg-party-date").value = db.config.partyDate.slice(0, 16);
   document.getElementById("cfg-birthday-date").value = db.config.birthdayDate.slice(0, 16);
 
   // Local & Pix
@@ -613,25 +564,33 @@ function populateConfigForms() {
     document.getElementById("cfg-video-title").value = db.videos[0].title;
     document.getElementById("cfg-video-url").value = db.videos[0].videoUrl;
   }
+
+  // Credenciais Supabase
+  document.getElementById("cfg-sb-url").value = localStorage.getItem("supabase_url") || "";
+  document.getElementById("cfg-sb-key").value = localStorage.getItem("supabase_anon_key") || "";
 }
 
-function saveGeneralConfig(event) {
+async function saveGeneralConfig(event) {
   event.preventDefault();
-  const db = DB.get();
+  const db = await DB.get();
 
   db.config.name = document.getElementById("cfg-name").value;
   db.config.quote = document.getElementById("cfg-quote").value;
   db.config.partyDate = document.getElementById("cfg-party-date").value;
   db.config.birthdayDate = document.getElementById("cfg-birthday-date").value;
 
-  DB.save(db);
-  alert("Configurações Gerais salvas com sucesso!");
+  const success = await DB.saveConfig(db.config);
+  if (success) {
+    alert("Configurações Gerais salvas com sucesso!");
+  } else {
+    alert("Erro ao salvar configurações gerais.");
+  }
 }
 window.saveGeneralConfig = saveGeneralConfig;
 
-function saveLocalPixConfig(event) {
+async function saveLocalPixConfig(event) {
   event.preventDefault();
-  const db = DB.get();
+  const db = await DB.get();
 
   db.config.pixKey = document.getElementById("cfg-pix").value;
   db.config.dressCode = document.getElementById("cfg-dress").value;
@@ -643,23 +602,28 @@ function saveLocalPixConfig(event) {
     mapUrl: document.getElementById("cfg-map").value
   };
 
-  DB.save(db);
-  alert("Local e informações de Pix salvas com sucesso!");
+  const success = await DB.saveConfig(db.config);
+  if (success) {
+    alert("Local e informações de Pix salvas com sucesso!");
+  } else {
+    alert("Erro ao salvar informações de local.");
+  }
 }
 window.saveLocalPixConfig = saveLocalPixConfig;
 
-function saveVideoConfig(event) {
+async function saveVideoConfig(event) {
   event.preventDefault();
-  const db = DB.get();
+  const db = await DB.get();
 
   const title = document.getElementById("cfg-video-title").value;
   const url = document.getElementById("cfg-video-url").value;
 
-  if (db.videos.length > 0) {
-    db.videos[0].title = title;
-    db.videos[0].videoUrl = url;
+  let videos = db.videos;
+  if (videos.length > 0) {
+    videos[0].title = title;
+    videos[0].videoUrl = url;
   } else {
-    db.videos.push({
+    videos.push({
       id: "v1",
       title: title,
       videoUrl: url,
@@ -667,16 +631,56 @@ function saveVideoConfig(event) {
     });
   }
 
-  DB.save(db);
-  alert("Vídeo da retrospectiva atualizado!");
+  db.config.videos = videos;
+  const success = await DB.saveConfig(db.config);
+  if (success) {
+    alert("Vídeo da retrospectiva atualizado!");
+  } else {
+    alert("Erro ao atualizar vídeo.");
+  }
 }
 window.saveVideoConfig = saveVideoConfig;
+
+// Gravar credenciais de conexão do Supabase
+async function saveSupabaseConfig(event) {
+  event.preventDefault();
+  
+  const sbUrl = document.getElementById("cfg-sb-url").value.trim();
+  const sbKey = document.getElementById("cfg-sb-key").value.trim();
+
+  if (!sbUrl || !sbKey) {
+    alert("Por favor, preencha a URL e a Chave Anon antes de conectar.");
+    return;
+  }
+
+  localStorage.setItem("supabase_url", sbUrl);
+  localStorage.setItem("supabase_anon_key", sbKey);
+
+  const connected = await DB.init();
+  if (connected) {
+    alert("Conectado ao Supabase com sucesso! Os dados foram sincronizados com a nuvem.");
+    location.reload();
+  } else {
+    alert("Falha de conexão. Verifique as chaves fornecidas e garanta que as tabelas foram criadas via supabase_schema.sql.");
+  }
+}
+window.saveSupabaseConfig = saveSupabaseConfig;
+
+function clearSupabaseConfig() {
+  if (confirm("Deseja mesmo remover a conexão com o Supabase? O site retornará a rodar em modo LocalStorage.")) {
+    localStorage.removeItem("supabase_url");
+    localStorage.removeItem("supabase_anon_key");
+    alert("Conexão com o Supabase removida. Recarregando...");
+    location.reload();
+  }
+}
+window.clearSupabaseConfig = clearSupabaseConfig;
 
 /* ==========================================================================
    9. EXPORTADORES (CSV, EXCEL, PDF)
    ========================================================================== */
-function exportData(type) {
-  const db = DB.get();
+async function exportData(type) {
+  const db = await DB.get();
   
   if (db.rsvps.length === 0) {
     alert("Não há dados de convidados para exportar.");
@@ -688,7 +692,6 @@ function exportData(type) {
     const headers = ["Nome", "Telefone", "Email", "Acomp Adultos", "Acomp Criancas", "Acompanhantes", "Restricoes", "Data de Confirmacao"];
     
     if (type === 'excel') {
-      // Formato compatível com Excel (separado por tabulação)
       content = headers.join("\t") + "\n";
       db.rsvps.forEach(r => {
         const row = [
@@ -710,7 +713,6 @@ function exportData(type) {
       link.download = `convidados_lavinia_15_anos_${Date.now()}.xls`;
       link.click();
     } else {
-      // Formato CSV comum (valores entre aspas e separados por vírgula)
       content = headers.map(h => `"${h}"`).join(",") + "\n";
       db.rsvps.forEach(r => {
         const row = [
@@ -733,7 +735,6 @@ function exportData(type) {
       link.click();
     }
   } else if (type === 'pdf') {
-    // Exportação em PDF utilizando html2pdf.js
     const element = document.createElement('div');
     element.innerHTML = `
       <div style="font-family: Arial, sans-serif; padding: 25px; color: #2c2c2c;">
