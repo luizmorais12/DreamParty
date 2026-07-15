@@ -10,7 +10,7 @@ const SUPABASE_ANON_KEY_DEFAULT = 'sb_publishable_uMlijmLuk7X_3NfD1bsPyQ_Eos7A9t
 const defaultDatabase = {
   config: {
     name: "Lavinia dos Santos Mattos",
-    partyDate: "2026-11-01T21:00:00",
+    partyDate: "2026-11-02T21:00:00",
     birthdayDate: "2026-11-02T00:00:00",
     quote: "Cada sonho merece uma noite para se tornar realidade.",
     heroImage: "https://images.unsplash.com/photo-1549417229-aa67d3263c09?q=80&w=1920",
