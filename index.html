@@ -133,8 +133,7 @@
   </nav>
 
   <!-- HERO SECTION -->
-  <header class="hero-section" id="inicio"
-  *style="background-image: url('https://images.unsplash.com/photo-1549417229-aa67d3263c09?q=80&w=1920');"
+  <header class="hero-section" id="inicio" style="background-image: url('assets/IMG/Lavinia-51.jpg');">
     <div class="hero-overlay"></div>
     <div class="container hero-content" data-aos="fade-up" data-aos-duration="1500">
       <span class="hero-subtitle font-heading text-uppercase">Os 15 Anos de</span>
@@ -199,7 +198,7 @@
         </div>
         <div class="col-lg-6" data-aos="fade-left" data-aos-duration="1200">
           <div class="position-relative p-2" style="border: 2px solid var(--color-gold); border-radius: 20px;">
-            <img src="https://images.unsplash.com/photo-1549057443-4f9520bfd672?q=80&w=800" alt="Lavinia Sorrindo"
+            <img src="assets/IMG/Lavinia-52.jpg" alt="Lavinia Sorrindo"
               class="img-fluid rounded-4 w-100" style="height: 450px; object-fit: cover;" id="about-side-image">
           </div>
         </div>
@@ -228,12 +227,19 @@
         <h2 class="section-title">Galeria de Fotos</h2>
       </div>
 
+      <!-- Botão para enviar foto -->
+      <div class="text-center mb-4" data-aos="fade-up">
+        <button class="btn btn-gold scale-hover px-4 py-2" data-bs-toggle="modal" data-bs-target="#uploadPhotoModal" style="border-radius: 30px; font-weight: 600; background: linear-gradient(135deg, var(--color-gold) 0%, #b8860b 100%); border: none; color: white;">
+          <i class="fa-solid fa-camera me-2"></i>Enviar Sua Foto da Festa
+        </button>
+      </div>
+
       <!-- Filtros -->
       <div class="gallery-filter" data-aos="fade-up" id="gallery-filters-container">
         <button class="filter-btn active" onclick="filterGallery('todos', this)">Todos</button>
         <button class="filter-btn" onclick="filterGallery('ensaio', this)">Ensaio Oficial</button>
-        <button class="filter-btn" onclick="filterGallery('infancia', this)">Infância</button>
         <button class="filter-btn" onclick="filterGallery('familia', this)">Família</button>
+        <button class="filter-btn" onclick="filterGallery('convidados', this)">Convidados</button>
       </div>
 
       <!-- Grid de Galeria -->
@@ -302,53 +308,76 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body p-4">
-          <p class="text-center text-muted mb-4">Escolha um dos valores sugeridos ou faça uma transferência livre para a
-            chave cadastrada.</p>
+          <div id="pix-modal-form-wrapper">
+            <p class="text-center text-muted mb-4">Escolha um dos valores sugeridos ou faça uma transferência livre para a
+              chave cadastrada.</p>
 
-          <div class="pix-options-grid">
-            <div class="pix-val-card" onclick="selectPixValue(30, this)">
-              <span>Lembrança</span>
-              <strong>R$ 30</strong>
+            <div class="pix-options-grid">
+              <div class="pix-val-card" onclick="selectPixValue(30, this)">
+                <span>Lembrança</span>
+                <strong>R$ 30</strong>
+              </div>
+              <div class="pix-val-card" onclick="selectPixValue(50, this)">
+                <span>Carinho</span>
+                <strong>R$ 50</strong>
+              </div>
+              <div class="pix-val-card selected" onclick="selectPixValue(100, this)">
+                <span>Flores</span>
+                <strong>R$ 100</strong>
+              </div>
+              <div class="pix-val-card" onclick="selectPixValue(200, this)">
+                <span>Festa</span>
+                <strong>R$ 200</strong>
+              </div>
+              <div class="pix-val-card" onclick="selectPixValue(500, this)">
+                <span>Princesa</span>
+                <strong>R$ 500</strong>
+              </div>
+              <div class="pix-val-card" onclick="selectPixValue('custom', this)">
+                <span>Valor Livre</span>
+                <strong>Outro</strong>
+              </div>
             </div>
-            <div class="pix-val-card" onclick="selectPixValue(50, this)">
-              <span>Carinho</span>
-              <strong>R$ 50</strong>
+
+            <!-- Input de valor livre personalizado -->
+            <div class="mb-3 d-none text-start" id="custom-pix-amount-container">
+              <label for="custom-pix-amount" class="form-label small fw-600 text-muted">Digite o Valor (R$) *</label>
+              <input type="number" class="form-control" id="custom-pix-amount" placeholder="Ex: 150" min="1" step="any" oninput="updateCustomPixQrCode()">
             </div>
-            <div class="pix-val-card selected" onclick="selectPixValue(100, this)">
-              <span>Flores</span>
-              <strong>R$ 100</strong>
+
+            <div class="pix-qr-container">
+              <img src="" alt="QR Code Pix" id="pix-qrcode-img" class="img-fluid mb-3" style="max-height: 180px;">
+              <div class="small text-muted mb-2">Chave Pix cadastrada:</div>
+              <code class="d-block bg-light p-2 rounded text-break mb-3 font-monospace"
+                id="pix-key-display">lavinia15anos@pix.com.br</code>
+              <button class="btn btn-sm btn-outline-gold" onclick="copyPixKey()">
+                <i class="fa-solid fa-copy me-1"></i> Copiar Chave Pix
+              </button>
+              <div class="text-success small mt-2 d-none" id="copy-success-msg">Chave copiada com sucesso!</div>
             </div>
-            <div class="pix-val-card" onclick="selectPixValue(200, this)">
-              <span>Festa</span>
-              <strong>R$ 200</strong>
-            </div>
-            <div class="pix-val-card" onclick="selectPixValue(500, this)">
-              <span>Princesa</span>
-              <strong>R$ 500</strong>
-            </div>
+
+            <form id="pix-confirm-form" onsubmit="handlePixContribution(event)">
+              <div class="mb-3 text-start">
+                <label for="pix-donor-name" class="form-label">Seu Nome</label>
+                <input type="text" class="form-control" id="pix-donor-name" required
+                  placeholder="Insira seu nome completo">
+              </div>
+              <button type="submit" class="btn btn-rose w-100 py-3 mt-2">
+                <i class="fa-solid fa-check me-2"></i>Confirmar Envio do Presente
+              </button>
+            </form>
           </div>
 
-          <div class="pix-qr-container">
-            <img src="" alt="QR Code Pix" id="pix-qrcode-img" class="img-fluid mb-3" style="max-height: 180px;">
-            <div class="small text-muted mb-2">Chave Pix cadastrada:</div>
-            <code class="d-block bg-light p-2 rounded text-break mb-3 font-monospace"
-              id="pix-key-display">lavinia15anos@pix.com.br</code>
-            <button class="btn btn-sm btn-outline-gold" onclick="copyPixKey()">
-              <i class="fa-solid fa-copy me-1"></i> Copiar Chave Pix
-            </button>
-            <div class="text-success small mt-2 d-none" id="copy-success-msg">Chave copiada com sucesso!</div>
+          <!-- Tela de Sucesso -->
+          <div id="pix-modal-success-wrapper" class="d-none text-center py-4">
+            <div class="text-success fs-1 mb-3"><i class="fa-solid fa-circle-check"></i></div>
+            <h4 class="font-heading text-rose-gold mb-3">Pix Confirmado no Site!</h4>
+            <p class="text-muted small mb-4">Agradecemos de coração pelo presente! Deseja enviar o comprovante de transferência agora via WhatsApp?</p>
+            <a href="#" target="_blank" id="pix-modal-whatsapp-btn" class="btn btn-success w-100 py-3 mb-2 scale-hover" style="background-color: #25d366; border-color: #25d366; color: white; font-weight: 600;">
+              <i class="fa-brands fa-whatsapp me-2"></i>Sim, Enviar Comprovante
+            </a>
+            <button class="btn btn-outline-secondary w-100 py-2 mt-2" data-bs-dismiss="modal">Não, Fechar</button>
           </div>
-
-          <form id="pix-confirm-form" onsubmit="handlePixContribution(event)">
-            <div class="mb-3">
-              <label for="pix-donor-name" class="form-label">Seu Nome</label>
-              <input type="text" class="form-control" id="pix-donor-name" required
-                placeholder="Insira seu nome completo">
-            </div>
-            <button type="submit" class="btn btn-rose w-100 py-3 mt-2">
-              <i class="fa-solid fa-check me-2"></i>Confirmar Envio do Presente
-            </button>
-          </form>
         </div>
       </div>
     </div>
@@ -358,26 +387,67 @@
   <div class="modal fade" id="confirmGiftModal" tabindex="-1" aria-labelledby="confirmGiftModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0" style="border-radius: 20px; overflow: hidden;">
+      <div class="modal-content border-0" style="border-radius: 20px; overflow: hidden; background: white;">
         <div class="modal-header border-0 bg-light p-4">
           <h5 class="modal-title font-heading fw-600 text-rose-gold" id="confirmGiftModalLabel">Presentear com Mimo</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body p-4">
-          <div class="text-center mb-4">
-            <h4 class="font-heading mb-2 text-rose-gold" id="gift-modal-item-name">Nome do Mimo</h4>
-            <p class="text-muted small" id="gift-modal-item-desc">Descrição do mimo</p>
-            <div class="fs-4 fw-600 text-gold" id="gift-modal-item-val">R$ 0,00</div>
-          </div>
-          <form id="physical-gift-form" onsubmit="handleChoosePhysicalGift(event)">
-            <input type="hidden" id="gift-modal-item-id">
-            <div class="mb-3">
-              <label for="gift-giver-name" class="form-label">Seu Nome</label>
-              <input type="text" class="form-control" id="gift-giver-name" required
-                placeholder="Insira seu nome para reservarmos o presente">
+          <div id="confirm-gift-form-wrapper">
+            <div class="text-center mb-4">
+              <h4 class="font-heading mb-2 text-rose-gold" id="gift-modal-item-name">Nome do Mimo</h4>
+              <p class="text-muted small" id="gift-modal-item-desc">Descrição do mimo</p>
+              <div class="fs-4 fw-600 text-gold" id="gift-modal-item-val">R$ 0,00</div>
             </div>
-            <button type="submit" class="btn btn-rose w-100 py-3 mt-2">
-              <i class="fa-solid fa-gift me-2"></i>Reservar este Presente
+            <form id="physical-gift-form" onsubmit="handleChoosePhysicalGift(event)">
+              <input type="hidden" id="gift-modal-item-id">
+              <div class="mb-3">
+                <label for="gift-giver-name" class="form-label">Seu Nome</label>
+                <input type="text" class="form-control" id="gift-giver-name" required
+                  placeholder="Insira seu nome para reservarmos o presente">
+              </div>
+              <button type="submit" class="btn btn-rose w-100 py-3 mt-2">
+                <i class="fa-solid fa-gift me-2"></i>Reservar este Presente
+              </button>
+            </form>
+          </div>
+
+          <!-- Tela de Sucesso -->
+          <div id="confirm-gift-success-wrapper" class="d-none text-center py-4">
+            <div class="text-success fs-1 mb-3"><i class="fa-solid fa-circle-check"></i></div>
+            <h4 class="font-heading text-rose-gold mb-3">Reserva Confirmada no Site!</h4>
+            <p class="text-muted small mb-4">Agradecemos imensamente pelo seu presente! Deseja enviar o comprovante de transferência para a organização agora via WhatsApp?</p>
+            <a href="#" target="_blank" id="confirm-gift-whatsapp-btn" class="btn btn-success w-100 py-3 mb-2 scale-hover" style="background-color: #25d366; border-color: #25d366; color: white; font-weight: 600;">
+              <i class="fa-brands fa-whatsapp me-2"></i>Sim, Enviar Comprovante
+            </a>
+            <button class="btn btn-outline-secondary w-100 py-2 mt-2" data-bs-dismiss="modal">Não, Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE ENVIAR FOTO (CONVIDADOS) -->
+  <div class="modal fade" id="uploadPhotoModal" tabindex="-1" aria-labelledby="uploadPhotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 glass-panel" style="border-radius: 20px; overflow: hidden; background: white;">
+        <div class="modal-header border-0 bg-light p-4">
+          <h5 class="modal-title font-heading fw-600 text-rose-gold" id="uploadPhotoModalLabel">Enviar sua Foto da Festa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="upload-photo-form" onsubmit="handleGuestPhotoUpload(event)">
+            <div class="mb-3">
+              <label for="up-name" class="form-label">Seu Nome / Legenda *</label>
+              <input type="text" class="form-control" id="up-name" required placeholder="Ex: Luiz Henrique (primo)">
+            </div>
+            <div class="mb-4">
+              <label for="up-file" class="form-label">Selecione a Foto *</label>
+              <input type="file" class="form-control" id="up-file" accept="image/*" required>
+              <div class="form-text small mt-1">Sua foto será otimizada automaticamente para carregar rápido no site.</div>
+            </div>
+            <button type="submit" class="btn btn-rose w-100 py-3" id="btn-upload-photo-submit">
+              <i class="fa-solid fa-cloud-arrow-up me-2"></i>Enviar Foto
             </button>
           </form>
         </div>

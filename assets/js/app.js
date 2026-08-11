@@ -1,9 +1,6 @@
 // app.js - Script Principal da Área Pública (Integrado com Supabase / LocalStorage)
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // Inicializa a conexão com o banco de dados (detecta se há Supabase configurado)
-  await DB.init();
-
   // Inicializa AOS (Animate on Scroll)
   AOS.init({
     duration: 1000,
@@ -16,15 +13,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   initParticles();
   initPetalsAndButterflies();
   
-  // Renderização Dinâmica do Conteúdo
-  await renderDynamicContent();
+  // 1. Renderização Dinâmica imediata com dados locais para carregamento instantâneo
+  renderDynamicContentLocal();
 
   // Inicializa Controle de Música
   await initMusicPlayer();
 
-  // Inicializa Contadores e RSVP
+  // Inicializa Contadores
   await initCountdown();
-  await updateRSVPStats();
+
+  // 2. Inicialização em segundo plano do banco de dados (Supabase/Local)
+  initDatabaseAsync();
 
   // Scroll Reveal Navbar Effect
   window.addEventListener("scroll", () => {
@@ -49,6 +48,26 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
       });
+    });
+  }
+  // Resetar telas de sucesso dos modals ao fechar
+  const confirmGiftModal = document.getElementById("confirmGiftModal");
+  if (confirmGiftModal) {
+    confirmGiftModal.addEventListener("hidden.bs.modal", () => {
+      const formWrap = document.getElementById("confirm-gift-form-wrapper");
+      const successWrap = document.getElementById("confirm-gift-success-wrapper");
+      if (formWrap) formWrap.classList.remove("d-none");
+      if (successWrap) successWrap.classList.add("d-none");
+    });
+  }
+
+  const pixDonationModal = document.getElementById("pixDonationModal");
+  if (pixDonationModal) {
+    pixDonationModal.addEventListener("hidden.bs.modal", () => {
+      const formWrap = document.getElementById("pix-modal-form-wrapper");
+      const successWrap = document.getElementById("pix-modal-success-wrapper");
+      if (formWrap) formWrap.classList.remove("d-none");
+      if (successWrap) successWrap.classList.add("d-none");
     });
   }
 });
@@ -406,8 +425,9 @@ window.prevTrack = prevTrack;
 /* ==========================================================================
    6. RENDERIZAÇÃO DE CONTEÚDO DINÂMICO
    ========================================================================== */
-async function renderDynamicContent() {
-  const db = await DB.get();
+// Aplica um objeto de banco de dados (seja local ou do Supabase) no DOM
+function applyDatabaseToDOM(db) {
+  if (!db || !db.config) return;
 
   // Configurações Gerais
   document.getElementById("nav-brand-title").textContent = db.config.name.split(" ")[0];
@@ -418,20 +438,101 @@ async function renderDynamicContent() {
   const dFesta = new Date(db.config.partyDate);
   document.getElementById("hero-celebration-date").textContent = dFesta.toLocaleDateString('pt-BR', optDate);
 
-  // Local
-  document.getElementById("local-address-display").textContent = db.config.location.address;
-  document.getElementById("local-time-display").textContent = `A recepção terá início pontualmente às ${db.config.location.time}h.`;
-  document.getElementById("local-parking-display").textContent = db.config.location.parking;
-  document.getElementById("local-dress-display").textContent = db.config.location.dressCode;
-  document.getElementById("local-map-iframe").src = db.config.location.mapUrl;
-  document.getElementById("local-gmaps-link").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(db.config.location.address)}`;
+  // Hero Background
+  const heroSection = document.getElementById("inicio");
+  if (heroSection && db.config.heroImage) {
+    heroSection.style.backgroundImage = `url('${db.config.heroImage}')`;
+  }
 
-  renderTimeline(db.timeline);
-  renderGallery(db.gallery);
-  renderVideos(db.videos);
-  renderGifts(db.gifts);
-  renderMessages(db.messages);
-  renderSchedule(db.schedule);
+  // Local
+  if (db.config.location) {
+    document.getElementById("local-address-display").textContent = db.config.location.address;
+    document.getElementById("local-time-display").textContent = `A recepção terá início pontualmente às ${db.config.location.time}h.`;
+    document.getElementById("local-parking-display").textContent = db.config.location.parking;
+    document.getElementById("local-dress-display").textContent = db.config.location.dressCode;
+    document.getElementById("local-map-iframe").src = db.config.location.mapUrl;
+    document.getElementById("local-gmaps-link").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(db.config.location.address)}`;
+  }
+
+  if (db.timeline) renderTimeline(db.timeline);
+  if (db.gallery) renderGallery(db.gallery);
+  if (db.videos) renderVideos(db.videos);
+  if (db.gifts) renderGifts(db.gifts);
+  if (db.messages) renderMessages(db.messages);
+  if (db.schedule) renderSchedule(db.schedule);
+}
+
+// Renderiza o conteúdo usando os valores locais padrão imediatamente
+function renderDynamicContentLocal() {
+  const localDefaults = window.DB && typeof window.DB.getDefaults === 'function' ? window.DB.getDefaults() : null;
+  if (!localDefaults) return;
+  
+  // Clonar para evitar modificar o original diretamente se necessário
+  const dbCopy = JSON.parse(JSON.stringify(localDefaults));
+  
+  // Garantir fotos locais mapeadas
+  dbCopy.config.heroImage = "assets/IMG/Lavinia-51.jpg";
+  if (dbCopy.timeline) {
+    dbCopy.timeline.forEach((item, index) => {
+      if (index === 3) {
+        item.image = "assets/IMG/Lavinia-56.jpg";
+      } else {
+        item.image = "";
+      }
+    });
+  }
+  
+  // Usar as 34 fotos locais
+  const updatedGallery = [];
+  for (let i = 0; i < 34; i++) {
+    const id = `g${i + 1}`;
+    let category = "ensaio";
+    let title = `Foto Ensaio ${i + 1}`;
+    if (i >= 24) {
+      category = "familia";
+      title = `Momento em Família ${i - 23}`;
+    }
+    updatedGallery.push({
+      id,
+      title,
+      category,
+      image: `assets/IMG/Lavinia-${57 + i}.jpg`
+    });
+  }
+  dbCopy.gallery = updatedGallery;
+  dbCopy.config.gallery = updatedGallery;
+
+  applyDatabaseToDOM(dbCopy);
+}
+
+// Inicializa conexão e sincronização com banco de dados em segundo plano
+async function initDatabaseAsync() {
+  try {
+    // Inicializa a conexão com o Supabase
+    await DB.init();
+    
+    // Carrega dados agregados (Supabase/LocalStorage)
+    const db = await DB.get();
+    
+    // Atualiza o DOM com as customizações e dados mais recentes
+    applyDatabaseToDOM(db);
+    
+    // Atualiza estatísticas RSVP
+    await updateRSVPStats();
+    
+    // Atualiza AOS para recalcular posições corretas dos cards de animação
+    setTimeout(() => {
+      if (typeof AOS !== 'undefined') AOS.refresh();
+    }, 500);
+  } catch (err) {
+    console.error("Erro ao carregar banco de dados assincronamente:", err);
+  }
+}
+
+// Mantido para compatibilidade externa caso outros scripts chamem
+async function renderDynamicContent() {
+  const db = await DB.get();
+  applyDatabaseToDOM(db);
 }
 
 function renderTimeline(timelineData) {
@@ -630,12 +731,16 @@ async function handleChoosePhysicalGift(event) {
     
     await DB.saveGift(gift);
 
-    const modalEl = document.getElementById("confirmGiftModal");
-    const modal = bootstrap.Modal.getInstance(modalEl);
-    modal.hide();
+    // Mostrar a tela de sucesso dentro do modal
+    document.getElementById("confirm-gift-form-wrapper").classList.add("d-none");
+    document.getElementById("confirm-gift-success-wrapper").classList.remove("d-none");
+
+    const msg = encodeURIComponent(`Olá! Acabei de escolher o presente "${gift.name}" (R$ ${gift.value.toFixed(2)}) para a Lavinia. Segue meu comprovante de transferência! (Assinado: ${name})`);
+    const whatsappUrl = `https://wa.me/5521999999999?text=${msg}`;
+    document.getElementById("confirm-gift-whatsapp-btn").href = whatsappUrl;
 
     document.getElementById("physical-gift-form").reset();
-    
+
     // Atualiza listagem de presentes após gravação
     const updatedDb = await DB.get();
     renderGifts(updatedDb.gifts);
@@ -645,18 +750,75 @@ window.handleChoosePhysicalGift = handleChoosePhysicalGift;
 
 let selectedPixAmount = 100;
 async function selectPixValue(amount, element) {
-  selectedPixAmount = amount;
-  
   const cards = document.querySelectorAll(".pix-val-card");
   cards.forEach(c => c.classList.remove("selected"));
   element.classList.add("selected");
+  
+  const customContainer = document.getElementById("custom-pix-amount-container");
+  const customInput = document.getElementById("custom-pix-amount");
 
-  const db = await DB.get();
-  const qrcode = document.getElementById("pix-qrcode-img");
-  const pixData = `00020101021126580014br.gov.bcb.pix0119${db.config.pixKey}5204000053039865405${amount.toFixed(2)}5802BR5925LAVINIA%20DOS%20SANTOS%20MATTOS6009SAO%20PAULO62070503***63041A2D`;
-  qrcode.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixData)}`;
+  if (amount === 'custom') {
+    // Mostrar campo customizado
+    customContainer.classList.remove("d-none");
+    if (customInput.value) {
+      selectedPixAmount = parseFloat(customInput.value) || 0;
+    } else {
+      selectedPixAmount = 0;
+    }
+    updateCustomPixQrCode();
+  } else {
+    // Esconder campo customizado e limpar
+    customContainer.classList.add("d-none");
+    selectedPixAmount = amount;
+    
+    const db = await DB.get();
+    const qrcode = document.getElementById("pix-qrcode-img");
+    const pixData = `00020101021126580014br.gov.bcb.pix0119${db.config.pixKey}5204000053039865405${amount.toFixed(2)}5802BR5925LAVINIA%20DOS%20SANTOS%20MATTOS6009SAO%20PAULO62070503***63041A2D`;
+    qrcode.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixData)}`;
+  }
 }
+
+async function updateCustomPixQrCode() {
+  const customInput = document.getElementById("custom-pix-amount");
+  const amount = parseFloat(customInput.value) || 0;
+  selectedPixAmount = amount;
+
+  const qrcode = document.getElementById("pix-qrcode-img");
+  
+  if (amount > 0) {
+    const db = await DB.get();
+    const pixData = `00020101021126580014br.gov.bcb.pix0119${db.config.pixKey}5204000053039865405${amount.toFixed(2)}5802BR5925LAVINIA%20DOS%20SANTOS%20MATTOS6009SAO%20PAULO62070503***63041A2D`;
+    qrcode.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixData)}`;
+  } else {
+    // QR Code em branco se não tiver valor digitado ainda
+    qrcode.src = "";
+  }
+}
+
+function openPixModal(amount) {
+  // 1. Mostrar o modal
+  const modalEl = document.getElementById("pixDonationModal");
+  const modal = new bootstrap.Modal(modalEl);
+  modal.show();
+
+  // 2. Selecionar o card correto dentro do modal
+  setTimeout(() => {
+    let cardElement;
+    if (amount === 'custom') {
+      cardElement = document.querySelector(".pix-options-grid .pix-val-card[onclick*='custom']");
+    } else {
+      cardElement = document.querySelector(`.pix-options-grid .pix-val-card[onclick*='(${amount},']`);
+    }
+    
+    if (cardElement) {
+      selectPixValue(amount, cardElement);
+    }
+  }, 300);
+}
+
 window.selectPixValue = selectPixValue;
+window.updateCustomPixQrCode = updateCustomPixQrCode;
+window.openPixModal = openPixModal;
 
 function copyPixKey() {
   const keyText = document.getElementById("pix-key-display").textContent;
@@ -688,12 +850,16 @@ async function handlePixContribution(event) {
   
   await DB.saveRsvp(newRsvp);
 
-  const modalEl = document.getElementById("pixDonationModal");
-  const modal = bootstrap.Modal.getInstance(modalEl);
-  modal.hide();
+  // Mostrar a tela de sucesso dentro do modal
+  document.getElementById("pix-modal-form-wrapper").classList.add("d-none");
+  document.getElementById("pix-modal-success-wrapper").classList.remove("d-none");
+
+  const formattedAmount = selectedPixAmount > 0 ? `R$ ${selectedPixAmount.toFixed(2)}` : "um valor livre";
+  const msg = encodeURIComponent(`Olá! Acabei de enviar um presente em Pix de ${formattedAmount} para a Lavinia. Segue meu comprovante de transferência! (Assinado: ${donorName})`);
+  const whatsappUrl = `https://wa.me/5521999999999?text=${msg}`;
+  document.getElementById("pix-modal-whatsapp-btn").href = whatsappUrl;
 
   document.getElementById("pix-confirm-form").reset();
-  alert("Obrigado pelo seu Pix de presente! A confirmação simbólica foi salva com sucesso.");
   
   await updateRSVPStats();
 }
@@ -900,3 +1066,107 @@ window.toggleHighContrast = toggleHighContrast;
 if (localStorage.getItem("high-contrast-active") === "true") {
   document.body.classList.add("high-contrast");
 }
+
+/* ==========================================================================
+   9. ENVIO DE FOTO DO CONVIDADO (CLIENT-SIDE COMPRESSION & UPLOAD)
+   ========================================================================== */
+async function handleGuestPhotoUpload(event) {
+  event.preventDefault();
+  
+  const nameInput = document.getElementById("up-name");
+  const fileInput = document.getElementById("up-file");
+  const submitBtn = document.getElementById("btn-upload-photo-submit");
+  
+  if (!nameInput || !fileInput || !fileInput.files || fileInput.files.length === 0) {
+    alert("Por favor, preencha o nome e selecione uma foto.");
+    return;
+  }
+  
+  const file = fileInput.files[0];
+  const name = nameInput.value.trim();
+  
+  // Alterar botão para carregando
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Enviando...`;
+  
+  // Comprimir imagem no client-side
+  compressImage(file, 800, 800, 0.7, async (dataUrl) => {
+    const galleryItem = {
+      id: "upload_" + Date.now(),
+      title: name,
+      category: "convidados",
+      image: dataUrl
+    };
+    
+    try {
+      const success = await DB.saveGalleryItem(galleryItem);
+      if (success) {
+        alert("Sua foto foi enviada com sucesso! Ela já está aparecendo na aba 'Convidados'.");
+        
+        // Limpar formulário e fechar modal
+        nameInput.value = "";
+        fileInput.value = "";
+        
+        const modalEl = document.getElementById("uploadPhotoModal");
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+        
+        // Recarregar a galeria dinamicamente
+        const db = await DB.get();
+        renderGallery(db.gallery);
+      } else {
+        alert("Erro ao enviar a foto. Tente novamente.");
+      }
+    } catch (e) {
+      console.error("Erro ao enviar imagem:", e);
+      alert("Erro ao processar imagem.");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up me-2"></i>Enviar Foto`;
+    }
+  });
+}
+
+function compressImage(file, maxWidth, maxHeight, quality, callback) {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = (event) => {
+    const img = new Image();
+    img.src = event.target.result;
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const dataUrl = canvas.toDataURL("image/jpeg", quality);
+      callback(dataUrl);
+    };
+  };
+}
+
+// Tornar disponível globalmente
+window.handleGuestPhotoUpload = handleGuestPhotoUpload;
+
+// Recalcular posições dos elementos para animação de scroll (AOS) quando todas as fotos carregarem
+window.addEventListener("load", () => {
+  if (typeof AOS !== 'undefined') {
+    AOS.refresh();
+  }
+});

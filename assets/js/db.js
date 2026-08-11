@@ -13,7 +13,7 @@ const defaultDatabase = {
     partyDate: "2026-11-02T21:00:00",
     birthdayDate: "2026-11-02T00:00:00",
     quote: "Cada sonho merece uma noite para se tornar realidade.",
-    heroImage: "https://images.unsplash.com/photo-1549417229-aa67d3263c09?q=80&w=1920",
+    heroImage: "assets/IMG/Lavinia-51.jpg",
     musicTracks: [
       { id: "1", title: "Beauty and the Beast (Piano)", artist: "Disney Instrumental", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
       { id: "2", title: "Valsa das Flores", artist: "Tchaikovsky", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
@@ -36,37 +36,65 @@ const defaultDatabase = {
       age: "Nascimento (2011)",
       title: "O início de tudo",
       description: "Lavinia chegou trazendo luz e alegria ao mundo no dia 2 de novembro de 2011. Um bebê doce que desde cedo já encantava a todos com seu sorriso.",
-      image: "https://images.unsplash.com/photo-1519689680058-324335c77ebe?q=80&w=800"
+      image: ""
     },
     {
       id: "t2",
       age: "5 Anos (2016)",
       title: "Primeiros passinhos no jardim",
       description: "Amante da natureza e de brincar ao ar livre. Aqui ela já ensaiava seus primeiros passos de dança e adorava se fantasiar de princesa.",
-      image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=800"
+      image: ""
     },
     {
       id: "t3",
       age: "10 Anos (2021)",
       title: "Descobertas e Amizades",
       description: "Uma menina sonhadora, dedicada aos estudos e muito apegada à família. Seu amor pelas artes e pela música começou a florescer.",
-      image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800"
+      image: ""
     },
     {
       id: "t4",
       age: "15 Anos (Hoje)",
       title: "A realização de um sonho",
       description: "Chegou o grande momento! Lavinia floresceu e está pronta para celebrar o início de um novo capítulo em uma noite mágica cercada de quem ama.",
-      image: "https://images.unsplash.com/photo-1549417229-aa67d3263c09?q=80&w=800"
+      image: "assets/IMG/Lavinia-56.jpg"
     }
   ],
   gallery: [
-    { id: "g1", title: "Ensaio Jardim 1", category: "ensaio", image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=800" },
-    { id: "g2", title: "Sorriso Doce", category: "ensaio", image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=800" },
-    { id: "g3", title: "Recordação de Infância", category: "infancia", image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800" },
-    { id: "g4", title: "Com a Família", category: "familia", image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=800" },
-    { id: "g5", title: "Brilho no Olhar", category: "ensaio", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800" },
-    { id: "g6", title: "Passeio Especial", category: "familia", image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=800" }
+    { id: "g1", title: "Ensaio Oficial 1", category: "ensaio", image: "assets/IMG/Lavinia-57.jpg" },
+    { id: "g2", title: "Ensaio Oficial 2", category: "ensaio", image: "assets/IMG/Lavinia-58.jpg" },
+    { id: "g3", title: "Ensaio Oficial 3", category: "ensaio", image: "assets/IMG/Lavinia-59.jpg" },
+    { id: "g4", title: "Ensaio Oficial 4", category: "ensaio", image: "assets/IMG/Lavinia-60.jpg" },
+    { id: "g5", title: "Ensaio Oficial 5", category: "ensaio", image: "assets/IMG/Lavinia-61.jpg" },
+    { id: "g6", title: "Ensaio Oficial 6", category: "ensaio", image: "assets/IMG/Lavinia-62.jpg" },
+    { id: "g7", title: "Ensaio Oficial 7", category: "ensaio", image: "assets/IMG/Lavinia-63.jpg" },
+    { id: "g8", title: "Ensaio Oficial 8", category: "ensaio", image: "assets/IMG/Lavinia-64.jpg" },
+    { id: "g9", title: "Ensaio Oficial 9", category: "ensaio", image: "assets/IMG/Lavinia-65.jpg" },
+    { id: "g10", title: "Ensaio Oficial 10", category: "ensaio", image: "assets/IMG/Lavinia-66.jpg" },
+    { id: "g11", title: "Ensaio Oficial 11", category: "ensaio", image: "assets/IMG/Lavinia-67.jpg" },
+    { id: "g12", title: "Ensaio Oficial 12", category: "ensaio", image: "assets/IMG/Lavinia-68.jpg" },
+    { id: "g13", title: "Ensaio Oficial 13", category: "ensaio", image: "assets/IMG/Lavinia-69.jpg" },
+    { id: "g14", title: "Ensaio Oficial 14", category: "ensaio", image: "assets/IMG/Lavinia-70.jpg" },
+    { id: "g15", title: "Ensaio Oficial 15", category: "ensaio", image: "assets/IMG/Lavinia-71.jpg" },
+    { id: "g16", title: "Ensaio Oficial 16", category: "ensaio", image: "assets/IMG/Lavinia-72.jpg" },
+    { id: "g17", title: "Ensaio Oficial 17", category: "ensaio", image: "assets/IMG/Lavinia-73.jpg" },
+    { id: "g18", title: "Ensaio Oficial 18", category: "ensaio", image: "assets/IMG/Lavinia-74.jpg" },
+    { id: "g19", title: "Ensaio Oficial 19", category: "ensaio", image: "assets/IMG/Lavinia-75.jpg" },
+    { id: "g20", title: "Ensaio Oficial 20", category: "ensaio", image: "assets/IMG/Lavinia-76.jpg" },
+    { id: "g21", title: "Ensaio Oficial 21", category: "ensaio", image: "assets/IMG/Lavinia-77.jpg" },
+    { id: "g22", title: "Ensaio Oficial 22", category: "ensaio", image: "assets/IMG/Lavinia-78.jpg" },
+    { id: "g23", title: "Ensaio Oficial 23", category: "ensaio", image: "assets/IMG/Lavinia-79.jpg" },
+    { id: "g24", title: "Ensaio Oficial 24", category: "ensaio", image: "assets/IMG/Lavinia-80.jpg" },
+    { id: "g25", title: "Momento em Família 1", category: "familia", image: "assets/IMG/Lavinia-81.jpg" },
+    { id: "g26", title: "Momento em Família 2", category: "familia", image: "assets/IMG/Lavinia-82.jpg" },
+    { id: "g27", title: "Momento em Família 3", category: "familia", image: "assets/IMG/Lavinia-83.jpg" },
+    { id: "g28", title: "Momento em Família 4", category: "familia", image: "assets/IMG/Lavinia-84.jpg" },
+    { id: "g29", title: "Momento em Família 5", category: "familia", image: "assets/IMG/Lavinia-85.jpg" },
+    { id: "g30", title: "Momento em Família 6", category: "familia", image: "assets/IMG/Lavinia-86.jpg" },
+    { id: "g31", title: "Momento em Família 7", category: "familia", image: "assets/IMG/Lavinia-87.jpg" },
+    { id: "g32", title: "Momento em Família 8", category: "familia", image: "assets/IMG/Lavinia-88.jpg" },
+    { id: "g33", title: "Momento em Família 9", category: "familia", image: "assets/IMG/Lavinia-89.jpg" },
+    { id: "g34", title: "Momento em Família 10", category: "familia", image: "assets/IMG/Lavinia-90.jpg" }
   ],
   videos: [
     { id: "v1", title: "Teaser Oficial do Ensaio de 15 Anos", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", type: "youtube" }
@@ -121,6 +149,7 @@ function saveDBLocal(db) {
 const DB = {
   isSupabase: false,
   supabaseClient: null,
+  getDefaults: () => defaultDatabase,
 
   // Inicializa a conexão com o Supabase se configurado
   init: async () => {
@@ -151,6 +180,7 @@ const DB = {
 
   // Retorna os dados agregados (seja do Supabase ou do LocalStorage)
   get: async () => {
+    let data;
     if (DB.isSupabase && DB.supabaseClient) {
       try {
         const [rsvpsRes, messagesRes, giftsRes, settingsRes] = await Promise.all([
@@ -218,7 +248,7 @@ const DB = {
           dateConfirmed: r.date_confirmed
         }));
 
-        return {
+        data = {
           config,
           timeline,
           gallery,
@@ -230,10 +260,63 @@ const DB = {
         };
       } catch (err) {
         console.error("Erro na leitura assíncrona do Supabase. Alternando para LocalStorage:", err);
-        return loadDBLocal();
+        data = loadDBLocal();
       }
+    } else {
+      data = loadDBLocal();
     }
-    return loadDBLocal();
+
+    // Sobrescrever imagens e expandir galeria para as 40 fotos locais da debutante
+    if (data) {
+      // 1. Hero
+      data.config.heroImage = "assets/IMG/Lavinia-51.jpg";
+      
+      // 2. Linha do Tempo (Somente a foto dos 15 anos/hoje Lavinia-56.jpg)
+      if (data.timeline) {
+        data.timeline.forEach((item, index) => {
+          if (index === 3) {
+            item.image = "assets/IMG/Lavinia-56.jpg";
+          } else {
+            item.image = "";
+          }
+        });
+      }
+      
+      // 3. Galeria (34 fotos: Lavinia-57 a Lavinia-90 + fotos de convidados)
+      const updatedGallery = [];
+      for (let i = 0; i < 34; i++) {
+        const id = `g${i + 1}`;
+        let category = "ensaio";
+        let title = `Foto Ensaio ${i + 1}`;
+        
+        // Mapear fotos de índice 24 a 33 (fotos 25 a 34) para a categoria "familia"
+        if (i >= 24) {
+          category = "familia";
+          title = `Momento em Família ${i - 23}`;
+        }
+        
+        updatedGallery.push({
+          id,
+          title,
+          category,
+          image: `assets/IMG/Lavinia-${57 + i}.jpg`
+        });
+      }
+      
+      // Anexar as fotos enviadas pelos convidados
+      if (data.gallery) {
+        data.gallery.forEach(item => {
+          if (item && (item.category === "convidados" || (item.id && String(item.id).startsWith("upload_")))) {
+            updatedGallery.push(item);
+          }
+        });
+      }
+      
+      data.gallery = updatedGallery;
+      data.config.gallery = updatedGallery;
+    }
+
+    return data;
   },
 
   // Salva configurações gerais (config, timeline, galeria, etc.)
@@ -413,6 +496,40 @@ const DB = {
       const db = loadDBLocal();
       db.gifts = db.gifts.filter(g => g.id !== id);
       saveDBLocal(db);
+      return true;
+    }
+  },
+
+  // Salva foto enviada pelo convidado na galeria
+  saveGalleryItem: async (galleryItem) => {
+    const db = await DB.get();
+    
+    // Adiciona o item na galeria carregada
+    db.gallery.push(galleryItem);
+    
+    if (DB.isSupabase && DB.supabaseClient) {
+      try {
+        // Buscar o valor atual de settings para atualizar apenas a galeria
+        const { data: settingsData } = await DB.supabaseClient.from('settings').select('*').eq('key', 'site_config').maybeSingle();
+        let val = settingsData ? settingsData.value : {};
+        
+        // Se a chave gallery não existir no banco de dados, inicializa ela
+        val.gallery = db.gallery;
+        
+        const { error } = await DB.supabaseClient.from('settings').upsert({
+          key: 'site_config',
+          value: val
+        });
+        if (error) throw error;
+        return true;
+      } catch (err) {
+        console.error("Falha ao salvar item da galeria no Supabase:", err);
+        return false;
+      }
+    } else {
+      const localDb = loadDBLocal();
+      localDb.gallery.push(galleryItem);
+      saveDBLocal(localDb);
       return true;
     }
   },
