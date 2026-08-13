@@ -822,6 +822,33 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
 }
 
+.gallery-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-rose-gold) 100%);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  z-index: 2;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  backdrop-filter: blur(4px);
+  transition: var(--transition-smooth);
+}
+
+.gallery-item.featured {
+  border: 2px solid var(--color-gold);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
+}
+
 .gallery-item img {
   width: 100%;
   height: 100%;
@@ -1583,4 +1610,65 @@ h1, h2, h3, h4, h5, h6 {
   .admin-sidebar-overlay.show {
     display: block;
   }
+}
+
+/* Envelope Virtual e Homenagem de Mãe */
+.virtual-envelope-card {
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+}
+
+.virtual-envelope-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(183, 110, 121, 0.15) !important;
+}
+
+.wax-seal-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wax-seal {
+  width: 65px;
+  height: 65px;
+  background: radial-gradient(circle, #e63946 0%, #b70918 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.6rem;
+  box-shadow: 0 6px 15px rgba(183, 9, 24, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+  border: 3px double #d4af37;
+  position: relative;
+  animation: seal-pulse 2.2s infinite ease-in-out;
+  transition: transform 0.3s ease;
+}
+
+.virtual-envelope-card:hover .wax-seal {
+  transform: scale(1.1) rotate(5deg);
+}
+
+@keyframes seal-pulse {
+  0% { transform: scale(1); box-shadow: 0 6px 15px rgba(183, 9, 24, 0.4); }
+  50% { transform: scale(1.06); box-shadow: 0 8px 20px rgba(183, 9, 24, 0.6); }
+  100% { transform: scale(1); box-shadow: 0 6px 15px rgba(183, 9, 24, 0.4); }
+}
+
+.letter-paper-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.letter-paper-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 10px;
+}
+
+.letter-paper-content::-webkit-scrollbar-thumb {
+  background: rgba(183, 110, 121, 0.3);
+  border-radius: 10px;
+}
+
+.letter-paper-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(183, 110, 121, 0.5);
 }

@@ -2,10 +2,8 @@
 
 const DB_KEY = 'lavinia_15_anos_db';
 
-// CONFIGURAÇÃO GLOBAL DO SUPABASE (Opcional - Para quando publicar o site na internet)
-// Insira as chaves abaixo para que todos os seus convidados conectem ao mesmo banco automaticamente.
-const SUPABASE_URL_DEFAULT = 'https://mfxjhsszkywwkpqfuepp.supabase.co';
-const SUPABASE_ANON_KEY_DEFAULT = 'sb_publishable_uMlijmLuk7X_3NfD1bsPyQ_Eos7A9t2';
+const SUPABASE_URL_DEFAULT = typeof SUPABASE_URL !== 'undefined' ? SUPABASE_URL : '';
+const SUPABASE_ANON_KEY_DEFAULT = typeof SUPABASE_ANON_KEY !== 'undefined' ? SUPABASE_ANON_KEY : '';
 
 const defaultDatabase = {
   config: {
@@ -13,7 +11,7 @@ const defaultDatabase = {
     partyDate: "2026-11-02T21:00:00",
     birthdayDate: "2026-11-02T00:00:00",
     quote: "Cada sonho merece uma noite para se tornar realidade.",
-    heroImage: "assets/IMG/Lavinia-51.jpg",
+    heroImage: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg",
     musicTracks: [
       { id: "1", title: "Beauty and the Beast (Piano)", artist: "Disney Instrumental", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
       { id: "2", title: "Valsa das Flores", artist: "Tchaikovsky", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
@@ -57,44 +55,23 @@ const defaultDatabase = {
       age: "15 Anos (Hoje)",
       title: "A realização de um sonho",
       description: "Chegou o grande momento! Lavinia floresceu e está pronta para celebrar o início de um novo capítulo em uma noite mágica cercada de quem ama.",
-      image: "assets/IMG/Lavinia-56.jpg"
+      image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg"
     }
   ],
   gallery: [
-    { id: "g1", title: "Ensaio Oficial 1", category: "ensaio", image: "assets/IMG/Lavinia-57.jpg" },
-    { id: "g2", title: "Ensaio Oficial 2", category: "ensaio", image: "assets/IMG/Lavinia-58.jpg" },
-    { id: "g3", title: "Ensaio Oficial 3", category: "ensaio", image: "assets/IMG/Lavinia-59.jpg" },
-    { id: "g4", title: "Ensaio Oficial 4", category: "ensaio", image: "assets/IMG/Lavinia-60.jpg" },
-    { id: "g5", title: "Ensaio Oficial 5", category: "ensaio", image: "assets/IMG/Lavinia-61.jpg" },
-    { id: "g6", title: "Ensaio Oficial 6", category: "ensaio", image: "assets/IMG/Lavinia-62.jpg" },
-    { id: "g7", title: "Ensaio Oficial 7", category: "ensaio", image: "assets/IMG/Lavinia-63.jpg" },
-    { id: "g8", title: "Ensaio Oficial 8", category: "ensaio", image: "assets/IMG/Lavinia-64.jpg" },
-    { id: "g9", title: "Ensaio Oficial 9", category: "ensaio", image: "assets/IMG/Lavinia-65.jpg" },
-    { id: "g10", title: "Ensaio Oficial 10", category: "ensaio", image: "assets/IMG/Lavinia-66.jpg" },
-    { id: "g11", title: "Ensaio Oficial 11", category: "ensaio", image: "assets/IMG/Lavinia-67.jpg" },
-    { id: "g12", title: "Ensaio Oficial 12", category: "ensaio", image: "assets/IMG/Lavinia-68.jpg" },
-    { id: "g13", title: "Ensaio Oficial 13", category: "ensaio", image: "assets/IMG/Lavinia-69.jpg" },
-    { id: "g14", title: "Ensaio Oficial 14", category: "ensaio", image: "assets/IMG/Lavinia-70.jpg" },
-    { id: "g15", title: "Ensaio Oficial 15", category: "ensaio", image: "assets/IMG/Lavinia-71.jpg" },
-    { id: "g16", title: "Ensaio Oficial 16", category: "ensaio", image: "assets/IMG/Lavinia-72.jpg" },
-    { id: "g17", title: "Ensaio Oficial 17", category: "ensaio", image: "assets/IMG/Lavinia-73.jpg" },
-    { id: "g18", title: "Ensaio Oficial 18", category: "ensaio", image: "assets/IMG/Lavinia-74.jpg" },
-    { id: "g19", title: "Ensaio Oficial 19", category: "ensaio", image: "assets/IMG/Lavinia-75.jpg" },
-    { id: "g20", title: "Ensaio Oficial 20", category: "ensaio", image: "assets/IMG/Lavinia-76.jpg" },
-    { id: "g21", title: "Ensaio Oficial 21", category: "ensaio", image: "assets/IMG/Lavinia-77.jpg" },
-    { id: "g22", title: "Ensaio Oficial 22", category: "ensaio", image: "assets/IMG/Lavinia-78.jpg" },
-    { id: "g23", title: "Ensaio Oficial 23", category: "ensaio", image: "assets/IMG/Lavinia-79.jpg" },
-    { id: "g24", title: "Ensaio Oficial 24", category: "ensaio", image: "assets/IMG/Lavinia-80.jpg" },
-    { id: "g25", title: "Momento em Família 1", category: "familia", image: "assets/IMG/Lavinia-81.jpg" },
-    { id: "g26", title: "Momento em Família 2", category: "familia", image: "assets/IMG/Lavinia-82.jpg" },
-    { id: "g27", title: "Momento em Família 3", category: "familia", image: "assets/IMG/Lavinia-83.jpg" },
-    { id: "g28", title: "Momento em Família 4", category: "familia", image: "assets/IMG/Lavinia-84.jpg" },
-    { id: "g29", title: "Momento em Família 5", category: "familia", image: "assets/IMG/Lavinia-85.jpg" },
-    { id: "g30", title: "Momento em Família 6", category: "familia", image: "assets/IMG/Lavinia-86.jpg" },
-    { id: "g31", title: "Momento em Família 7", category: "familia", image: "assets/IMG/Lavinia-87.jpg" },
-    { id: "g32", title: "Momento em Família 8", category: "familia", image: "assets/IMG/Lavinia-88.jpg" },
-    { id: "g33", title: "Momento em Família 9", category: "familia", image: "assets/IMG/Lavinia-89.jpg" },
-    { id: "g34", title: "Momento em Família 10", category: "familia", image: "assets/IMG/Lavinia-90.jpg" }
+    { id: "g1", title: "Caminho dos Sonhos", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg", featured: true },
+    { id: "g2", title: "Sorriso Encantado", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg", featured: true },
+    { id: "g3", title: "Momento com a Mãe 1", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg" },
+    { id: "g4", title: "Momento com a Mãe 2", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (1).jpeg" },
+    { id: "g5", title: "Momento com a Mãe 3", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (2).jpeg" },
+    { id: "g6", title: "Momento com a Mãe 4", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48.jpeg" },
+    { id: "g7", title: "Ensaio Oficial 1", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48 (1).jpeg" },
+    { id: "g8", title: "Ensaio Oficial 2", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49.jpeg" },
+    { id: "g9", title: "Ensaio Oficial 3", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (1).jpeg" },
+    { id: "g10", title: "Ensaio Oficial 4", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (2).jpeg" },
+    { id: "g11", title: "Ensaio Oficial 5", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50.jpeg" },
+    { id: "g12", title: "Ensaio Oficial 6", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg" },
+    { id: "g13", title: "Ensaio Oficial 7", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.25.42.jpeg" }
   ],
   videos: [
     { id: "v1", title: "Teaser Oficial do Ensaio de 15 Anos", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", type: "youtube" }
@@ -133,7 +110,15 @@ function loadDBLocal() {
     return defaultDatabase;
   }
   try {
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    // Se contiver referências a imagens antigas "Lavinia-", força o reset do LocalStorage
+    const serialized = JSON.stringify(parsed);
+    if (serialized.includes("Lavinia-")) {
+      console.warn("Detectado banco de dados local com referências a imagens antigas (Lavinia-). Resetando...");
+      localStorage.setItem(DB_KEY, JSON.stringify(defaultDatabase));
+      return defaultDatabase;
+    }
+    return parsed;
   } catch (e) {
     console.error("Erro ao carregar banco de dados local. Resetando...", e);
     localStorage.setItem(DB_KEY, JSON.stringify(defaultDatabase));
@@ -266,42 +251,38 @@ const DB = {
       data = loadDBLocal();
     }
 
-    // Sobrescrever imagens e expandir galeria para as 40 fotos locais da debutante
+    // Sobrescrever imagens e atualizar galeria para as novas fotos locais da debutante
     if (data) {
       // 1. Hero
-      data.config.heroImage = "assets/IMG/Lavinia-51.jpg";
+      data.config.heroImage = "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg";
       
-      // 2. Linha do Tempo (Somente a foto dos 15 anos/hoje Lavinia-56.jpg)
+      // 2. Linha do Tempo (Somente a foto dos 15 anos/hoje)
       if (data.timeline) {
         data.timeline.forEach((item, index) => {
           if (index === 3) {
-            item.image = "assets/IMG/Lavinia-56.jpg";
+            item.image = "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg";
           } else {
             item.image = "";
           }
         });
       }
       
-      // 3. Galeria (34 fotos: Lavinia-57 a Lavinia-90 + fotos de convidados)
-      const updatedGallery = [];
-      for (let i = 0; i < 34; i++) {
-        const id = `g${i + 1}`;
-        let category = "ensaio";
-        let title = `Foto Ensaio ${i + 1}`;
-        
-        // Mapear fotos de índice 24 a 33 (fotos 25 a 34) para a categoria "familia"
-        if (i >= 24) {
-          category = "familia";
-          title = `Momento em Família ${i - 23}`;
-        }
-        
-        updatedGallery.push({
-          id,
-          title,
-          category,
-          image: `assets/IMG/Lavinia-${57 + i}.jpg`
-        });
-      }
+      // 3. Galeria (13 novas fotos locais)
+      const updatedGallery = [
+        { id: "g1", title: "Caminho dos Sonhos", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg", featured: true },
+        { id: "g2", title: "Sorriso Encantado", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg", featured: true },
+        { id: "g3", title: "Momento com a Mãe 1", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg" },
+        { id: "g4", title: "Momento com a Mãe 2", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (1).jpeg" },
+        { id: "g5", title: "Momento com a Mãe 3", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (2).jpeg" },
+        { id: "g6", title: "Momento com a Mãe 4", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48.jpeg" },
+        { id: "g7", title: "Ensaio Oficial 1", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48 (1).jpeg" },
+        { id: "g8", title: "Ensaio Oficial 2", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49.jpeg" },
+        { id: "g9", title: "Ensaio Oficial 3", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (1).jpeg" },
+        { id: "g10", title: "Ensaio Oficial 4", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (2).jpeg" },
+        { id: "g11", title: "Ensaio Oficial 5", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50.jpeg" },
+        { id: "g12", title: "Ensaio Oficial 6", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg" },
+        { id: "g13", title: "Ensaio Oficial 7", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.25.42.jpeg" }
+      ];
       
       // Anexar as fotos enviadas pelos convidados
       if (data.gallery) {

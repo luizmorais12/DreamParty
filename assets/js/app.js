@@ -471,34 +471,32 @@ function renderDynamicContentLocal() {
   const dbCopy = JSON.parse(JSON.stringify(localDefaults));
   
   // Garantir fotos locais mapeadas
-  dbCopy.config.heroImage = "assets/IMG/Lavinia-51.jpg";
+  dbCopy.config.heroImage = "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg";
   if (dbCopy.timeline) {
     dbCopy.timeline.forEach((item, index) => {
       if (index === 3) {
-        item.image = "assets/IMG/Lavinia-56.jpg";
+        item.image = "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg";
       } else {
         item.image = "";
       }
     });
   }
   
-  // Usar as 34 fotos locais
-  const updatedGallery = [];
-  for (let i = 0; i < 34; i++) {
-    const id = `g${i + 1}`;
-    let category = "ensaio";
-    let title = `Foto Ensaio ${i + 1}`;
-    if (i >= 24) {
-      category = "familia";
-      title = `Momento em Família ${i - 23}`;
-    }
-    updatedGallery.push({
-      id,
-      title,
-      category,
-      image: `assets/IMG/Lavinia-${57 + i}.jpg`
-    });
-  }
+  const updatedGallery = [
+    { id: "g1", title: "Caminho dos Sonhos", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg", featured: true },
+    { id: "g2", title: "Sorriso Encantado", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg", featured: true },
+    { id: "g3", title: "Momento com a Mãe 1", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg" },
+    { id: "g4", title: "Momento com a Mãe 2", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (1).jpeg" },
+    { id: "g5", title: "Momento com a Mãe 3", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (2).jpeg" },
+    { id: "g6", title: "Momento com a Mãe 4", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48.jpeg" },
+    { id: "g7", title: "Ensaio Oficial 1", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48 (1).jpeg" },
+    { id: "g8", title: "Ensaio Oficial 2", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49.jpeg" },
+    { id: "g9", title: "Ensaio Oficial 3", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (1).jpeg" },
+    { id: "g10", title: "Ensaio Oficial 4", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (2).jpeg" },
+    { id: "g11", title: "Ensaio Oficial 5", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50.jpeg" },
+    { id: "g12", title: "Ensaio Oficial 6", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg" },
+    { id: "g13", title: "Ensaio Oficial 7", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.25.42.jpeg" }
+  ];
   dbCopy.gallery = updatedGallery;
   dbCopy.config.gallery = updatedGallery;
 
@@ -569,9 +567,16 @@ function renderGallery(galleryData) {
   galleryData.forEach((item, index) => {
     const card = document.createElement("div");
     card.classList.add("gallery-item", "scale-hover");
+    if (item.featured) {
+      card.classList.add("featured");
+    }
     card.setAttribute("data-category", item.category);
     card.setAttribute("onclick", `openLightbox(${index})`);
+    
+    const badgeHTML = item.featured ? `<div class="gallery-badge"><i class="fa-solid fa-star me-1"></i>Destaque</div>` : "";
+    
     card.innerHTML = `
+      ${badgeHTML}
       <img src="${item.image}" alt="${item.title}" loading="lazy">
       <div class="gallery-overlay">
         <div class="gallery-info">
@@ -1170,3 +1175,31 @@ window.addEventListener("load", () => {
     AOS.refresh();
   }
 });
+
+// Abre o modal da carta da mãe
+function openMotherLetterModal() {
+  const modalElement = document.getElementById('motherLetterModal');
+  if (modalElement && typeof bootstrap !== 'undefined') {
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+  }
+}
+window.openMotherLetterModal = openMotherLetterModal;
+
+// Alterna o texto do botão Ler Mais da biografia
+function toggleReadMoreText(btn) {
+  setTimeout(() => {
+    const collapseElement = document.getElementById('aboutTextCollapse');
+    if (collapseElement) {
+      const isExpanded = collapseElement.classList.contains('show');
+      btn.innerHTML = isExpanded 
+        ? '<i class="fa-solid fa-chevron-up me-1"></i>Ler Menos' 
+        : '<i class="fa-solid fa-chevron-down me-1"></i>Ler Texto Completo';
+      // Força a recalcular posições da animação de scroll (AOS) já que a altura mudou
+      if (typeof AOS !== 'undefined') {
+        AOS.refresh();
+      }
+    }
+  }, 350); // Aguarda o tempo da transição do Bootstrap
+}
+window.toggleReadMoreText = toggleReadMoreText;
