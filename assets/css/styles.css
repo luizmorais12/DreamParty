@@ -823,6 +823,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .gallery-badge {
+  display: none !important;
   position: absolute;
   top: 15px;
   left: 15px;
@@ -861,6 +862,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .gallery-overlay {
+  display: none !important;
   position: absolute;
   top: 0;
   left: 0;
@@ -936,6 +938,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .lightbox-caption {
+  display: none !important;
   color: white;
   margin-top: 15px;
   font-family: var(--font-heading);

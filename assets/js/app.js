@@ -484,8 +484,8 @@ function renderDynamicContentLocal() {
   
   const updatedGallery = [
     { id: "g1", title: "Caminho dos Sonhos", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg", featured: true },
-    { id: "g2", title: "Sorriso Encantado", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg", featured: true },
-    { id: "g3", title: "Momento com a Mãe 1", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg" },
+    { id: "g2", title: "Sorriso Encantado", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg" },
+    { id: "g3", title: "Momento com a Mãe 1", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg", featured: true },
     { id: "g4", title: "Momento com a Mãe 2", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (1).jpeg" },
     { id: "g5", title: "Momento com a Mãe 3", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (2).jpeg" },
     { id: "g6", title: "Momento com a Mãe 4", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48.jpeg" },
@@ -494,7 +494,7 @@ function renderDynamicContentLocal() {
     { id: "g9", title: "Ensaio Oficial 3", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (1).jpeg" },
     { id: "g10", title: "Ensaio Oficial 4", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (2).jpeg" },
     { id: "g11", title: "Ensaio Oficial 5", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50.jpeg" },
-    { id: "g12", title: "Ensaio Oficial 6", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg" },
+    { id: "g12", title: "Ensaio Oficial 6", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg", featured: true },
     { id: "g13", title: "Ensaio Oficial 7", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.25.42.jpeg" }
   ];
   dbCopy.gallery = updatedGallery;
@@ -573,7 +573,7 @@ function renderGallery(galleryData) {
     card.setAttribute("data-category", item.category);
     card.setAttribute("onclick", `openLightbox(${index})`);
     
-    const badgeHTML = item.featured ? `<div class="gallery-badge"><i class="fa-solid fa-star me-1"></i>Destaque</div>` : "";
+    const badgeHTML = "";
     
     card.innerHTML = `
       ${badgeHTML}
@@ -587,6 +587,13 @@ function renderGallery(galleryData) {
     `;
     grid.appendChild(card);
   });
+
+  // Executa o filtro ativo por padrão inicialmente (Destaque)
+  const activeFilterBtn = document.querySelector("#gallery-filters-container .filter-btn.active");
+  if (activeFilterBtn) {
+    const activeCat = activeFilterBtn.textContent.trim().toLowerCase() === "destaque" ? "destaque" : "todos";
+    filterGallery(activeCat, activeFilterBtn);
+  }
 }
 
 function filterGallery(category, btn) {
@@ -597,7 +604,16 @@ function filterGallery(category, btn) {
   const items = document.querySelectorAll("#gallery-grid .gallery-item");
   items.forEach(item => {
     const itemCat = item.getAttribute("data-category");
-    if (category === "todos" || itemCat === category) {
+    const isFeatured = item.classList.contains("featured");
+    let show = false;
+    
+    if (category === "destaque") {
+      if (isFeatured) show = true;
+    } else if (category === "todos" || itemCat === category) {
+      show = true;
+    }
+    
+    if (show) {
       item.style.display = "block";
       setTimeout(() => item.style.opacity = "1", 50);
     } else {
@@ -618,7 +634,7 @@ function openLightbox(index) {
 
   currentLightboxIndex = index;
   img.src = activeGalleryItems[index].image;
-  caption.innerHTML = `<h5>${activeGalleryItems[index].title}</h5><p class="text-uppercase font-monospace small" style="color: var(--color-gold); font-size: 0.75rem;">${activeGalleryItems[index].category}</p>`;
+  caption.innerHTML = "";
   
   modal.style.display = "flex";
   document.body.style.overflow = "hidden";
