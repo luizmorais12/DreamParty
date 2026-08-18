@@ -564,10 +564,12 @@ async function populateConfigForms() {
   document.getElementById("cfg-parking").value = db.config.location.parking;
   document.getElementById("cfg-map").value = db.config.location.mapUrl;
 
-  // Vídeo
-  if (db.videos.length > 0) {
-    document.getElementById("cfg-video-title").value = db.videos[0].title;
-    document.getElementById("cfg-video-url").value = db.videos[0].videoUrl;
+  // Vídeo (Segurança para caso os campos tenham sido removidos)
+  const videoTitleEl = document.getElementById("cfg-video-title");
+  const videoUrlEl = document.getElementById("cfg-video-url");
+  if (videoTitleEl && videoUrlEl && db.videos && db.videos.length > 0) {
+    videoTitleEl.value = db.videos[0].title;
+    videoUrlEl.value = db.videos[0].videoUrl;
   }
 
   // Credenciais Supabase
