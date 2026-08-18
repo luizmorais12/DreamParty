@@ -394,7 +394,7 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   text-align: center;
   background-size: cover;
-  background-position: center;
+  background-position: 65% 15%;
   background-repeat: no-repeat;
   z-index: 3;
   padding: 100px 20px;

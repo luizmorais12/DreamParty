@@ -471,7 +471,7 @@ function renderDynamicContentLocal() {
   const dbCopy = JSON.parse(JSON.stringify(localDefaults));
   
   // Garantir fotos locais mapeadas
-  dbCopy.config.heroImage = "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg";
+  dbCopy.config.heroImage = "assets/IMG/fundo_hero_azul.jpeg";
   if (dbCopy.timeline) {
     dbCopy.timeline.forEach((item, index) => {
       if (index === 3) {
