@@ -335,6 +335,23 @@ async function initMusicPlayer() {
   if (currentTrackIndex === -1) currentTrackIndex = 0;
 
   await loadTrack(currentTrackIndex);
+
+  // Tenta iniciar a reprodução automaticamente ao carregar
+  playMusic();
+
+  // Se o autoplay direto for bloqueado, inicia o som na primeira interação do usuário na página
+  const INTERACTION_EVENTS = ["click", "touchstart", "scroll", "keydown"];
+  const playOnFirstInteraction = () => {
+    if (!isPlaying) {
+      playMusic();
+    }
+    INTERACTION_EVENTS.forEach(event => {
+      document.removeEventListener(event, playOnFirstInteraction);
+    });
+  };
+  INTERACTION_EVENTS.forEach(event => {
+    document.addEventListener(event, playOnFirstInteraction, { passive: true });
+  });
 }
 
 async function loadTrack(index) {
