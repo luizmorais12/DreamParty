@@ -20,10 +20,10 @@ const defaultDatabase = {
     pixQrCode: "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=00020101021126580014br.gov.bcb.pix0119lavinia15anos@pix.com.br5204000053039865802BR5925LAVINIA%20DOS%20SANTOS%20MATTOS6009SAO%20PAULO62070503***63041A2D",
     dressCode: "Gala / Esporte Fino: Sugerimos tons pastéis claros para harmonizar com nosso Jardim Encantado.",
     location: {
-      address: "Mansão das Flores, Av. das Rosas, 1500 - Rio de Janeiro, RJ",
-      time: "21:00",
+      address: "Buffet Venturi, Rua Piracicaba, 79 - Vila Augusta, Guarulhos - SP",
+      time: "18:00",
       parking: "Serviço de manobrista gratuito no local para todos os convidados.",
-      mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3673.84478149867!2d-43.22699892377747!3d-22.955986479219894!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997fd59828d11f%3A0x2865910fae13467e!2sParque%20Lage!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr"
+      mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3659.1834162794715!2d-46.57467612470732!3d-23.473551578854424!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce58a9833f444f%3A0xe54d89e1a1b411d7!2sBuffet%20Venturi!5e0!3m2!1spt-BR!2sbr!4v1723983240000!5m2!1spt-BR!2sbr"
     }
   },
   timeline: [
@@ -152,13 +152,14 @@ function loadDBLocal() {
   }
   try {
     const parsed = JSON.parse(data);
-    // Se contiver referências a imagens antigas "Lavinia-", se não contiver "Lana Del Rey" (limpeza das instrumentais) ou se contiver os fundos antigos (1).jpeg/(2).jpeg, força o reset do LocalStorage
+    // Se contiver referências antigas ou se não contiver "Buffet Venturi", força o reset do LocalStorage
     const serialized = JSON.stringify(parsed);
     const hasOldImages = serialized.includes("Lavinia-");
     const hasOldMusic = !serialized.includes("Lana Del Rey");
     const hasOldHero = serialized.includes("23.23.50 (1).jpeg") || serialized.includes("23.23.50 (2).jpeg");
+    const hasOldLocation = !serialized.includes("Buffet Venturi");
     
-    if (hasOldImages || hasOldMusic || hasOldHero) {
+    if (hasOldImages || hasOldMusic || hasOldHero || hasOldLocation) {
       console.warn("Detectado banco de dados local antigo. Resetando...");
       localStorage.setItem(DB_KEY, JSON.stringify(defaultDatabase));
       return defaultDatabase;
