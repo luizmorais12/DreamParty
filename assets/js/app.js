@@ -943,6 +943,7 @@ function renderSchedule(scheduleData) {
       <div class="cron-info-wrapper">
         <div class="cron-time">${item.time}</div>
         <div class="cron-title">${item.title}</div>
+        ${item.description ? `<div class="cron-desc text-muted mt-1 small" style="font-size: 0.85rem; line-height: 1.4;">${item.description}</div>` : ""}
       </div>
     `;
     wrapper.appendChild(cronItem);

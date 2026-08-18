@@ -13,9 +13,7 @@ const defaultDatabase = {
     quote: "Cada sonho merece uma noite para se tornar realidade.",
     heroImage: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg",
     musicTracks: [
-      { id: "1", title: "Beauty and the Beast (Piano)", artist: "Disney Instrumental", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-      { id: "2", title: "Valsa das Flores", artist: "Tchaikovsky", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-      { id: "3", title: "Perfect (Piano Version)", artist: "Ed Sheeran Cover", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
+      { id: "1", title: "Video Games", artist: "Lana Del Rey", url: "https://archive.org/download/relax-fm-collection-vol.1-11/Relax%20FM%20-%20Collection%20%28Vol.1-11%29/2013%20-%20Relax%20FM%20-%20vol.11/09.%20Lana%20Del%20Rey%20-%20Video%20Games.mp3" }
     ],
     currentTrackId: "1",
     pixKey: "lavinia15anos@pix.com.br",
@@ -94,11 +92,54 @@ const defaultDatabase = {
     { id: "m3", author: "Tio Renato", relation: "Tio", text: "Muitas felicidades, minha querida sobrinha! Que papai do céu guie sempre seus caminhos.", date: "2026-07-07T20:10:00", approved: false }
   ],
   schedule: [
-    { time: "21:00", title: "Recepção dos Convidados", icon: "fa-door-open" },
-    { time: "22:00", title: "Jantar dos Convidados", icon: "fa-utensils" },
-    { time: "23:30", title: "Cerimonial & Valsa", icon: "fa-crown" },
-    { time: "00:30", title: "Abertura da Balada", icon: "fa-compact-disc" },
-    { time: "05:00", title: "Encerramento da Festa", icon: "fa-moon" }
+    {
+      time: "18h00",
+      title: "Recepção dos convidados",
+      description: "Abertura da festa e recepção dos convidados.",
+      icon: "fa-door-open"
+    },
+    {
+      time: "18h30",
+      title: "Início da recepção e serviço",
+      description: "Momento para confraternizar, aproveitar as bebidas e os deliciosos quitutes preparados para a noite.",
+      icon: "fa-champagne-glasses"
+    },
+    {
+      time: "19h30",
+      title: "Preparação para o Cerimonial",
+      description: "Os convidados serão convidados a se dirigir à pista para o início do momento especial da noite.",
+      icon: "fa-hourglass-start"
+    },
+    {
+      time: "19h40",
+      title: "Cerimonial dos 15 Anos",
+      description: "Um momento emocionante com homenagens, valsas e a tradicional celebração dos 15 anos da Lavínia.",
+      icon: "fa-crown"
+    },
+    {
+      time: "20h40",
+      title: "Abertura da Balada",
+      description: "É hora de comemorar! Música, dança e muita diversão com as atrações da festa.",
+      icon: "fa-compact-disc"
+    },
+    {
+      time: "21h30",
+      title: "Bolo, Sorvete e Doces",
+      description: "Momento especial para saborear o bolo e as delícias da mesa de doces.",
+      icon: "fa-cake-candles"
+    },
+    {
+      time: "Após o bolo",
+      title: "Festa continua!",
+      description: "A música e a diversão seguem até o encerramento da festa.",
+      icon: "fa-glass-cheers"
+    },
+    {
+      time: "23h00",
+      title: "Encerramento",
+      description: "Finalização da comemoração. Prepare-se para uma noite inesquecível!",
+      icon: "fa-moon"
+    }
   ]
 };
 
@@ -111,10 +152,13 @@ function loadDBLocal() {
   }
   try {
     const parsed = JSON.parse(data);
-    // Se contiver referências a imagens antigas "Lavinia-", força o reset do LocalStorage
+    // Se contiver referências a imagens antigas "Lavinia-" ou se não contiver "Lana Del Rey" (limpeza das instrumentais), força o reset do LocalStorage
     const serialized = JSON.stringify(parsed);
-    if (serialized.includes("Lavinia-")) {
-      console.warn("Detectado banco de dados local com referências a imagens antigas (Lavinia-). Resetando...");
+    const hasOldImages = serialized.includes("Lavinia-");
+    const hasOldMusic = !serialized.includes("Lana Del Rey");
+    
+    if (hasOldImages || hasOldMusic) {
+      console.warn("Detectado banco de dados local antigo. Resetando...");
       localStorage.setItem(DB_KEY, JSON.stringify(defaultDatabase));
       return defaultDatabase;
     }
