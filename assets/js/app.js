@@ -1176,30 +1176,3 @@ window.addEventListener("load", () => {
   }
 });
 
-// Abre o modal da carta da mãe
-function openMotherLetterModal() {
-  const modalElement = document.getElementById('motherLetterModal');
-  if (modalElement && typeof bootstrap !== 'undefined') {
-    const modal = new bootstrap.Modal(modalElement);
-    modal.show();
-  }
-}
-window.openMotherLetterModal = openMotherLetterModal;
-
-// Alterna o texto do botão Ler Mais da biografia
-function toggleReadMoreText(btn) {
-  setTimeout(() => {
-    const collapseElement = document.getElementById('aboutTextCollapse');
-    if (collapseElement) {
-      const isExpanded = collapseElement.classList.contains('show');
-      btn.innerHTML = isExpanded 
-        ? '<i class="fa-solid fa-chevron-up me-1"></i>Ler Menos' 
-        : '<i class="fa-solid fa-chevron-down me-1"></i>Ler Texto Completo';
-      // Força a recalcular posições da animação de scroll (AOS) já que a altura mudou
-      if (typeof AOS !== 'undefined') {
-        AOS.refresh();
-      }
-    }
-  }, 350); // Aguarda o tempo da transição do Bootstrap
-}
-window.toggleReadMoreText = toggleReadMoreText;
