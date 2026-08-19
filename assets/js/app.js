@@ -789,7 +789,7 @@ async function handleChoosePhysicalGift(event) {
     document.getElementById("confirm-gift-success-wrapper").classList.remove("d-none");
 
     const msg = encodeURIComponent(`Olá! Acabei de escolher o presente "${gift.name}" (R$ ${gift.value.toFixed(2)}) para a Lavinia. Segue meu comprovante de transferência! (Assinado: ${name})`);
-    const whatsappUrl = `https://wa.me/5521999999999?text=${msg}`;
+    const whatsappUrl = `https://wa.me/5511966395132?text=${msg}`;
     document.getElementById("confirm-gift-whatsapp-btn").href = whatsappUrl;
 
     document.getElementById("physical-gift-form").reset();
@@ -927,33 +927,16 @@ async function handlePixContribution(event) {
   const donorName = document.getElementById("pix-donor-name").value;
   if (!donorName.trim()) return;
 
-  const newRsvp = {
-    id: "r_pix_" + Date.now(),
-    name: donorName + " (Pix Presente R$" + selectedPixAmount + ")",
-    phone: "--",
-    email: "--",
-    adultsCount: 0,
-    kidsCount: 0,
-    companionNames: "",
-    dietaryRestrictions: "",
-    message: `Contribuiu com um Pix de R$ ${selectedPixAmount} para Lavinia.`,
-    dateConfirmed: new Date().toISOString()
-  };
-  
-  await DB.saveRsvp(newRsvp);
-
   // Mostrar a tela de sucesso dentro do modal
   document.getElementById("pix-modal-form-wrapper").classList.add("d-none");
   document.getElementById("pix-modal-success-wrapper").classList.remove("d-none");
 
   const formattedAmount = selectedPixAmount > 0 ? `R$ ${selectedPixAmount.toFixed(2)}` : "um valor livre";
   const msg = encodeURIComponent(`Olá! Acabei de enviar um presente em Pix de ${formattedAmount} para a Lavinia. Segue meu comprovante de transferência! (Assinado: ${donorName})`);
-  const whatsappUrl = `https://wa.me/5521999999999?text=${msg}`;
+  const whatsappUrl = `https://wa.me/5511966395132?text=${msg}`;
   document.getElementById("pix-modal-whatsapp-btn").href = whatsappUrl;
 
   document.getElementById("pix-confirm-form").reset();
-  
-  await updateRSVPStats();
 }
 window.handlePixContribution = handlePixContribution;
 
