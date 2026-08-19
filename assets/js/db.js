@@ -59,8 +59,8 @@ const defaultDatabase = {
   gallery: [
     { id: "g1", title: "Caminho dos Sonhos", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg", featured: true },
     { id: "g2", title: "Sorriso Encantado", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg" },
-    { id: "g3", title: "Momento com a Mãe 1", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg", featured: true },
-    { id: "g4", title: "Momento com a Mãe 2", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (1).jpeg" },
+    { id: "g3", title: "Momento com a Mãe 1", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg" },
+    { id: "g4", title: "Momento com a Mãe 2", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (1).jpeg", featured: true },
     { id: "g5", title: "Momento com a Mãe 3", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (2).jpeg" },
     { id: "g6", title: "Momento com a Mãe 4", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48.jpeg" },
     { id: "g7", title: "Ensaio Oficial 1", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48 (1).jpeg" },
@@ -158,7 +158,7 @@ function loadDBLocal() {
     const hasOldMusic = !serialized.includes("Lana Del Rey");
     const hasOldHero = serialized.includes("23.23.50 (1).jpeg") || serialized.includes("23.23.50 (2).jpeg");
     const hasOldLocation = serialized.includes("Guarulhos - SP");
-    const hasOldGallery = parsed.gallery && parsed.gallery.length > 11 && (parsed.gallery[1].featured || !parsed.gallery[11].featured);
+    const hasOldGallery = parsed.gallery && parsed.gallery.length > 3 && (parsed.gallery[2].featured || !parsed.gallery[3].featured);
     const hasOldPixKey = serialized.includes("lavinia15anos@pix.com.br");
     
     if (hasOldImages || hasOldMusic || hasOldHero || hasOldLocation || hasOldGallery || hasOldPixKey) {
@@ -319,8 +319,8 @@ const DB = {
       const updatedGallery = [
         { id: "g1", title: "Caminho dos Sonhos", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg", featured: true },
         { id: "g2", title: "Sorriso Encantado", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg" },
-        { id: "g3", title: "Momento com a Mãe 1", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg", featured: true },
-        { id: "g4", title: "Momento com a Mãe 2", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (1).jpeg" },
+        { id: "g3", title: "Momento com a Mãe 1", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg" },
+        { id: "g4", title: "Momento com a Mãe 2", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (1).jpeg", featured: true },
         { id: "g5", title: "Momento com a Mãe 3", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (2).jpeg" },
         { id: "g6", title: "Momento com a Mãe 4", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48.jpeg" },
         { id: "g7", title: "Ensaio Oficial 1", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48 (1).jpeg" },
