@@ -63,6 +63,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const pixDonationModal = document.getElementById("pixDonationModal");
   if (pixDonationModal) {
+    pixDonationModal.addEventListener("show.bs.modal", () => {
+      // Pré-seleciona a opção de R$ 200 ao abrir
+      const defaultCard = document.querySelector(".pix-options-grid .pix-val-card[onclick*='200']");
+      if (defaultCard) {
+        selectPixValue(200, defaultCard);
+      }
+    });
     pixDonationModal.addEventListener("hidden.bs.modal", () => {
       const formWrap = document.getElementById("pix-modal-form-wrapper");
       const successWrap = document.getElementById("pix-modal-success-wrapper");
@@ -471,6 +478,14 @@ function applyDatabaseToDOM(db) {
     document.getElementById("local-gmaps-link").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(db.config.location.address)}`;
   }
 
+  // Chave Pix
+  if (db.config.pixKey) {
+    const keyDisplay = document.getElementById("pix-key-display");
+    if (keyDisplay) {
+      keyDisplay.textContent = db.config.pixKey;
+    }
+  }
+
   if (db.timeline) renderTimeline(db.timeline);
   if (db.gallery) renderGallery(db.gallery);
   if (db.videos) renderVideos(db.videos);
@@ -786,7 +801,46 @@ async function handleChoosePhysicalGift(event) {
 }
 window.handleChoosePhysicalGift = handleChoosePhysicalGift;
 
-let selectedPixAmount = 100;
+let selectedPixAmount = 200;
+
+// Algoritmo CRC16 CCITT para validação oficial do Pix
+function crc16(str) {
+  let crc = 0xFFFF;
+  for (let c = 0; c < str.length; c++) {
+    let code = str.charCodeAt(c);
+    crc ^= (code << 8);
+    for (let i = 0; i < 8; i++) {
+      if ((crc & 0x8000) !== 0) {
+        crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
+      } else {
+        crc = (crc << 1) & 0xFFFF;
+      }
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4, '0');
+}
+
+// Gera a string oficial EMV/BRCode do Pix de forma dinâmica e em conformidade técnica
+function generatePixBRCode(key, amount) {
+  const cleanKey = key.replace(/\s+/g, "");
+  const keyLenStr = String(cleanKey.length).padStart(2, '0');
+  const tag26Val = `0014br.gov.bcb.pix01${keyLenStr}${cleanKey}`;
+  const tag26LenStr = String(tag26Val.length).padStart(2, '0');
+  
+  let brCode = `00020101021226${tag26LenStr}${tag26Val}520400005303986`;
+  
+  if (amount > 0) {
+    const amtStr = amount.toFixed(2);
+    const amtLenStr = String(amtStr.length).padStart(2, '0');
+    brCode += `54${amtLenStr}${amtStr}`;
+  }
+  
+  brCode += `5802BR5925LAVINIA DOS SANTOS MATTOS6009SAO PAULO62070503***6304`;
+  
+  const checksum = crc16(brCode);
+  return brCode + checksum;
+}
+
 async function selectPixValue(amount, element) {
   const cards = document.querySelectorAll(".pix-val-card");
   cards.forEach(c => c.classList.remove("selected"));
@@ -811,7 +865,7 @@ async function selectPixValue(amount, element) {
     
     const db = await DB.get();
     const qrcode = document.getElementById("pix-qrcode-img");
-    const pixData = `00020101021126580014br.gov.bcb.pix0119${db.config.pixKey}5204000053039865405${amount.toFixed(2)}5802BR5925LAVINIA%20DOS%20SANTOS%20MATTOS6009SAO%20PAULO62070503***63041A2D`;
+    const pixData = generatePixBRCode(db.config.pixKey, amount);
     qrcode.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixData)}`;
   }
 }
@@ -825,7 +879,7 @@ async function updateCustomPixQrCode() {
   
   if (amount > 0) {
     const db = await DB.get();
-    const pixData = `00020101021126580014br.gov.bcb.pix0119${db.config.pixKey}5204000053039865405${amount.toFixed(2)}5802BR5925LAVINIA%20DOS%20SANTOS%20MATTOS6009SAO%20PAULO62070503***63041A2D`;
+    const pixData = generatePixBRCode(db.config.pixKey, amount);
     qrcode.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixData)}`;
   } else {
     // QR Code em branco se não tiver valor digitado ainda

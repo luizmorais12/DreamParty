@@ -16,8 +16,8 @@ const defaultDatabase = {
       { id: "1", title: "Video Games", artist: "Lana Del Rey", url: "https://archive.org/download/relax-fm-collection-vol.1-11/Relax%20FM%20-%20Collection%20%28Vol.1-11%29/2013%20-%20Relax%20FM%20-%20vol.11/09.%20Lana%20Del%20Rey%20-%20Video%20Games.mp3" }
     ],
     currentTrackId: "1",
-    pixKey: "lavinia15anos@pix.com.br",
-    pixQrCode: "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=00020101021126580014br.gov.bcb.pix0119lavinia15anos@pix.com.br5204000053039865802BR5925LAVINIA%20DOS%20SANTOS%20MATTOS6009SAO%20PAULO62070503***63041A2D",
+    pixKey: "11963020240",
+    pixQrCode: "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=00020101021226330014br.gov.bcb.pix0111119630202405204000053039865802BR5925LAVINIA%20DOS%20SANTOS%20MATTOS6009SAO%20PAULO62070503***630452D5",
     dressCode: "Gala / Esporte Fino: Sugerimos tons pastéis claros para harmonizar com nosso Jardim Encantado.",
     location: {
       address: "Buffet Venturi, Rua Piracicaba, 79 - Vila Augusta, Guarulhos - SP",
@@ -159,8 +159,9 @@ function loadDBLocal() {
     const hasOldHero = serialized.includes("23.23.50 (1).jpeg") || serialized.includes("23.23.50 (2).jpeg");
     const hasOldLocation = !serialized.includes("Buffet Venturi");
     const hasOldGallery = parsed.gallery && parsed.gallery.length > 11 && (parsed.gallery[1].featured || !parsed.gallery[11].featured);
+    const hasOldPixKey = serialized.includes("lavinia15anos@pix.com.br");
     
-    if (hasOldImages || hasOldMusic || hasOldHero || hasOldLocation || hasOldGallery) {
+    if (hasOldImages || hasOldMusic || hasOldHero || hasOldLocation || hasOldGallery || hasOldPixKey) {
       console.warn("Detectado banco de dados local antigo. Resetando...");
       localStorage.setItem(DB_KEY, JSON.stringify(defaultDatabase));
       return defaultDatabase;
