@@ -356,10 +356,20 @@
               <div class="mb-3">
                 <label for="gift-giver-name" class="form-label">Seu Nome</label>
                 <input type="text" class="form-control" id="gift-giver-name" required
-                  placeholder="Insira seu nome para reservarmos o presente">
+                  placeholder="Insira seu nome para sabermos quem presenteou">
+              </div>
+              <div class="mb-4 p-3 bg-light rounded text-center border">
+                <span class="text-muted small d-block mb-1"><i class="fa-solid fa-key me-1 text-gold"></i>Chave Pix para Transferência:</span>
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                  <strong class="text-rose-gold font-monospace fs-5" id="gift-modal-pix-key">11963020240</strong>
+                  <button type="button" class="btn btn-sm btn-outline-rose" onclick="copyGiftPixKey()" title="Copiar Chave Pix">
+                    <i class="fa-solid fa-copy"></i>
+                  </button>
+                </div>
+                <div class="text-muted mt-1" style="font-size: 0.72rem;">Copie a chave Pix acima e realize o pagamento no seu app do banco.</div>
               </div>
               <button type="submit" class="btn btn-rose w-100 py-3 mt-2">
-                <i class="fa-solid fa-gift me-2"></i>Reservar este Presente
+                <i class="fa-solid fa-gift me-2"></i>Confirmar Presente no Site
               </button>
             </form>
           </div>

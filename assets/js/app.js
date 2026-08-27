@@ -749,11 +749,17 @@ function renderGifts(giftsData) {
   });
 }
 
-function openGiftReservation(id, name, desc, val) {
+async function openGiftReservation(id, name, desc, val) {
   document.getElementById("gift-modal-item-id").value = id;
   document.getElementById("gift-modal-item-name").textContent = name;
   document.getElementById("gift-modal-item-desc").textContent = desc;
   document.getElementById("gift-modal-item-val").textContent = `R$ ${val.toFixed(2)}`;
+  
+  const db = await DB.get();
+  const pixKeyElement = document.getElementById("gift-modal-pix-key");
+  if (pixKeyElement && db && db.config) {
+    pixKeyElement.textContent = db.config.pixKey || "11963020240";
+  }
   
   const modal = new bootstrap.Modal(document.getElementById("confirmGiftModal"));
   modal.show();
@@ -913,6 +919,16 @@ function copyPixKey() {
   });
 }
 window.copyPixKey = copyPixKey;
+
+function copyGiftPixKey() {
+  const keyText = document.getElementById("gift-modal-pix-key").textContent;
+  navigator.clipboard.writeText(keyText).then(() => {
+    alert("Chave Pix copiada com sucesso! Cole no seu banco para fazer a transferência.");
+  }).catch(err => {
+    console.error("Erro ao copiar: ", err);
+  });
+}
+window.copyGiftPixKey = copyGiftPixKey;
 
 async function handlePixContribution(event) {
   event.preventDefault();
