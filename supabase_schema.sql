@@ -1,6 +1,12 @@
 -- SCHEMA SQL PARA CONFIGURAÇÃO DO BANCO DE DADOS NO SUPABASE
 -- Copie todo este conteúdo e cole no SQL Editor do seu projeto no Supabase, depois execute.
 
+-- 0. APAGAR TABELAS ANTIGAS SE EXISTIREM PARA REATUALIZAR O SCHEMA CACHE
+drop table if exists settings cascade;
+drop table if exists rsvps cascade;
+drop table if exists messages cascade;
+drop table if exists gifts cascade;
+
 -- 1. TABELA DE CONFIGURAÇÕES GERAIS (SALVA TEXTOS, TIMELINE, CRONOGRAMA, GALERIA, TRACKS)
 create table if not exists settings (
   key text primary key,
@@ -62,21 +68,19 @@ insert into settings (key, value) values (
     "partyDate": "2026-11-02T21:00:00",
     "birthdayDate": "2026-11-02T00:00:00",
     "quote": "Cada sonho merece uma noite para se tornar realidade.",
-    "heroImage": "https://images.unsplash.com/photo-1549417229-aa67d3263c09?q=80&w=1920",
+    "heroImage": "assets/IMG/fundo_hero_azul.jpeg",
     "musicTracks": [
-      {"id": "1", "title": "Beauty and the Beast (Piano)", "artist": "Disney Instrumental", "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"},
-      {"id": "2", "title": "Valsa das Flores", "artist": "Tchaikovsky", "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"},
-      {"id": "3", "title": "Perfect (Piano Version)", "artist": "Ed Sheeran Cover", "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"}
+      {"id": "1", "title": "Video Games", "artist": "Lana Del Rey", "url": "https://archive.org/download/relax-fm-collection-vol.1-11/Relax%20FM%20-%20Collection%20%28Vol.1-11%29/2013%20-%20Relax%20FM%20-%20vol.11/09.%20Lana%20Del%20Rey%20-%20Video%20Games.mp3"}
     ],
     "currentTrackId": "1",
-    "pixKey": "lavinia15anos@pix.com.br",
-    "pixQrCode": "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=00020101021126580014br.gov.bcb.pix0119lavinia15anos@pix.com.br5204000053039865802BR5925LAVINIA%20DOS%20SANTOS%20MATTOS6009SAO%20PAULO62070503***63041A2D",
+    "pixKey": "11963020240",
+    "pixQrCode": "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=00020101021226330014br.gov.bcb.pix0111119630202405204000053039865802BR5925LAVINIA%20DOS%20SANTOS%20MATTOS6009SAO%20PAULO62070503***630452D5",
     "dressCode": "Gala / Esporte Fino: Sugerimos tons pastéis claros para harmonizar com nosso Jardim Encantado.",
     "location": {
-      "address": "Mansão das Flores, Av. das Rosas, 1500 - Rio de Janeiro, RJ",
-      "time": "21:00",
+      "address": "Rua Piracicaba, 79 - Vila Augusta",
+      "time": "18:00",
       "parking": "Serviço de manobrista gratuito no local para todos os convidados.",
-      "mapUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3673.84478149867!2d-43.22699892377747!3d-22.955986479219894!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997fd59828d11f%3A0x2865910fae13467e!2sParque%20Lage!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr"
+      "mapUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3659.1834162794715!2d-46.57467612470732!3d-23.473551578854424!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce58a9833f444f%3A0xe54d89e1a1b411d7!2sBuffet%20Venturi!5e0!3m2!1spt-BR!2sbr!4v1723983240000!5m2!1spt-BR!2sbr"
     },
     "timeline": [
       {
@@ -84,47 +88,55 @@ insert into settings (key, value) values (
         "age": "Nascimento (2011)",
         "title": "O início de tudo",
         "description": "Lavinia chegou trazendo luz e alegria ao mundo no dia 2 de novembro de 2011. Um bebê doce que desde cedo já encantava a todos com seu sorriso.",
-        "image": "https://images.unsplash.com/photo-1519689680058-324335c77ebe?q=80&w=800"
+        "image": ""
       },
       {
         "id": "t2",
         "age": "5 Anos (2016)",
         "title": "Primeiros passinhos no jardim",
         "description": "Amante da natureza e de brincar ao ar livre. Aqui ela já ensaiava seus primeiros passos de dança e adorava se fantasiar de princesa.",
-        "image": "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=800"
+        "image": ""
       },
       {
         "id": "t3",
         "age": "10 Anos (2021)",
         "title": "Descobertas e Amizades",
         "description": "Uma menina sonhadora, dedicada aos estudos e muito apegada à família. Seu amor pelas artes e pela música começou a florescer.",
-        "image": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800"
+        "image": ""
       },
       {
         "id": "t4",
         "age": "15 Anos (Hoje)",
         "title": "A realização de um sonho",
         "description": "Chegou o grande momento! Lavinia floresceu e está pronta para celebrar o início de um novo capítulo em uma noite mágica cercada de quem ama.",
-        "image": "https://images.unsplash.com/photo-1549417229-aa67d3263c09?q=80&w=800"
+        "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg"
       }
     ],
     "gallery": [
-      { "id": "g1", "title": "Ensaio Jardim 1", "category": "ensaio", "image": "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=800" },
-      { "id": "g2", "title": "Sorriso Doce", "category": "ensaio", "image": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=800" },
-      { "id": "g3", "title": "Recordação de Infância", "category": "infancia", "image": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800" },
-      { "id": "g4", "title": "Com a Família", "category": "familia", "image": "https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=800" },
-      { "id": "g5", "title": "Brilho no Olhar", "category": "ensaio", "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800" },
-      { "id": "g6", "title": "Passeio Especial", "category": "familia", "image": "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=800" }
+      { "id": "g1", "title": "Caminho dos Sonhos", "category": "ensaio", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg", "featured": true },
+      { "id": "g2", "title": "Sorriso Encantado", "category": "ensaio", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg" },
+      { "id": "g3", "title": "Momento com a Mãe 1", "category": "familia", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg" },
+      { "id": "g5", "title": "Momento com a Mãe 3", "category": "familia", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (2).jpeg" },
+      { "id": "g6", "title": "Momento com a Mãe 4", "category": "ensaio", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48.jpeg" },
+      { "id": "g7", "title": "Ensaio Oficial 1", "category": "ensaio", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48 (1).jpeg" },
+      { "id": "g8", "title": "Ensaio Oficial 2", "category": "ensaio", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49.jpeg" },
+      { "id": "g9", "title": "Ensaio Oficial 3", "category": "ensaio", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (1).jpeg" },
+      { "id": "g11", "title": "Ensaio Oficial 5", "category": "ensaio", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50.jpeg" },
+      { "id": "g12", "title": "Ensaio Oficial 6", "category": "ensaio", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg", "featured": true },
+      { "id": "g13", "title": "Ensaio Oficial 7", "category": "ensaio", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.25.42.jpeg" }
     ],
     "videos": [
       { "id": "v1", "title": "Teaser Oficial do Ensaio de 15 Anos", "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ", "type": "youtube" }
     ],
     "schedule": [
-      { "time": "21:00", "title": "Recepção dos Convidados", "icon": "fa-door-open" },
-      { "time": "22:00", "title": "Jantar dos Convidados", "icon": "fa-utensils" },
-      { "time": "23:30", "title": "Cerimonial & Valsa", "icon": "fa-crown" },
-      { "time": "00:30", "title": "Abertura da Balada", "icon": "fa-compact-disc" },
-      { "time": "05:00", "title": "Encerramento da Festa", "icon": "fa-moon" }
+      { "time": "18h00", "title": "Recepção dos convidados", "description": "Abertura da festa e recepção dos convidados.", "icon": "fa-door-open" },
+      { "time": "18h30", "title": "Início da recepção e serviço", "description": "Momento para confraternizar, aproveitar as bebidas e os deliciosos quitutes preparados para a noite.", "icon": "fa-champagne-glasses" },
+      { "time": "19h30", "title": "Preparação para o Cerimonial", "description": "Os convidados serão convidados a se dirigir à pista para o início do momento especial da noite.", "icon": "fa-hourglass-start" },
+      { "time": "19h40", "title": "Cerimonial dos 15 Anos", "description": "Um momento emocionante com homenagens, valsas e a tradicional celebração dos 15 anos da Lavínia.", "icon": "fa-crown" },
+      { "time": "20h40", "title": "Abertura da Balada", "description": "É hora de comemorar! Música, dança e muita diversão com as atrações da festa.", "icon": "fa-compact-disc" },
+      { "time": "21h30", "title": "Bolo, Sorvete e Doces", "description": "Momento especial para saborear o bolo e as delícias da mesa de doces.", "icon": "fa-cake-candles" },
+      { "time": "Após o bolo", "title": "Festa continua!", "description": "A música e a diversão seguem até o encerramento da festa.", "icon": "fa-glass-cheers" },
+      { "time": "23h00", "title": "Encerramento", "description": "Finalização da comemoração. Prepare-se para uma noite inesquecível!", "icon": "fa-moon" }
     ]
   }'
 ) on conflict (key) do update set value = excluded.value;

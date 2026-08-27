@@ -34,7 +34,6 @@
         <div class="mb-4">
           <label for="admin-password" class="form-label">Senha de Acesso</label>
           <input type="password" class="form-control text-center py-3" id="admin-password" required placeholder="Insira a senha do painel">
-          <div class="form-text text-center small mt-2">Dica: A senha padrão é <b>lavinia15</b></div>
         </div>
         <button type="submit" class="btn btn-rose w-100 py-3 scale-hover">
           <i class="fa-solid fa-right-to-bracket me-2"></i>Entrar no Painel
@@ -458,6 +457,21 @@
               <div class="col-md-6">
                 <label for="gift-image-field" class="form-label">URL Imagem</label>
                 <input type="url" class="form-control" id="gift-image-field">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="gift-image-file" class="form-label">Ou envie uma foto do dispositivo</label>
+              <input type="file" class="form-control" id="gift-image-file" accept="image/*">
+              <div class="form-text">Recomendado: escolha uma imagem do seu dispositivo para preencher a URL automaticamente.</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label d-block">Pré-visualização da Imagem</label>
+              <div id="gift-image-preview-wrapper" class="border rounded d-flex align-items-center justify-content-center bg-light" style="height: 120px; overflow: hidden; border-style: dashed !important;">
+                <img id="gift-image-preview" src="" alt="Pré-visualização" class="d-none" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                <span id="gift-image-preview-placeholder" class="text-muted small"><i class="fa-solid fa-image me-1"></i> Nenhuma imagem carregada</span>
+              </div>
+              <div id="gift-image-error-msg" class="text-warning small mt-1 d-none" style="font-weight: 500;">
+                <i class="fa-solid fa-triangle-exclamation me-1"></i> Atenção: Esta imagem pode não carregar no site (bloqueio de link externo ou link de página). Se não funcionar, prefira enviar o arquivo pelo botão acima.
               </div>
             </div>
             <div class="form-check mb-4">

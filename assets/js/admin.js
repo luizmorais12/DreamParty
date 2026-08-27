@@ -12,6 +12,35 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Verifica Autenticação
   await checkAuth();
+
+  // Listener para conversão de imagem de presente para Base64
+  const giftImageFileInput = document.getElementById("gift-image-file");
+  if (giftImageFileInput) {
+    giftImageFileInput.addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.size > 2 * 1024 * 1024) {
+          alert("A imagem selecionada é muito grande! Por favor, escolha uma imagem com menos de 2MB.");
+          e.target.value = "";
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          document.getElementById("gift-image-field").value = evt.target.result;
+          updateGiftImagePreview(evt.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Listener para pré-visualizar e corrigir links digitados/copiados de imagens
+  const giftImageInput = document.getElementById("gift-image-field");
+  if (giftImageInput) {
+    giftImageInput.addEventListener("input", function(e) {
+      updateGiftImagePreview(e.target.value);
+    });
+  }
 });
 
 /* ==========================================================================
@@ -250,9 +279,13 @@ async function renderGuestTable() {
 
 async function deleteGuest(id) {
   if (confirm("Tem certeza que deseja excluir esta confirmação? Os dados serão removidos definitivamente.")) {
-    await DB.deleteRsvp(id);
-    await renderGuestTable();
-    await updateDashboardStats();
+    const success = await DB.deleteRsvp(id);
+    if (success) {
+      await renderGuestTable();
+      await updateDashboardStats();
+    } else {
+      alert("Erro ao excluir convidado. Detalhes: " + (DB.lastError || "Erro de permissão ou conexão") + "\n\nSe estiver usando o Supabase, certifique-se de que desabilitou a segurança de linha (RLS) para a tabela 'rsvps' executando o script SQL no editor do Supabase.");
+    }
   }
 }
 window.deleteGuest = deleteGuest;
@@ -284,16 +317,19 @@ async function handleManualGuestAdd(event) {
     dateConfirmed: new Date().toISOString()
   };
 
-  await DB.saveRsvp(newRsvp);
+  const success = await DB.saveRsvp(newRsvp);
+  if (success) {
+    const modalEl = document.getElementById("addGuestModal");
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    modal.hide();
 
-  const modalEl = document.getElementById("addGuestModal");
-  const modal = bootstrap.Modal.getInstance(modalEl);
-  modal.hide();
+    document.getElementById("add-guest-form").reset();
 
-  document.getElementById("add-guest-form").reset();
-
-  await renderGuestTable();
-  await updateDashboardStats();
+    await renderGuestTable();
+    await updateDashboardStats();
+  } else {
+    alert("Erro ao salvar convidado. Detalhes: " + (DB.lastError || "Erro de permissão ou conexão") + "\n\nSe estiver usando o Supabase, certifique-se de que desabilitou a segurança de linha (RLS) para a tabela 'rsvps' executando o script SQL no editor do Supabase.");
+  }
 }
 window.handleManualGuestAdd = handleManualGuestAdd;
 
@@ -385,18 +421,26 @@ async function approveMessage(id) {
   const msg = db.messages.find(m => m.id === id);
   if (msg) {
     msg.approved = true;
-    await DB.saveMessage(msg);
-    await renderModerationGrid();
-    await updateDashboardStats();
+    const success = await DB.saveMessage(msg);
+    if (success) {
+      await renderModerationGrid();
+      await updateDashboardStats();
+    } else {
+      alert("Erro ao aprovar mensagem. Detalhes: " + (DB.lastError || "Erro de permissão ou conexão") + "\n\nSe estiver usando o Supabase, certifique-se de que desabilitou a segurança de linha (RLS) para a tabela 'messages' executando o script SQL no editor do Supabase.");
+    }
   }
 }
 window.approveMessage = approveMessage;
 
 async function deleteMessage(id) {
   if (confirm("Excluir esta mensagem de forma definitiva?")) {
-    await DB.deleteMessage(id);
-    await renderModerationGrid();
-    await updateDashboardStats();
+    const success = await DB.deleteMessage(id);
+    if (success) {
+      await renderModerationGrid();
+      await updateDashboardStats();
+    } else {
+      alert("Erro ao excluir mensagem. Detalhes: " + (DB.lastError || "Erro de permissão ou conexão") + "\n\nSe estiver usando o Supabase, certifique-se de que desabilitou a segurança de linha (RLS) para a tabela 'messages' executando o script SQL no editor do Supabase.");
+    }
   }
 }
 window.deleteMessage = deleteMessage;
@@ -452,6 +496,7 @@ function openAddGiftModal() {
   document.getElementById("gift-chosen-field").checked = false;
   document.getElementById("gift-chosen-by-wrapper").classList.add("d-none");
   document.getElementById("giftModalLabel").textContent = "Novo Presente";
+  updateGiftImagePreview("");
 
   const modal = new bootstrap.Modal(document.getElementById("giftModal"));
   modal.show();
@@ -468,6 +513,11 @@ async function openEditGiftModal(id) {
   document.getElementById("gift-desc-field").value = gift.description;
   document.getElementById("gift-value-field").value = gift.value;
   document.getElementById("gift-image-field").value = gift.image;
+  
+  const fileInput = document.getElementById("gift-image-file");
+  if (fileInput) fileInput.value = "";
+  
+  updateGiftImagePreview(gift.image);
   
   const chosenChk = document.getElementById("gift-chosen-field");
   chosenChk.checked = gift.chosen;
@@ -524,22 +574,29 @@ async function handleGiftSave(event) {
     chosenBy: chosen ? chosenBy : ""
   };
 
-  await DB.saveGift(giftData);
+  const success = await DB.saveGift(giftData);
+  if (success) {
+    const modalEl = document.getElementById("giftModal");
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    modal.hide();
 
-  const modalEl = document.getElementById("giftModal");
-  const modal = bootstrap.Modal.getInstance(modalEl);
-  modal.hide();
-
-  await renderGiftsAdmin();
-  await updateDashboardStats();
+    await renderGiftsAdmin();
+    await updateDashboardStats();
+  } else {
+    alert("Erro ao salvar presente. Detalhes: " + (DB.lastError || "Erro de permissão ou conexão") + "\n\nSe estiver usando o Supabase, certifique-se de que desabilitou a segurança de linha (RLS) para a tabela 'gifts' executando o script SQL no editor do Supabase.");
+  }
 }
 window.handleGiftSave = handleGiftSave;
 
 async function deleteGift(id) {
   if (confirm("Remover este presente da lista definitivamente?")) {
-    await DB.deleteGift(id);
-    await renderGiftsAdmin();
-    await updateDashboardStats();
+    const success = await DB.deleteGift(id);
+    if (success) {
+      await renderGiftsAdmin();
+      await updateDashboardStats();
+    } else {
+      alert("Erro ao excluir presente. Detalhes: " + (DB.lastError || "Erro de permissão ou conexão") + "\n\nSe estiver usando o Supabase, certifique-se de que desabilitou a segurança de linha (RLS) para a tabela 'gifts' executando o script SQL no editor do Supabase.");
+    }
   }
 }
 window.deleteGift = deleteGift;
@@ -808,3 +865,62 @@ function toggleAdminSidebar(show) {
   }
 }
 window.toggleAdminSidebar = toggleAdminSidebar;
+
+/* ==========================================================================
+   11. PRÉ-VISUALIZAÇÃO E AUTO-CORREÇÃO DE IMAGENS DE PRESENTES
+   ========================================================================== */
+function updateGiftImagePreview(url) {
+  const previewImg = document.getElementById("gift-image-preview");
+  const placeholder = document.getElementById("gift-image-preview-placeholder");
+  const errorMsg = document.getElementById("gift-image-error-msg");
+
+  if (!previewImg || !placeholder || !errorMsg) return;
+
+  if (!url || !url.trim()) {
+    previewImg.classList.add("d-none");
+    previewImg.src = "";
+    placeholder.classList.remove("d-none");
+    errorMsg.classList.add("d-none");
+    return;
+  }
+
+  let correctedUrl = url.trim();
+
+  // Correção de link de visualização do Google Drive para link direto de imagem
+  const driveFileRegex = /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/;
+  const driveOpenRegex = /drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/;
+  
+  if (driveFileRegex.test(correctedUrl)) {
+    const fileId = correctedUrl.match(driveFileRegex)[1];
+    correctedUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
+    document.getElementById("gift-image-field").value = correctedUrl;
+  } else if (driveOpenRegex.test(correctedUrl)) {
+    const fileId = correctedUrl.match(driveOpenRegex)[1];
+    correctedUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
+    document.getElementById("gift-image-field").value = correctedUrl;
+  }
+
+  // Tenta carregar a imagem em background para verificar se funciona
+  const tempImg = new Image();
+  tempImg.onload = function() {
+    previewImg.src = correctedUrl;
+    previewImg.classList.remove("d-none");
+    placeholder.classList.add("d-none");
+    errorMsg.classList.add("d-none");
+  };
+  tempImg.onerror = function() {
+    // Se for Base64 local (começa com data:), ela é considerada válida
+    if (correctedUrl.startsWith("data:")) {
+      previewImg.src = correctedUrl;
+      previewImg.classList.remove("d-none");
+      placeholder.classList.add("d-none");
+      errorMsg.classList.add("d-none");
+    } else {
+      previewImg.classList.add("d-none");
+      placeholder.classList.remove("d-none");
+      errorMsg.classList.remove("d-none");
+    }
+  };
+  tempImg.src = correctedUrl;
+}
+window.updateGiftImagePreview = updateGiftImagePreview;

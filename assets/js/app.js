@@ -517,14 +517,12 @@ function renderDynamicContentLocal() {
   const updatedGallery = [
     { id: "g1", title: "Caminho dos Sonhos", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg", featured: true },
     { id: "g2", title: "Sorriso Encantado", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg" },
-    { id: "g3", title: "Momento com a Mãe 1", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg", featured: true },
-    { id: "g4", title: "Momento com a Mãe 2", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (1).jpeg" },
+    { id: "g3", title: "Momento com a Mãe 1", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg" },
     { id: "g5", title: "Momento com a Mãe 3", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (2).jpeg" },
-    { id: "g6", title: "Momento com a Mãe 4", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48.jpeg" },
+    { id: "g6", title: "Momento com a Mãe 4", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48.jpeg" },
     { id: "g7", title: "Ensaio Oficial 1", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48 (1).jpeg" },
     { id: "g8", title: "Ensaio Oficial 2", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49.jpeg" },
     { id: "g9", title: "Ensaio Oficial 3", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (1).jpeg" },
-    { id: "g10", title: "Ensaio Oficial 4", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (2).jpeg" },
     { id: "g11", title: "Ensaio Oficial 5", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50.jpeg" },
     { id: "g12", title: "Ensaio Oficial 6", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg", featured: true },
     { id: "g13", title: "Ensaio Oficial 7", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.25.42.jpeg" }
@@ -988,15 +986,18 @@ async function submitMessage(event) {
     approved: false // Necessita aprovação do moderador
   };
 
-  await DB.saveMessage(newMsg);
-
-  const successAlert = document.getElementById("msg-success-alert");
-  successAlert.classList.remove("d-none");
-  document.getElementById("msg-guestbook-form").reset();
-  
-  setTimeout(() => {
-    successAlert.classList.add("d-none");
-  }, 6000);
+  const success = await DB.saveMessage(newMsg);
+  if (success) {
+    const successAlert = document.getElementById("msg-success-alert");
+    successAlert.classList.remove("d-none");
+    document.getElementById("msg-guestbook-form").reset();
+    
+    setTimeout(() => {
+      successAlert.classList.add("d-none");
+    }, 6000);
+  } else {
+    alert("Houve um erro ao enviar seu recado. Por favor, tente novamente mais tarde ou contate a debutante.");
+  }
 }
 window.submitMessage = submitMessage;
 
@@ -1088,22 +1089,25 @@ async function submitRSVP(event) {
     dateConfirmed: new Date().toISOString()
   };
 
-  await DB.saveRsvp(newRsvp);
-  
-  if (message.trim()) {
-    await DB.saveMessage({
-      id: "m_rsvp_" + Date.now(),
-      author: name,
-      relation: "Convidado",
-      text: message,
-      date: new Date().toISOString(),
-      approved: false
-    });
-  }
+  const success = await DB.saveRsvp(newRsvp);
+  if (success) {
+    if (message.trim()) {
+      await DB.saveMessage({
+        id: "m_rsvp_" + Date.now(),
+        author: name,
+        relation: "Convidado",
+        text: message,
+        date: new Date().toISOString(),
+        approved: false
+      });
+    }
 
-  document.getElementById("rsvp-form").classList.add("d-none");
-  document.getElementById("rsvp-success-alert").classList.remove("d-none");
-  document.getElementById("rsvp").scrollIntoView({ behavior: "smooth" });
+    document.getElementById("rsvp-form").classList.add("d-none");
+    document.getElementById("rsvp-success-alert").classList.remove("d-none");
+    document.getElementById("rsvp").scrollIntoView({ behavior: "smooth" });
+  } else {
+    alert("Houve um erro ao confirmar sua presença. Por favor, tente novamente mais tarde ou contate a debutante.");
+  }
 
   await updateRSVPStats();
   
