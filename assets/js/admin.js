@@ -260,13 +260,13 @@ async function renderGuestTable() {
 
     row.innerHTML = `
       <td class="fw-bold">${rsvp.name}</td>
-      <td>${rsvp.phone || "--"}</td>
-      <td class="text-lowercase">${rsvp.email || "--"}</td>
+      <td class="d-none d-md-table-cell">${rsvp.phone || "--"}</td>
+      <td class="d-none d-lg-table-cell text-lowercase">${rsvp.email || "--"}</td>
       <td class="text-center">${rsvp.adultsCount}</td>
       <td class="text-center">${rsvp.kidsCount}</td>
-      <td class="text-muted text-truncate" style="max-width: 150px;" title="${rsvp.companionNames || ""}">${rsvp.companionNames || "--"}</td>
+      <td class="d-none d-md-table-cell text-muted text-truncate" style="max-width: 150px;" title="${rsvp.companionNames || ""}">${rsvp.companionNames || "--"}</td>
       <td>${rLabel}</td>
-      <td class="text-muted">${dConfirmed}</td>
+      <td class="d-none d-md-table-cell text-muted">${dConfirmed}</td>
       <td class="text-center">
         <button class="btn btn-sm btn-outline-danger" onclick="deleteGuest('${rsvp.id}')" title="Excluir Convidado">
           <i class="fa-solid fa-trash-can"></i>
