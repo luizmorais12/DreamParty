@@ -68,6 +68,9 @@
             <a href="#" class="admin-nav-item" onclick="switchSection('presentes', this)">
               <i class="fa-solid fa-gift"></i> Presentes
             </a>
+            <a href="#" class="admin-nav-item" onclick="switchSection('fotos-convidados', this)">
+              <i class="fa-solid fa-images"></i> Fotos Convidados
+            </a>
             <a href="#" class="admin-nav-item" onclick="switchSection('conteudo', this)">
               <i class="fa-solid fa-sliders"></i> Conteúdo Site
             </a>
@@ -258,6 +261,25 @@
                 <div class="card-body p-4">
                   <div class="row g-4" id="gifts-admin-grid">
                     <!-- Cards de presentes em modo de edição -->
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ==========================================
+                 SEÇÃO 4.5: FOTOS DOS CONVIDADOS
+                 ========================================== -->
+            <section id="sec-fotos-convidados" class="admin-section d-none">
+              <div class="card admin-card">
+                <div class="admin-card-header font-heading">
+                  <i class="fa-solid fa-images me-2 text-rose-gold"></i>Fotos Enviadas pelos Convidados
+                </div>
+                <div class="card-body p-4">
+                  <div class="alert alert-info mb-4">
+                    <i class="fa-solid fa-circle-info me-1"></i> Aqui você pode visualizar e excluir as fotos enviadas pelos convidados na festa. As fotos excluídas sumirão do site imediatamente.
+                  </div>
+                  <div class="row g-3" id="guest-photos-admin-grid">
+                    <!-- Cards de fotos inseridos por JS -->
                   </div>
                 </div>
               </div>

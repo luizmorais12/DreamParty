@@ -134,6 +134,8 @@ async function switchSection(sectionId, element) {
     await renderModerationGrid();
   } else if (sectionId === "presentes") {
     await renderGiftsAdmin();
+  } else if (sectionId === "fotos-convidados") {
+    await renderGuestPhotosAdmin();
   }
 }
 window.switchSection = switchSection;
@@ -612,6 +614,64 @@ async function deleteGift(id) {
   }
 }
 window.deleteGift = deleteGift;
+
+/* ==========================================================================
+   7.5. GERENCIAMENTO DAS FOTOS DOS CONVIDADOS
+   ========================================================================== */
+async function renderGuestPhotosAdmin() {
+  const db = await DB.get();
+  const grid = document.getElementById("guest-photos-admin-grid");
+  if (!grid) return;
+  grid.innerHTML = "";
+
+  const guestPhotos = (db.gallery || []).filter(item => item.category === "convidados");
+
+  if (guestPhotos.length === 0) {
+    grid.innerHTML = `
+      <div class="col-12 text-center text-muted py-5">
+        <i class="fa-solid fa-images fs-1 mb-3 d-block text-rose-gold"></i>
+        Nenhuma foto foi enviada pelos convidados ainda.
+      </div>
+    `;
+    return;
+  }
+
+  guestPhotos.forEach(item => {
+    const col = document.createElement("div");
+    col.classList.add("col-sm-6", "col-md-4", "col-lg-3");
+
+    col.innerHTML = `
+      <div class="card h-100 shadow-sm" style="border-radius: 12px; overflow: hidden; border: 1px solid #eee;">
+        <div style="height: 180px; overflow: hidden; position: relative; background: #fafafa;">
+          <img src="${item.image}" alt="${item.title}" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="card-body p-3 d-flex flex-column justify-content-between">
+          <div class="mb-3">
+            <h6 class="fw-bold mb-1 text-truncate" title="${item.title}">${item.title}</h6>
+            <span class="badge bg-secondary-subtle text-secondary small">Foto do Convidado</span>
+          </div>
+          <button class="btn btn-sm btn-outline-danger w-100" onclick="deleteGuestPhoto('${item.id}')">
+            <i class="fa-solid fa-trash me-1"></i> Excluir Foto
+          </button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(col);
+  });
+}
+window.renderGuestPhotosAdmin = renderGuestPhotosAdmin;
+
+async function deleteGuestPhoto(id) {
+  if (confirm("Deseja realmente excluir esta foto? Ela será removida definitivamente do site.")) {
+    const success = await DB.deleteGalleryItem(id);
+    if (success) {
+      await renderGuestPhotosAdmin();
+    } else {
+      alert("Erro ao excluir foto. Detalhes: " + (DB.lastError || "Erro de conexão."));
+    }
+  }
+}
+window.deleteGuestPhoto = deleteGuestPhoto;
 
 /* ==========================================================================
    8. CONFIGURAÇÕES DO CONTEÚDO DO SITE (FORMULÁRIOS)

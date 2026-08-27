@@ -567,6 +567,35 @@ const DB = {
     }
   },
 
+  deleteGalleryItem: async (id) => {
+    const db = await DB.get();
+    db.gallery = db.gallery.filter(item => item.id !== id);
+    
+    if (DB.isSupabase && DB.supabaseClient) {
+      try {
+        const { data: settingsData } = await DB.supabaseClient.from('settings').select('*').eq('key', 'site_config').maybeSingle();
+        let val = settingsData ? settingsData.value : {};
+        val.gallery = db.gallery;
+        
+        const { error } = await DB.supabaseClient.from('settings').upsert({
+          key: 'site_config',
+          value: val
+        });
+        if (error) throw error;
+        return true;
+      } catch (err) {
+        console.error("Falha ao deletar item da galeria no Supabase:", err);
+        DB.lastError = err.message || err;
+        return false;
+      }
+    } else {
+      const localDb = loadDBLocal();
+      localDb.gallery = localDb.gallery.filter(item => item.id !== id);
+      saveDBLocal(localDb);
+      return true;
+    }
+  },
+
   // Reseta banco de dados para os valores padrão
   reset: async () => {
     if (DB.isSupabase && DB.supabaseClient) {
