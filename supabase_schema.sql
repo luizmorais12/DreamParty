@@ -45,7 +45,8 @@ create table if not exists gifts (
   value numeric(10, 2) not null,
   image text,
   chosen boolean default false,
-  chosen_by text
+  chosen_by text,
+  collective boolean default false
 );
 
 -- Habilitar leitura pública para todas as tabelas (importante para o site estático)
@@ -142,13 +143,13 @@ insert into settings (key, value) values (
 ) on conflict (key) do update set value = excluded.value;
 
 -- Popula Lista de Presentes Inicial
-insert into gifts (id, name, description, value, image, chosen, chosen_by) values
-  ('gft1', 'Passaporte para o País das Maravilhas', 'Ajude Lavinia a fazer sua viagem dos sonhos após a festa.', 500.00, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=300', false, ''),
-  ('gft2', 'Ensaio Fotográfico Álbum de Luxo', 'Uma recordação eterna impressa em papel fotográfico importado.', 300.00, 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=300', false, ''),
-  ('gft3', 'Dia de Princesa no SPA', 'Massagem relaxante, banho de pétalas e cuidados especiais pré-festa.', 200.00, 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=300', false, ''),
-  ('gft4', 'Sapato de Cristal da Valsa', 'Contribuição para o icônico sapato que será usado na valsa da meia-noite.', 150.00, 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=300', true, 'Maria Alice (Tia)'),
-  ('gft5', 'Arranjo Flor de Cerejeira', 'Ajuda para a ambientação com lindas flores de cerejeira na entrada.', 100.00, 'https://images.unsplash.com/photo-1522748906645-95d8adfd52c7?q=80&w=300', false, ''),
-  ('gft6', 'Caixa de Bombons Finos Belgas', 'Mimos doces para adoçar a mesa de doces finos.', 50.00, 'https://images.unsplash.com/photo-1549007994-cb92ca888bd6?q=80&w=300', false, '')
+insert into gifts (id, name, description, value, image, chosen, chosen_by, collective) values
+  ('gft1', 'Passaporte para o País das Maravilhas', 'Ajude Lavinia a fazer sua viagem dos sonhos após a festa.', 500.00, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=300', false, '', true),
+  ('gft2', 'Ensaio Fotográfico Álbum de Luxo', 'Uma recordação eterna impressa em papel fotográfico importado.', 300.00, 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=300', false, '', false),
+  ('gft3', 'Dia de Princesa no SPA', 'Massagem relaxante, banho de pétalas e cuidados especiais pré-festa.', 200.00, 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=300', false, '', true),
+  ('gft4', 'Sapato de Cristal da Valsa', 'Contribuição para o icônico sapato que será usado na valsa da meia-noite.', 150.00, 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=300', true, 'Maria Alice (Tia)', false),
+  ('gft5', 'Arranjo Flor de Cerejeira', 'Ajuda para a ambientação com lindas flores de cerejeira na entrada.', 100.00, 'https://images.unsplash.com/photo-1522748906645-95d8adfd52c7?q=80&w=300', false, '', false),
+  ('gft6', 'Caixa de Bombons Finos Belgas', 'Mimos doces para adoçar a mesa de doces finos.', 50.00, 'https://images.unsplash.com/photo-1549007994-cb92ca888bd6?q=80&w=300', false, '', false)
 on conflict (id) do nothing;
 
 -- Popula Convidados de Teste Inicial

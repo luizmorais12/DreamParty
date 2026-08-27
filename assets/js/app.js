@@ -728,8 +728,16 @@ function renderGifts(giftsData) {
   giftsData.forEach(item => {
     const card = document.createElement("div");
     card.classList.add("col-md-6", "col-lg-4");
+
+    const isChosen = item.chosen && !item.collective;
+    
+    let contributorsHtml = "";
+    if (item.collective && item.chosenBy) {
+      contributorsHtml = `<div class="text-success small mt-1" style="font-weight: 500;"><i class="fa-solid fa-people-group me-1"></i> Já presenteado por: ${item.chosenBy}</div>`;
+    }
+
     card.innerHTML = `
-      <div class="glass-panel gift-card scale-hover ${item.chosen ? "chosen" : ""}" id="gift-card-${item.id}">
+      <div class="glass-panel gift-card scale-hover ${isChosen ? "chosen" : ""}" id="gift-card-${item.id}">
         <div class="gift-img-container">
           <img src="${item.image}" alt="${item.name}">
           <div class="gift-badge">R$ ${item.value.toFixed(2)}</div>
@@ -745,9 +753,10 @@ function renderGifts(giftsData) {
           <h4 class="gift-title">${item.name}</h4>
           <p class="gift-desc">${item.description}</p>
           <div class="gift-value">Valor: R$ ${item.value.toFixed(2)}</div>
-          <button class="btn btn-rose w-100 mt-2" onclick="openGiftReservation('${item.id}', '${item.name}', '${item.description}', ${item.value})" ${item.chosen ? "disabled" : ""}>
-            ${item.chosen ? "Já Presenteado" : '<i class="fa-solid fa-gift me-2"></i>Presentear'}
+          <button class="btn btn-rose w-100 mt-2" onclick="openGiftReservation('${item.id}', '${item.name}', '${item.description}', ${item.value})" ${isChosen ? "disabled" : ""}>
+            ${isChosen ? "Já Presenteado" : '<i class="fa-solid fa-gift me-2"></i>Presentear'}
           </button>
+          ${contributorsHtml}
         </div>
       </div>
     `;
@@ -778,7 +787,11 @@ async function handleChoosePhysicalGift(event) {
   
   if (gift) {
     gift.chosen = true;
-    gift.chosenBy = name;
+    if (gift.collective) {
+      gift.chosenBy = gift.chosenBy ? gift.chosenBy + ", " + name.trim() : name.trim();
+    } else {
+      gift.chosenBy = name.trim();
+    }
     
     await DB.saveGift(gift);
 

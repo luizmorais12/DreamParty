@@ -467,6 +467,10 @@ async function renderGiftsAdmin() {
       ? `<span class="badge bg-danger-subtle text-danger px-3 py-1 rounded-pill border border-danger-subtle text-wrap">Escolhido por: ${item.chosenBy}</span>`
       : `<span class="badge bg-success-subtle text-success px-3 py-1 rounded-pill border border-success-subtle">Disponível</span>`;
 
+    const collectiveBadge = item.collective
+      ? `<span class="badge bg-info-subtle text-info px-2 py-1 rounded-pill border border-info-subtle ms-1"><i class="fa-solid fa-people-group me-1"></i> Coletivo</span>`
+      : "";
+
     col.innerHTML = `
       <div class="card h-100 shadow-sm" style="border-radius:15px; overflow:hidden;">
         <div style="height: 150px; overflow: hidden; position: relative;">
@@ -477,7 +481,7 @@ async function renderGiftsAdmin() {
           <div>
             <h5 class="font-heading fs-6 fw-bold mb-2">${item.name}</h5>
             <p class="text-muted small mb-3 text-truncate-2" style="max-height: 40px; overflow:hidden;">${item.description}</p>
-            <div class="mb-3">${badge}</div>
+            <div class="mb-3">${badge}${collectiveBadge}</div>
           </div>
           <div class="d-flex gap-2">
             <button class="btn btn-sm btn-outline-secondary w-100" onclick="openEditGiftModal('${item.id}')"><i class="fa-solid fa-pen-to-square me-1"></i> Editar</button>
@@ -494,6 +498,7 @@ function openAddGiftModal() {
   document.getElementById("gift-form").reset();
   document.getElementById("gift-id-field").value = "";
   document.getElementById("gift-chosen-field").checked = false;
+  document.getElementById("gift-collective-field").checked = false;
   document.getElementById("gift-chosen-by-wrapper").classList.add("d-none");
   document.getElementById("giftModalLabel").textContent = "Novo Presente";
   updateGiftImagePreview("");
@@ -521,6 +526,11 @@ async function openEditGiftModal(id) {
   
   const chosenChk = document.getElementById("gift-chosen-field");
   chosenChk.checked = gift.chosen;
+
+  const collectiveChk = document.getElementById("gift-collective-field");
+  if (collectiveChk) {
+    collectiveChk.checked = gift.collective || false;
+  }
 
   const wrapper = document.getElementById("gift-chosen-by-wrapper");
   const chosenByField = document.getElementById("gift-chosen-by-field");
@@ -561,6 +571,7 @@ async function handleGiftSave(event) {
   const image = document.getElementById("gift-image-field").value || "https://images.unsplash.com/photo-1549417229-aa67d3263c09?q=80&w=300";
   const chosen = document.getElementById("gift-chosen-field").checked;
   const chosenBy = document.getElementById("gift-chosen-by-field").value;
+  const collective = document.getElementById("gift-collective-field").checked;
 
   if (!name.trim()) return;
 
@@ -571,7 +582,8 @@ async function handleGiftSave(event) {
     value,
     image,
     chosen,
-    chosenBy: chosen ? chosenBy : ""
+    chosenBy: chosen ? chosenBy : "",
+    collective
   };
 
   const success = await DB.saveGift(giftData);
