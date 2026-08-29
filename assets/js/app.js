@@ -50,32 +50,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     });
   }
-  // Resetar telas de sucesso dos modals ao fechar
-  const confirmGiftModal = document.getElementById("confirmGiftModal");
-  if (confirmGiftModal) {
-    confirmGiftModal.addEventListener("hidden.bs.modal", () => {
-      const formWrap = document.getElementById("confirm-gift-form-wrapper");
-      const successWrap = document.getElementById("confirm-gift-success-wrapper");
-      if (formWrap) formWrap.classList.remove("d-none");
-      if (successWrap) successWrap.classList.add("d-none");
-    });
-  }
-
-  const pixDonationModal = document.getElementById("pixDonationModal");
-  if (pixDonationModal) {
-    pixDonationModal.addEventListener("show.bs.modal", () => {
-      // Pré-seleciona a opção de R$ 200 ao abrir
-      const defaultCard = document.querySelector(".pix-options-grid .pix-val-card[onclick*='200']");
-      if (defaultCard) {
-        selectPixValue(200, defaultCard);
-      }
-    });
-    pixDonationModal.addEventListener("hidden.bs.modal", () => {
-      const formWrap = document.getElementById("pix-modal-form-wrapper");
-      const successWrap = document.getElementById("pix-modal-success-wrapper");
-      if (formWrap) formWrap.classList.remove("d-none");
-      if (successWrap) successWrap.classList.add("d-none");
-    });
+  // Pré-seleciona a opção de Pix padrão de R$ 200 ao carregar a página
+  const defaultCard = document.querySelector(".pix-options-grid .pix-val-card[onclick*='200']");
+  if (defaultCard) {
+    selectPixValue(200, defaultCard);
   }
 });
 
@@ -484,12 +462,26 @@ function applyDatabaseToDOM(db) {
     if (keyDisplay) {
       keyDisplay.textContent = db.config.pixKey;
     }
+    // Atualizar o QR Code com a chave carregada do banco mantendo a seleção ativa
+    const activeCard = document.querySelector(".pix-options-grid .pix-val-card.selected");
+    if (activeCard) {
+      if (activeCard.getAttribute("onclick").includes("'custom'")) {
+        updateCustomPixQrCode();
+      } else {
+        const valMatch = activeCard.getAttribute("onclick").match(/selectPixValue\((\d+)/);
+        if (valMatch) {
+          const val = parseFloat(valMatch[1]);
+          const qrcode = document.getElementById("pix-qrcode-img");
+          const pixData = generatePixBRCode(db.config.pixKey, val);
+          qrcode.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixData)}`;
+        }
+      }
+    }
   }
 
   if (db.timeline) renderTimeline(db.timeline);
   if (db.gallery) renderGallery(db.gallery);
   if (db.videos) renderVideos(db.videos);
-  if (db.gifts) renderGifts(db.gifts);
   if (db.messages) renderMessages(db.messages);
   if (db.schedule) renderSchedule(db.schedule);
 }
@@ -720,85 +712,6 @@ function renderVideos(videosData) {
   `;
 }
 
-function renderGifts(giftsData) {
-  const grid = document.getElementById("gifts-grid");
-  if (!grid) return;
-  grid.innerHTML = "";
-
-  giftsData.forEach(item => {
-    const card = document.createElement("div");
-    card.classList.add("col-md-6", "col-lg-4");
-
-    card.innerHTML = `
-      <div class="glass-panel gift-card scale-hover" id="gift-card-${item.id}">
-        <div class="gift-img-container">
-          <img src="${item.image}" alt="${item.name}">
-          <div class="gift-badge">R$ ${item.value.toFixed(2)}</div>
-        </div>
-        <div class="gift-body text-center">
-          <h4 class="gift-title">${item.name}</h4>
-          <p class="gift-desc">${item.description}</p>
-          <div class="gift-value">Valor: R$ ${item.value.toFixed(2)}</div>
-          <button class="btn btn-rose w-100 mt-2" onclick="openGiftReservation('${item.id}', '${item.name}', '${item.description}', ${item.value})">
-            <i class="fa-solid fa-gift me-2"></i>Presentear
-          </button>
-        </div>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-async function openGiftReservation(id, name, desc, val) {
-  document.getElementById("gift-modal-item-id").value = id;
-  document.getElementById("gift-modal-item-name").textContent = name;
-  document.getElementById("gift-modal-item-desc").textContent = desc;
-  document.getElementById("gift-modal-item-val").textContent = `R$ ${val.toFixed(2)}`;
-  
-  const db = await DB.get();
-  const pixKeyElement = document.getElementById("gift-modal-pix-key");
-  if (pixKeyElement && db && db.config) {
-    pixKeyElement.textContent = db.config.pixKey || "11963020240";
-  }
-  
-  const modal = new bootstrap.Modal(document.getElementById("confirmGiftModal"));
-  modal.show();
-}
-window.openGiftReservation = openGiftReservation;
-
-async function handleChoosePhysicalGift(event) {
-  event.preventDefault();
-  const id = document.getElementById("gift-modal-item-id").value;
-  const name = document.getElementById("gift-giver-name").value;
-
-  if (!name.trim()) return;
-
-  const db = await DB.get();
-  const gift = db.gifts.find(g => g.id === id);
-  
-  if (gift) {
-    gift.chosen = true;
-    gift.chosenBy = gift.chosenBy ? gift.chosenBy + ", " + name.trim() : name.trim();
-    
-    await DB.saveGift(gift);
-
-    // Mostrar a tela de sucesso dentro do modal
-    document.getElementById("confirm-gift-form-wrapper").classList.add("d-none");
-    document.getElementById("confirm-gift-success-wrapper").classList.remove("d-none");
-
-    const msg = encodeURIComponent(`Olá! Acabei de escolher o presente "${gift.name}" (R$ ${gift.value.toFixed(2)}) para a Lavinia. Segue meu comprovante de transferência! (Assinado: ${name})`);
-    const whatsappUrl = `https://wa.me/5511966395132?text=${msg}`;
-    document.getElementById("confirm-gift-whatsapp-btn").href = whatsappUrl;
-
-    document.getElementById("physical-gift-form").reset();
-
-    // Atualiza listagem de presentes após gravação
-    const updatedDb = await DB.get();
-    renderGifts(updatedDb.gifts);
-  }
-}
-window.handleChoosePhysicalGift = handleChoosePhysicalGift;
-
 let selectedPixAmount = 200;
 
 // Algoritmo CRC16 CCITT para validação oficial do Pix
@@ -947,6 +860,19 @@ async function handlePixContribution(event) {
   document.getElementById("pix-confirm-form").reset();
 }
 window.handlePixContribution = handlePixContribution;
+
+function resetPixForm() {
+  document.getElementById("pix-modal-form-wrapper").classList.remove("d-none");
+  document.getElementById("pix-modal-success-wrapper").classList.add("d-none");
+  const donorInput = document.getElementById("pix-donor-name");
+  if (donorInput) donorInput.value = "";
+  
+  const defaultCard = document.querySelector(".pix-options-grid .pix-val-card[onclick*='200']");
+  if (defaultCard) {
+    selectPixValue(200, defaultCard);
+  }
+}
+window.resetPixForm = resetPixForm;
 
 function renderMessages(messagesData) {
   const wrapper = document.getElementById("messages-list-wrapper");

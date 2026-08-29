@@ -240,154 +240,97 @@
   </div>
 
 
-  <!-- SEÇÃO LISTA DE PRESENTES -->
+  <!-- SEÇÃO LISTA DE PRESENTES (PIX) -->
   <section class="section-padding bg-light" id="presentes">
     <div class="container">
       <div class="section-title-wrapper" data-aos="fade-up">
         <span class="section-subtitle">Gesto de Carinho</span>
-        <h2 class="section-title">Lista de Presentes</h2>
-        <p class="text-muted mt-3">Para nos ajudar a celebrar esta data, criamos uma lista de mimos simbólicos. Você
-          também pode contribuir via Pix.</p>
+        <h2 class="section-title">Lista de Presentes (Pix)</h2>
+        <p class="text-muted mt-3">Sua presença é o nosso maior presente! Mas se você deseja nos homenagear com um mimo, preparamos esta seção para contribuição direta via Pix de forma prática e rápida.</p>
       </div>
 
-      <div class="text-center mb-5" data-aos="fade-up">
-        <button class="btn btn-rose scale-hover px-4" data-bs-toggle="modal" data-bs-target="#pixDonationModal">
-          <i class="fa-brands fa-pix me-2"></i>Presentear com qualquer valor via Pix
-        </button>
-      </div>
+      <div class="row g-4 justify-content-center mt-2" data-aos="fade-up">
+        <!-- Coluna da Esquerda: Opções e Instruções -->
+        <div class="col-lg-6">
+          <div class="glass-panel p-4 h-100 d-flex flex-column justify-content-between">
+            <div>
+              <h4 class="font-heading fw-600 text-rose-gold mb-3"><i class="fa-brands fa-pix text-info me-2"></i>Como Presentear</h4>
+              <p class="text-muted mb-4">Escolha um dos valores sugeridos abaixo que representam mimos simbólicos (viagem, spa, jantar, etc.) ou selecione "Valor Livre" para transferir o valor de sua preferência.</p>
+              
+              <div class="pix-options-grid mb-4">
+                <div class="pix-val-card selected" onclick="selectPixValue(200, this)">
+                  <span>Cota Viagem</span>
+                  <strong>R$ 200</strong>
+                </div>
+                <div class="pix-val-card" onclick="selectPixValue(300, this)">
+                  <span>Dia de SPA</span>
+                  <strong>R$ 300</strong>
+                </div>
+                <div class="pix-val-card" onclick="selectPixValue('custom', this)">
+                  <span>Valor Livre</span>
+                  <strong>Outro</strong>
+                </div>
+              </div>
 
-      <div class="row g-4" id="gifts-grid">
-        <!-- Cards de presentes carregados dinamicamente via JS -->
+              <!-- Input de valor livre personalizado -->
+              <div class="mb-4 d-none text-start" id="custom-pix-amount-container">
+                <label for="custom-pix-amount" class="form-label small fw-600 text-muted">Digite o Valor (R$) *</label>
+                <input type="number" class="form-control py-2" id="custom-pix-amount" placeholder="Ex: 150" min="1" step="any" oninput="updateCustomPixQrCode()">
+              </div>
+            </div>
+            
+            <div class="bg-white p-3 rounded-4 border border-light-subtle">
+              <span class="small text-muted d-block mb-1"><i class="fa-solid fa-info-circle me-1"></i> Instruções:</span>
+              <ol class="small text-muted mb-0 ps-3">
+                <li>Selecione o valor desejado.</li>
+                <li>Escaneie o QR Code ao lado com o app do seu banco ou copie a chave Pix.</li>
+                <li>Confirme o pagamento no seu banco.</li>
+                <li>Escreva seu nome no formulário e clique em "Confirmar Envio" para registrar sua homenagem!</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coluna da Direita: QR Code e Formulário -->
+        <div class="col-lg-5">
+          <div class="glass-panel p-4 text-center">
+            <div id="pix-modal-form-wrapper">
+              <div class="pix-qr-container mb-4">
+                <img src="" alt="QR Code Pix" id="pix-qrcode-img" class="img-fluid mb-3 p-2 bg-white rounded-3 shadow-sm" style="max-height: 200px;">
+                <div class="small text-muted mb-2">Chave Pix cadastrada (Celular):</div>
+                <code class="d-block bg-white p-2 rounded border border-light-subtle text-break mb-3 font-monospace" id="pix-key-display">11963020240</code>
+                <button class="btn btn-sm btn-outline-gold" onclick="copyPixKey()">
+                  <i class="fa-solid fa-copy me-1"></i> Copiar Chave Pix
+                </button>
+                <div class="text-success small mt-2 d-none" id="copy-success-msg">Chave copiada com sucesso!</div>
+              </div>
+
+              <form id="pix-confirm-form" onsubmit="handlePixContribution(event)">
+                <div class="mb-3 text-start">
+                  <label for="pix-donor-name" class="form-label small fw-600 text-muted">Seu Nome *</label>
+                  <input type="text" class="form-control py-2" id="pix-donor-name" required placeholder="Insira seu nome completo">
+                </div>
+                <button type="submit" class="btn btn-rose w-100 py-3 mt-2 font-heading fw-600">
+                  <i class="fa-solid fa-check me-2"></i>Confirmar Envio do Presente
+                </button>
+              </form>
+            </div>
+
+            <!-- Tela de Sucesso -->
+            <div id="pix-modal-success-wrapper" class="d-none text-center py-4">
+              <div class="text-success fs-1 mb-3"><i class="fa-solid fa-circle-check"></i></div>
+              <h4 class="font-heading text-rose-gold mb-3">Pix Confirmado no Site!</h4>
+              <p class="text-muted small mb-4">Agradecemos de coração pelo presente! Deseja enviar o comprovante de transferência agora via WhatsApp?</p>
+              <a href="#" target="_blank" id="pix-modal-whatsapp-btn" class="btn btn-success w-100 py-3 mb-2 scale-hover font-heading fw-600" style="background-color: #25d366; border-color: #25d366; color: white;">
+                <i class="fa-brands fa-whatsapp me-2"></i>Enviar Comprovante
+              </a>
+              <button type="button" class="btn btn-outline-secondary w-100 py-2 mt-3" onclick="resetPixForm()">Fazer outra contribuição</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
-
-  <!-- MODAL DE DOAÇÃO PIX -->
-  <div class="modal fade" id="pixDonationModal" tabindex="-1" aria-labelledby="pixDonationModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 glass-panel" style="border-radius: 20px; overflow: hidden; background: white;">
-        <div class="modal-header border-0 bg-light p-4">
-          <h5 class="modal-title font-heading fw-600 text-rose-gold" id="pixDonationModalLabel">Presentear com Pix</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body p-4">
-          <div id="pix-modal-form-wrapper">
-            <p class="text-center text-muted mb-4">Escolha um dos valores sugeridos ou faça uma transferência livre para a
-              chave cadastrada.</p>
-
-            <div class="pix-options-grid">
-              <div class="pix-val-card selected" onclick="selectPixValue(200, this)">
-                <span>Viagem</span>
-                <strong>R$ 200</strong>
-              </div>
-              <div class="pix-val-card" onclick="selectPixValue(300, this)">
-                <span>Conta da Debutante</span>
-                <strong>R$ 300</strong>
-              </div>
-              <div class="pix-val-card" onclick="selectPixValue('custom', this)">
-                <span>Valor Livre</span>
-                <strong>Outro</strong>
-              </div>
-            </div>
-
-            <!-- Input de valor livre personalizado -->
-            <div class="mb-3 d-none text-start" id="custom-pix-amount-container">
-              <label for="custom-pix-amount" class="form-label small fw-600 text-muted">Digite o Valor (R$) *</label>
-              <input type="number" class="form-control" id="custom-pix-amount" placeholder="Ex: 150" min="1" step="any" oninput="updateCustomPixQrCode()">
-            </div>
-
-            <div class="pix-qr-container">
-              <img src="" alt="QR Code Pix" id="pix-qrcode-img" class="img-fluid mb-3" style="max-height: 180px;">
-              <div class="small text-muted mb-2">Chave Pix cadastrada:</div>
-              <code class="d-block bg-light p-2 rounded text-break mb-3 font-monospace"
-                id="pix-key-display">11963020240</code>
-              <button class="btn btn-sm btn-outline-gold" onclick="copyPixKey()">
-                <i class="fa-solid fa-copy me-1"></i> Copiar Chave Pix
-              </button>
-              <div class="text-success small mt-2 d-none" id="copy-success-msg">Chave copiada com sucesso!</div>
-            </div>
-
-            <form id="pix-confirm-form" onsubmit="handlePixContribution(event)">
-              <div class="mb-3 text-start">
-                <label for="pix-donor-name" class="form-label">Seu Nome</label>
-                <input type="text" class="form-control" id="pix-donor-name" required
-                  placeholder="Insira seu nome completo">
-              </div>
-              <button type="submit" class="btn btn-rose w-100 py-3 mt-2">
-                <i class="fa-solid fa-check me-2"></i>Confirmar Envio do Presente
-              </button>
-            </form>
-          </div>
-
-          <!-- Tela de Sucesso -->
-          <div id="pix-modal-success-wrapper" class="d-none text-center py-4">
-            <div class="text-success fs-1 mb-3"><i class="fa-solid fa-circle-check"></i></div>
-            <h4 class="font-heading text-rose-gold mb-3">Pix Confirmado no Site!</h4>
-            <p class="text-muted small mb-4">Agradecemos de coração pelo presente! Deseja enviar o comprovante de transferência agora via WhatsApp?</p>
-            <a href="#" target="_blank" id="pix-modal-whatsapp-btn" class="btn btn-success w-100 py-3 mb-2 scale-hover" style="background-color: #25d366; border-color: #25d366; color: white; font-weight: 600;">
-              <i class="fa-brands fa-whatsapp me-2"></i>Sim, Enviar Comprovante
-            </a>
-            <button class="btn btn-outline-secondary w-100 py-2 mt-2" data-bs-dismiss="modal">Não, Fechar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL DE CONFIRMAÇÃO DO PRESENTE FÍSICO -->
-  <div class="modal fade" id="confirmGiftModal" tabindex="-1" aria-labelledby="confirmGiftModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0" style="border-radius: 20px; overflow: hidden; background: white;">
-        <div class="modal-header border-0 bg-light p-4">
-          <h5 class="modal-title font-heading fw-600 text-rose-gold" id="confirmGiftModalLabel">Presentear com Mimo</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body p-4">
-          <div id="confirm-gift-form-wrapper">
-            <div class="text-center mb-4">
-              <h4 class="font-heading mb-2 text-rose-gold" id="gift-modal-item-name">Nome do Mimo</h4>
-              <p class="text-muted small" id="gift-modal-item-desc">Descrição do mimo</p>
-              <div class="fs-4 fw-600 text-gold" id="gift-modal-item-val">R$ 0,00</div>
-            </div>
-            <form id="physical-gift-form" onsubmit="handleChoosePhysicalGift(event)">
-              <input type="hidden" id="gift-modal-item-id">
-              <div class="mb-3">
-                <label for="gift-giver-name" class="form-label">Seu Nome</label>
-                <input type="text" class="form-control" id="gift-giver-name" required
-                  placeholder="Insira seu nome para sabermos quem presenteou">
-              </div>
-              <div class="mb-4 p-3 bg-light rounded text-center border">
-                <span class="text-muted small d-block mb-1"><i class="fa-solid fa-key me-1 text-gold"></i>Chave Pix para Transferência:</span>
-                <div class="d-flex align-items-center justify-content-center gap-2">
-                  <strong class="text-rose-gold font-monospace fs-5" id="gift-modal-pix-key">11963020240</strong>
-                  <button type="button" class="btn btn-sm btn-outline-rose" onclick="copyGiftPixKey()" title="Copiar Chave Pix">
-                    <i class="fa-solid fa-copy"></i>
-                  </button>
-                </div>
-                <div class="text-muted mt-1" style="font-size: 0.72rem;">Copie a chave Pix acima e realize o pagamento no seu app do banco.</div>
-              </div>
-              <button type="submit" class="btn btn-rose w-100 py-3 mt-2">
-                <i class="fa-solid fa-gift me-2"></i>Confirmar Presente no Site
-              </button>
-            </form>
-          </div>
-
-          <!-- Tela de Sucesso -->
-          <div id="confirm-gift-success-wrapper" class="d-none text-center py-4">
-            <div class="text-success fs-1 mb-3"><i class="fa-solid fa-circle-check"></i></div>
-            <h4 class="font-heading text-rose-gold mb-3">Reserva Confirmada no Site!</h4>
-            <p class="text-muted small mb-4">Agradecemos imensamente pelo seu presente! Deseja enviar o comprovante de transferência para a organização agora via WhatsApp?</p>
-            <a href="#" target="_blank" id="confirm-gift-whatsapp-btn" class="btn btn-success w-100 py-3 mb-2 scale-hover" style="background-color: #25d366; border-color: #25d366; color: white; font-weight: 600;">
-              <i class="fa-brands fa-whatsapp me-2"></i>Sim, Enviar Comprovante
-            </a>
-            <button class="btn btn-outline-secondary w-100 py-2 mt-2" data-bs-dismiss="modal">Não, Fechar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- MODAL DE ENVIAR FOTO (CONVIDADOS) -->
   <div class="modal fade" id="uploadPhotoModal" tabindex="-1" aria-labelledby="uploadPhotoModalLabel" aria-hidden="true">

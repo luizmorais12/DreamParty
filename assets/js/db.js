@@ -264,7 +264,8 @@ const DB = {
           value: parseFloat(g.value),
           image: g.image,
           chosen: g.chosen ?? false,
-          chosenBy: g.chosen_by || ""
+          chosenBy: g.chosen_by || "",
+          collective: g.collective ?? false
         })).sort((a, b) => b.value - a.value);
 
         const rsvps = (rsvpsRes.data || []).map(r => ({
@@ -491,7 +492,8 @@ const DB = {
           value: parseFloat(gift.value),
           image: gift.image,
           chosen: gift.chosen,
-          chosen_by: gift.chosenBy
+          chosen_by: gift.chosenBy,
+          collective: gift.collective
         });
         if (error) throw error;
         return true;

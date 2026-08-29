@@ -13,34 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Verifica Autenticação
   await checkAuth();
 
-  // Listener para conversão de imagem de presente para Base64
-  const giftImageFileInput = document.getElementById("gift-image-file");
-  if (giftImageFileInput) {
-    giftImageFileInput.addEventListener("change", function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        if (file.size > 2 * 1024 * 1024) {
-          alert("A imagem selecionada é muito grande! Por favor, escolha uma imagem com menos de 2MB.");
-          e.target.value = "";
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          document.getElementById("gift-image-field").value = evt.target.result;
-          updateGiftImagePreview(evt.target.result);
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  }
 
-  // Listener para pré-visualizar e corrigir links digitados/copiados de imagens
-  const giftImageInput = document.getElementById("gift-image-field");
-  if (giftImageInput) {
-    giftImageInput.addEventListener("input", function(e) {
-      updateGiftImagePreview(e.target.value);
-    });
-  }
 });
 
 /* ==========================================================================
@@ -92,7 +65,6 @@ async function initAdminPanel() {
   await updateDashboardStats();
   await renderGuestTable();
   await renderModerationGrid();
-  await renderGiftsAdmin();
   await populateConfigForms();
 }
 
@@ -132,8 +104,6 @@ async function switchSection(sectionId, element) {
     await renderGuestTable();
   } else if (sectionId === "moderacao") {
     await renderModerationGrid();
-  } else if (sectionId === "presentes") {
-    await renderGiftsAdmin();
   } else if (sectionId === "fotos-convidados") {
     await renderGuestPhotosAdmin();
   }
@@ -155,13 +125,9 @@ async function updateDashboardStats() {
   });
 
   const grandTotal = totalAdults + totalKids;
-  const chosenGiftsCount = db.gifts.filter(g => g.chosen).length;
-  const totalGiftsCount = db.gifts.length;
-
   document.getElementById("dash-total-guests").textContent = grandTotal;
   document.getElementById("dash-adults").textContent = totalAdults;
   document.getElementById("dash-kids").textContent = totalKids;
-  document.getElementById("dash-gifts").textContent = `${chosenGiftsCount}/${totalGiftsCount}`;
 
   const feed = document.getElementById("dash-notifications");
   feed.innerHTML = "";
@@ -447,173 +413,7 @@ async function deleteMessage(id) {
 }
 window.deleteMessage = deleteMessage;
 
-/* ==========================================================================
-   7. GERENCIAMENTO DA LISTA DE PRESENTES
-   ========================================================================== */
-async function renderGiftsAdmin() {
-  const db = await DB.get();
-  const grid = document.getElementById("gifts-admin-grid");
-  if (!grid) return;
-  grid.innerHTML = "";
 
-  if (db.gifts.length === 0) {
-    grid.innerHTML = `<div class="col-12 text-center text-muted py-5">Nenhum presente na lista.</div>`;
-    return;
-  }
-
-  db.gifts.forEach(item => {
-    const col = document.createElement("div");
-    col.classList.add("col-md-6", "col-lg-4");
-
-    const badge = item.chosen 
-      ? `<span class="badge bg-danger-subtle text-danger px-3 py-1 rounded-pill border border-danger-subtle text-wrap">Escolhido por: ${item.chosenBy}</span>`
-      : `<span class="badge bg-success-subtle text-success px-3 py-1 rounded-pill border border-success-subtle">Disponível</span>`;
-
-    const collectiveBadge = item.collective
-      ? `<span class="badge bg-info-subtle text-info px-2 py-1 rounded-pill border border-info-subtle ms-1"><i class="fa-solid fa-people-group me-1"></i> Coletivo</span>`
-      : "";
-
-    col.innerHTML = `
-      <div class="card h-100 shadow-sm" style="border-radius:15px; overflow:hidden;">
-        <div style="height: 150px; overflow: hidden; position: relative;">
-          <img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;">
-          <div class="position-absolute bottom-0 end-0 bg-dark text-white p-2 small font-monospace fw-bold">R$ ${item.value.toFixed(2)}</div>
-        </div>
-        <div class="card-body p-4 d-flex flex-column justify-content-between">
-          <div>
-            <h5 class="font-heading fs-6 fw-bold mb-2">${item.name}</h5>
-            <p class="text-muted small mb-3 text-truncate-2" style="max-height: 40px; overflow:hidden;">${item.description}</p>
-            <div class="mb-3">${badge}${collectiveBadge}</div>
-          </div>
-          <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-outline-secondary w-100" onclick="openEditGiftModal('${item.id}')"><i class="fa-solid fa-pen-to-square me-1"></i> Editar</button>
-            <button class="btn btn-sm btn-outline-danger" onclick="deleteGift('${item.id}')" title="Excluir Presente"><i class="fa-solid fa-trash"></i></button>
-          </div>
-        </div>
-      </div>
-    `;
-    grid.appendChild(col);
-  });
-}
-
-function openAddGiftModal() {
-  document.getElementById("gift-form").reset();
-  document.getElementById("gift-id-field").value = "";
-  document.getElementById("gift-chosen-field").checked = false;
-  document.getElementById("gift-collective-field").checked = false;
-  document.getElementById("gift-chosen-by-wrapper").classList.add("d-none");
-  document.getElementById("giftModalLabel").textContent = "Novo Presente";
-  updateGiftImagePreview("");
-
-  const modal = new bootstrap.Modal(document.getElementById("giftModal"));
-  modal.show();
-}
-window.openAddGiftModal = openAddGiftModal;
-
-async function openEditGiftModal(id) {
-  const db = await DB.get();
-  const gift = db.gifts.find(g => g.id === id);
-  if (!gift) return;
-
-  document.getElementById("gift-id-field").value = gift.id;
-  document.getElementById("gift-name-field").value = gift.name;
-  document.getElementById("gift-desc-field").value = gift.description;
-  document.getElementById("gift-value-field").value = gift.value;
-  document.getElementById("gift-image-field").value = gift.image;
-  
-  const fileInput = document.getElementById("gift-image-file");
-  if (fileInput) fileInput.value = "";
-  
-  updateGiftImagePreview(gift.image);
-  
-  const chosenChk = document.getElementById("gift-chosen-field");
-  chosenChk.checked = gift.chosen;
-
-  const collectiveChk = document.getElementById("gift-collective-field");
-  if (collectiveChk) {
-    collectiveChk.checked = gift.collective || false;
-  }
-
-  const wrapper = document.getElementById("gift-chosen-by-wrapper");
-  const chosenByField = document.getElementById("gift-chosen-by-field");
-  
-  if (gift.chosen) {
-    wrapper.classList.remove("d-none");
-    chosenByField.value = gift.chosenBy;
-  } else {
-    wrapper.classList.add("d-none");
-    chosenByField.value = "";
-  }
-
-  document.getElementById("giftModalLabel").textContent = "Editar Presente";
-  const modal = new bootstrap.Modal(document.getElementById("giftModal"));
-  modal.show();
-}
-window.openEditGiftModal = openEditGiftModal;
-
-function toggleGiftGiverField() {
-  const chk = document.getElementById("gift-chosen-field").checked;
-  const wrapper = document.getElementById("gift-chosen-by-wrapper");
-  if (chk) {
-    wrapper.classList.remove("d-none");
-  } else {
-    wrapper.classList.add("d-none");
-    document.getElementById("gift-chosen-by-field").value = "";
-  }
-}
-window.toggleGiftGiverField = toggleGiftGiverField;
-
-async function handleGiftSave(event) {
-  event.preventDefault();
-
-  const id = document.getElementById("gift-id-field").value;
-  const name = document.getElementById("gift-name-field").value;
-  const desc = document.getElementById("gift-desc-field").value;
-  const value = parseFloat(document.getElementById("gift-value-field").value) || 0;
-  const image = document.getElementById("gift-image-field").value || "https://images.unsplash.com/photo-1549417229-aa67d3263c09?q=80&w=300";
-  const chosen = document.getElementById("gift-chosen-field").checked;
-  const chosenBy = document.getElementById("gift-chosen-by-field").value;
-  const collective = document.getElementById("gift-collective-field").checked;
-
-  if (!name.trim()) return;
-
-  const giftData = {
-    id: id || "gift_" + Date.now(),
-    name,
-    description: desc,
-    value,
-    image,
-    chosen,
-    chosenBy: chosen ? chosenBy : "",
-    collective
-  };
-
-  const success = await DB.saveGift(giftData);
-  if (success) {
-    const modalEl = document.getElementById("giftModal");
-    const modal = bootstrap.Modal.getInstance(modalEl);
-    modal.hide();
-
-    await renderGiftsAdmin();
-    await updateDashboardStats();
-  } else {
-    alert("Erro ao salvar presente. Detalhes: " + (DB.lastError || "Erro de permissão ou conexão") + "\n\nSe estiver usando o Supabase, certifique-se de que desabilitou a segurança de linha (RLS) para a tabela 'gifts' executando o script SQL no editor do Supabase.");
-  }
-}
-window.handleGiftSave = handleGiftSave;
-
-async function deleteGift(id) {
-  if (confirm("Remover este presente da lista definitivamente?")) {
-    const success = await DB.deleteGift(id);
-    if (success) {
-      await renderGiftsAdmin();
-      await updateDashboardStats();
-    } else {
-      alert("Erro ao excluir presente. Detalhes: " + (DB.lastError || "Erro de permissão ou conexão") + "\n\nSe estiver usando o Supabase, certifique-se de que desabilitou a segurança de linha (RLS) para a tabela 'gifts' executando o script SQL no editor do Supabase.");
-    }
-  }
-}
-window.deleteGift = deleteGift;
 
 /* ==========================================================================
    7.5. GERENCIAMENTO DAS FOTOS DOS CONVIDADOS
@@ -938,61 +738,4 @@ function toggleAdminSidebar(show) {
 }
 window.toggleAdminSidebar = toggleAdminSidebar;
 
-/* ==========================================================================
-   11. PRÉ-VISUALIZAÇÃO E AUTO-CORREÇÃO DE IMAGENS DE PRESENTES
-   ========================================================================== */
-function updateGiftImagePreview(url) {
-  const previewImg = document.getElementById("gift-image-preview");
-  const placeholder = document.getElementById("gift-image-preview-placeholder");
-  const errorMsg = document.getElementById("gift-image-error-msg");
 
-  if (!previewImg || !placeholder || !errorMsg) return;
-
-  if (!url || !url.trim()) {
-    previewImg.classList.add("d-none");
-    previewImg.src = "";
-    placeholder.classList.remove("d-none");
-    errorMsg.classList.add("d-none");
-    return;
-  }
-
-  let correctedUrl = url.trim();
-
-  // Correção de link de visualização do Google Drive para link direto de imagem
-  const driveFileRegex = /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/;
-  const driveOpenRegex = /drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/;
-  
-  if (driveFileRegex.test(correctedUrl)) {
-    const fileId = correctedUrl.match(driveFileRegex)[1];
-    correctedUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
-    document.getElementById("gift-image-field").value = correctedUrl;
-  } else if (driveOpenRegex.test(correctedUrl)) {
-    const fileId = correctedUrl.match(driveOpenRegex)[1];
-    correctedUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
-    document.getElementById("gift-image-field").value = correctedUrl;
-  }
-
-  // Tenta carregar a imagem em background para verificar se funciona
-  const tempImg = new Image();
-  tempImg.onload = function() {
-    previewImg.src = correctedUrl;
-    previewImg.classList.remove("d-none");
-    placeholder.classList.add("d-none");
-    errorMsg.classList.add("d-none");
-  };
-  tempImg.onerror = function() {
-    // Se for Base64 local (começa com data:), ela é considerada válida
-    if (correctedUrl.startsWith("data:")) {
-      previewImg.src = correctedUrl;
-      previewImg.classList.remove("d-none");
-      placeholder.classList.add("d-none");
-      errorMsg.classList.add("d-none");
-    } else {
-      previewImg.classList.add("d-none");
-      placeholder.classList.remove("d-none");
-      errorMsg.classList.remove("d-none");
-    }
-  };
-  tempImg.src = correctedUrl;
-}
-window.updateGiftImagePreview = updateGiftImagePreview;
