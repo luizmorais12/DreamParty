@@ -245,73 +245,40 @@
     <div class="container">
       <div class="section-title-wrapper" data-aos="fade-up">
         <span class="section-subtitle">Gesto de Carinho</span>
-        <h2 class="section-title">Lista de Presentes (Pix)</h2>
-        <p class="text-muted mt-3">Sua presença é o nosso maior presente! Mas se você deseja nos homenagear com um mimo, preparamos esta seção para contribuição direta via Pix de forma prática e rápida.</p>
+        <h2 class="section-title">Presente via Pix</h2>
+        <p class="text-muted mt-3">Sua presença é o nosso maior presente! Mas se você deseja nos homenagear com um mimo, você pode enviar qualquer valor via Pix de forma prática e rápida.</p>
       </div>
 
-      <div class="row g-4 justify-content-center mt-2" data-aos="fade-up">
-        <!-- Coluna da Esquerda: Opções e Instruções -->
-        <div class="col-lg-6">
-          <div class="glass-panel p-4 h-100 d-flex flex-column justify-content-between">
-            <div>
-              <h4 class="font-heading fw-600 text-rose-gold mb-3"><i class="fa-brands fa-pix text-info me-2"></i>Como Presentear</h4>
-              <p class="text-muted mb-4">Escolha um dos valores sugeridos abaixo que representam mimos simbólicos (viagem, spa, jantar, etc.) ou selecione "Valor Livre" para transferir o valor de sua preferência.</p>
-              
-              <div class="pix-options-grid mb-4">
-                <div class="pix-val-card selected" onclick="selectPixValue(200, this)">
-                  <span>Cota Viagem</span>
-                  <strong>R$ 200</strong>
-                </div>
-                <div class="pix-val-card" onclick="selectPixValue(300, this)">
-                  <span>Dia de SPA</span>
-                  <strong>R$ 300</strong>
-                </div>
-                <div class="pix-val-card" onclick="selectPixValue('custom', this)">
-                  <span>Valor Livre</span>
-                  <strong>Outro</strong>
-                </div>
-              </div>
-
-              <!-- Input de valor livre personalizado -->
-              <div class="mb-4 d-none text-start" id="custom-pix-amount-container">
-                <label for="custom-pix-amount" class="form-label small fw-600 text-muted">Digite o Valor (R$) *</label>
-                <input type="number" class="form-control py-2" id="custom-pix-amount" placeholder="Ex: 150" min="1" step="any" oninput="updateCustomPixQrCode()">
-              </div>
-            </div>
-            
-            <div class="bg-white p-3 rounded-4 border border-light-subtle">
-              <span class="small text-muted d-block mb-1"><i class="fa-solid fa-info-circle me-1"></i> Instruções:</span>
-              <ol class="small text-muted mb-0 ps-3">
-                <li>Selecione o valor desejado.</li>
-                <li>Escaneie o QR Code ao lado com o app do seu banco ou copie a chave Pix.</li>
-                <li>Confirme o pagamento no seu banco.</li>
-                <li>Escreva seu nome no formulário e clique em "Confirmar Envio" para registrar sua homenagem!</li>
-              </ol>
-            </div>
-          </div>
-        </div>
-
-        <!-- Coluna da Direita: QR Code e Formulário -->
-        <div class="col-lg-5">
+      <div class="row justify-content-center mt-2" data-aos="fade-up">
+        <div class="col-md-6 col-lg-5">
           <div class="glass-panel p-4 text-center">
+            
             <div id="pix-modal-form-wrapper">
+              <!-- QR Code & Chave -->
               <div class="pix-qr-container mb-4">
-                <img src="" alt="QR Code Pix" id="pix-qrcode-img" class="img-fluid mb-3 p-2 bg-white rounded-3 shadow-sm" style="max-height: 200px;">
-                <div class="small text-muted mb-2">Chave Pix cadastrada (Celular):</div>
+                <img src="" alt="QR Code Pix" id="pix-qrcode-img" class="img-fluid mb-3 p-2 bg-white rounded-3 shadow-sm" style="max-height: 180px;">
+                <div class="small text-muted mb-2">Chave Pix (Celular):</div>
                 <code class="d-block bg-white p-2 rounded border border-light-subtle text-break mb-3 font-monospace" id="pix-key-display">11963020240</code>
-                <button class="btn btn-sm btn-outline-gold" onclick="copyPixKey()">
+                <button class="btn btn-sm btn-outline-gold px-3" onclick="copyPixKey()">
                   <i class="fa-solid fa-copy me-1"></i> Copiar Chave Pix
                 </button>
                 <div class="text-success small mt-2 d-none" id="copy-success-msg">Chave copiada com sucesso!</div>
               </div>
 
+              <!-- Formulário -->
               <form id="pix-confirm-form" onsubmit="handlePixContribution(event)">
+                <div class="mb-3 text-start">
+                  <label for="custom-pix-amount" class="form-label small fw-600 text-muted">Valor do Presente (R$)</label>
+                  <input type="number" class="form-control py-2" id="custom-pix-amount" placeholder="Qualquer valor (Livre)" min="1" step="any" oninput="updateCustomPixQrCode()">
+                </div>
+                
                 <div class="mb-3 text-start">
                   <label for="pix-donor-name" class="form-label small fw-600 text-muted">Seu Nome *</label>
                   <input type="text" class="form-control py-2" id="pix-donor-name" required placeholder="Insira seu nome completo">
                 </div>
+                
                 <button type="submit" class="btn btn-rose w-100 py-3 mt-2 font-heading fw-600">
-                  <i class="fa-solid fa-check me-2"></i>Confirmar Envio do Presente
+                  <i class="fa-solid fa-check me-2"></i>Confirmar Presente
                 </button>
               </form>
             </div>
@@ -326,6 +293,7 @@
               </a>
               <button type="button" class="btn btn-outline-secondary w-100 py-2 mt-3" onclick="resetPixForm()">Fazer outra contribuição</button>
             </div>
+
           </div>
         </div>
       </div>

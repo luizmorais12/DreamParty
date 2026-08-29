@@ -50,11 +50,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     });
   }
-  // Pré-seleciona a opção de Pix padrão de R$ 200 ao carregar a página
-  const defaultCard = document.querySelector(".pix-options-grid .pix-val-card[onclick*='200']");
-  if (defaultCard) {
-    selectPixValue(200, defaultCard);
-  }
+  // Inicializa o QR Code do Pix com valor livre/padrão ao carregar a página
+  updateCustomPixQrCode();
 });
 
 /* ==========================================================================
@@ -462,21 +459,8 @@ function applyDatabaseToDOM(db) {
     if (keyDisplay) {
       keyDisplay.textContent = db.config.pixKey;
     }
-    // Atualizar o QR Code com a chave carregada do banco mantendo a seleção ativa
-    const activeCard = document.querySelector(".pix-options-grid .pix-val-card.selected");
-    if (activeCard) {
-      if (activeCard.getAttribute("onclick").includes("'custom'")) {
-        updateCustomPixQrCode();
-      } else {
-        const valMatch = activeCard.getAttribute("onclick").match(/selectPixValue\((\d+)/);
-        if (valMatch) {
-          const val = parseFloat(valMatch[1]);
-          const qrcode = document.getElementById("pix-qrcode-img");
-          const pixData = generatePixBRCode(db.config.pixKey, val);
-          qrcode.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixData)}`;
-        }
-      }
-    }
+    // Atualizar o QR Code com a chave carregada do banco
+    updateCustomPixQrCode();
   }
 
   if (db.timeline) renderTimeline(db.timeline);
@@ -752,76 +736,20 @@ function generatePixBRCode(key, amount) {
   return brCode + checksum;
 }
 
-async function selectPixValue(amount, element) {
-  const cards = document.querySelectorAll(".pix-val-card");
-  cards.forEach(c => c.classList.remove("selected"));
-  element.classList.add("selected");
-  
-  const customContainer = document.getElementById("custom-pix-amount-container");
-  const customInput = document.getElementById("custom-pix-amount");
-
-  if (amount === 'custom') {
-    // Mostrar campo customizado
-    customContainer.classList.remove("d-none");
-    if (customInput.value) {
-      selectedPixAmount = parseFloat(customInput.value) || 0;
-    } else {
-      selectedPixAmount = 0;
-    }
-    updateCustomPixQrCode();
-  } else {
-    // Esconder campo customizado e limpar
-    customContainer.classList.add("d-none");
-    selectedPixAmount = amount;
-    
-    const db = await DB.get();
-    const qrcode = document.getElementById("pix-qrcode-img");
-    const pixData = generatePixBRCode(db.config.pixKey, amount);
-    qrcode.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixData)}`;
-  }
-}
-
 async function updateCustomPixQrCode() {
   const customInput = document.getElementById("custom-pix-amount");
-  const amount = parseFloat(customInput.value) || 0;
+  const amount = customInput ? (parseFloat(customInput.value) || 0) : 0;
   selectedPixAmount = amount;
 
   const qrcode = document.getElementById("pix-qrcode-img");
-  
-  if (amount > 0) {
+  if (qrcode) {
     const db = await DB.get();
     const pixData = generatePixBRCode(db.config.pixKey, amount);
     qrcode.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixData)}`;
-  } else {
-    // QR Code em branco se não tiver valor digitado ainda
-    qrcode.src = "";
   }
 }
 
-function openPixModal(amount) {
-  // 1. Mostrar o modal
-  const modalEl = document.getElementById("pixDonationModal");
-  const modal = new bootstrap.Modal(modalEl);
-  modal.show();
-
-  // 2. Selecionar o card correto dentro do modal
-  setTimeout(() => {
-    let cardElement;
-    if (amount === 'custom') {
-      cardElement = document.querySelector(".pix-options-grid .pix-val-card[onclick*='custom']");
-    } else {
-      cardElement = document.querySelector(`.pix-options-grid .pix-val-card[onclick*='(${amount},']`);
-    }
-    
-    if (cardElement) {
-      selectPixValue(amount, cardElement);
-    }
-  }, 300);
-}
-
-window.selectPixValue = selectPixValue;
 window.updateCustomPixQrCode = updateCustomPixQrCode;
-window.openPixModal = openPixModal;
 
 function copyPixKey() {
   const keyText = document.getElementById("pix-key-display").textContent;
@@ -867,10 +795,10 @@ function resetPixForm() {
   const donorInput = document.getElementById("pix-donor-name");
   if (donorInput) donorInput.value = "";
   
-  const defaultCard = document.querySelector(".pix-options-grid .pix-val-card[onclick*='200']");
-  if (defaultCard) {
-    selectPixValue(200, defaultCard);
-  }
+  const customInput = document.getElementById("custom-pix-amount");
+  if (customInput) customInput.value = "";
+  
+  updateCustomPixQrCode();
 }
 window.resetPixForm = resetPixForm;
 
