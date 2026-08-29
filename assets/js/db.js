@@ -60,11 +60,13 @@ const defaultDatabase = {
     { id: "g1", title: "Caminho dos Sonhos", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg", featured: true },
     { id: "g2", title: "Sorriso Encantado", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg" },
     { id: "g3", title: "Momento com a Mãe 1", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg" },
+    { id: "g4", title: "Momento com a Mãe 2", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (1).jpeg" },
     { id: "g5", title: "Momento com a Mãe 3", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (2).jpeg" },
-    { id: "g6", title: "Momento com a Mãe 4", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48.jpeg" },
+    { id: "g6", title: "Momento com a Mãe 4", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48.jpeg" },
     { id: "g7", title: "Ensaio Oficial 1", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48 (1).jpeg" },
     { id: "g8", title: "Ensaio Oficial 2", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49.jpeg" },
     { id: "g9", title: "Ensaio Oficial 3", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (1).jpeg" },
+    { id: "g10", title: "Ensaio Oficial 4", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (2).jpeg" },
     { id: "g11", title: "Ensaio Oficial 5", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50.jpeg" },
     { id: "g12", title: "Ensaio Oficial 6", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg", featured: true },
     { id: "g13", title: "Ensaio Oficial 7", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.25.42.jpeg" }
@@ -156,7 +158,7 @@ function loadDBLocal() {
     const hasOldMusic = !serialized.includes("Lana Del Rey");
     const hasOldHero = parsed.config && parsed.config.heroImage && (parsed.config.heroImage.includes("23.23.50 (1).jpeg") || parsed.config.heroImage.includes("23.23.50 (2).jpeg"));
     const hasOldLocation = serialized.includes("Guarulhos - SP");
-    const hasOldGallery = !parsed.gallery || parsed.gallery.some(item => item.id === "g4" || (item.id === "g3" && item.category === "ensaio") || (item.id === "g6" && item.category === "familia"));
+    const hasOldGallery = !parsed.gallery || parsed.gallery.some(item => item.image && item.image.includes("unsplash.com"));
     const hasOldPixKey = serialized.includes("lavinia15anos@pix.com.br");
     
     if (hasOldImages || hasOldMusic || hasOldHero || hasOldLocation || hasOldGallery || hasOldPixKey) {
@@ -320,11 +322,13 @@ const DB = {
         { id: "g1", title: "Caminho dos Sonhos", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (1).jpeg", featured: true },
         { id: "g2", title: "Sorriso Encantado", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (2).jpeg" },
         { id: "g3", title: "Momento com a Mãe 1", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47.jpeg" },
+        { id: "g4", title: "Momento com a Mãe 2", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (1).jpeg" },
         { id: "g5", title: "Momento com a Mãe 3", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.47 (2).jpeg" },
-        { id: "g6", title: "Momento com a Mãe 4", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48.jpeg" },
+        { id: "g6", title: "Momento com a Mãe 4", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48.jpeg" },
         { id: "g7", title: "Ensaio Oficial 1", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.48 (1).jpeg" },
         { id: "g8", title: "Ensaio Oficial 2", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49.jpeg" },
         { id: "g9", title: "Ensaio Oficial 3", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (1).jpeg" },
+        { id: "g10", title: "Ensaio Oficial 4", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (2).jpeg" },
         { id: "g11", title: "Ensaio Oficial 5", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50.jpeg" },
         { id: "g12", title: "Ensaio Oficial 6", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg", featured: true },
         { id: "g13", title: "Ensaio Oficial 7", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.25.42.jpeg" }
