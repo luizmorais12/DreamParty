@@ -130,7 +130,10 @@ insert into settings (key, value) values (
       { "id": "g14", "title": "Brilho da Coroa", "category": "ensaio", "image": "assets/IMG/destaque 3.jpeg", "featured": true },
       { "id": "g15", "title": "Passeio sob as Luzes", "category": "familia", "image": "assets/IMG/familia01.jpeg" },
       { "id": "g16", "title": "Risos e Cumplicidade", "category": "familia", "image": "assets/IMG/familia02.jpeg" },
-      { "id": "g17", "title": "Alegria Compartilhada", "category": "familia", "image": "assets/IMG/familia03.jpeg" }
+      { "id": "g17", "title": "Alegria Compartilhada", "category": "familia", "image": "assets/IMG/familia03.jpeg" },
+      { "id": "g18", "title": "Estilo & Atitude", "category": "ensaio", "image": "assets/IMG/novo01.jpeg" },
+      { "id": "g19", "title": "Realeza na Escadaria", "category": "ensaio", "image": "assets/IMG/novo02.jpeg" },
+      { "id": "g20", "title": "Valsa dos Ventos", "category": "ensaio", "image": "assets/IMG/novo03.jpeg" }
     ],
     "videos": [
       { "id": "v1", "title": "Teaser Oficial do Ensaio de 15 Anos", "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ", "type": "youtube" }
