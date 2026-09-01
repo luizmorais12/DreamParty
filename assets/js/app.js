@@ -903,6 +903,21 @@ async function handlePixContribution(event) {
   const donorName = document.getElementById("pix-donor-name").value;
   if (!donorName.trim()) return;
 
+  // Registrar a contribuição no banco de dados para segurança e histórico
+  if (window.DB && typeof DB.saveGift === 'function') {
+    const contributionId = "pix_" + Date.now();
+    await DB.saveGift({
+      id: contributionId,
+      name: `Presente em Pix - R$ ${selectedPixAmount > 0 ? selectedPixAmount.toFixed(2) : 'Valor Livre'}`,
+      description: `Contribuição realizada via Pix por ${donorName}`,
+      value: selectedPixAmount || 0,
+      image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg",
+      chosen: true,
+      chosenBy: donorName,
+      collective: false
+    });
+  }
+
   // Mostrar a tela de sucesso dentro do modal
   document.getElementById("pix-modal-form-wrapper").classList.add("d-none");
   document.getElementById("pix-modal-success-wrapper").classList.remove("d-none");
