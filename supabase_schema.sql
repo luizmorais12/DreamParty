@@ -126,7 +126,8 @@ insert into settings (key, value) values (
       { "id": "g10", "title": "Jardim Encantado", "category": "ensaio", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.49 (2).jpeg" },
       { "id": "g11", "title": "Laços Eternos", "category": "familia", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50.jpeg" },
       { "id": "g12", "title": "Conto de Fadas", "category": "ensaio", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg", "featured": true },
-      { "id": "g13", "title": "Princesa do Palácio", "category": "ensaio", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.25.42.jpeg" }
+      { "id": "g13", "title": "Princesa do Palácio", "category": "ensaio", "image": "assets/IMG/WhatsApp Image 2026-08-10 at 23.25.42.jpeg" },
+      { "id": "g14", "title": "Brilho da Coroa", "category": "ensaio", "image": "assets/IMG/destaque 3.jpeg", "featured": true }
     ],
     "videos": [
       { "id": "v1", "title": "Teaser Oficial do Ensaio de 15 Anos", "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ", "type": "youtube" }
