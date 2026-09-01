@@ -766,14 +766,53 @@ function renderGiftGuide(guideData) {
     `;
     container.appendChild(card);
   });
+
+  // Inicia rotação automática suave dos cards
+  initBrandsCarouselAutoplay();
 }
 window.renderGiftGuide = renderGiftGuide;
+
+let brandsAutoplayInterval = null;
+let isUserInteractingWithBrands = false;
+
+function initBrandsCarouselAutoplay() {
+  const track = document.getElementById("brands-carousel-container");
+  if (!track) return;
+
+  if (brandsAutoplayInterval) clearInterval(brandsAutoplayInterval);
+
+  brandsAutoplayInterval = setInterval(() => {
+    if (isUserInteractingWithBrands) return;
+    
+    const maxScroll = track.scrollWidth - track.clientWidth;
+    const cardWidth = 266;
+    
+    // Se chegou ao fim do carrossel, volta suavemente para o início
+    if (track.scrollLeft >= maxScroll - 15) {
+      track.scrollTo({ left: 0, behavior: "smooth" });
+    } else {
+      track.scrollBy({ left: cardWidth, behavior: "smooth" });
+    }
+  }, 3200);
+
+  // Pausa autoplay quando o usuário estiver com o mouse em cima ou tocando na tela
+  track.addEventListener("mouseenter", () => { isUserInteractingWithBrands = true; });
+  track.addEventListener("mouseleave", () => { isUserInteractingWithBrands = false; });
+  track.addEventListener("touchstart", () => { isUserInteractingWithBrands = true; }, { passive: true });
+  track.addEventListener("touchend", () => { 
+    setTimeout(() => { isUserInteractingWithBrands = false; }, 3000); 
+  });
+}
 
 function scrollBrandsCarousel(direction) {
   const track = document.getElementById("brands-carousel-container");
   if (!track) return;
   const cardWidth = 266; // card (250px) + gap (16px)
   track.scrollBy({ left: cardWidth * direction, behavior: "smooth" });
+  
+  // Pausa brevemente o autoplay ao clicar nas setas manuais
+  isUserInteractingWithBrands = true;
+  setTimeout(() => { isUserInteractingWithBrands = false; }, 4000);
 }
 window.scrollBrandsCarousel = scrollBrandsCarousel;
 
