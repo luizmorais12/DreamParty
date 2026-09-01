@@ -158,7 +158,7 @@ function loadDBLocal() {
     const hasOldMusic = !serialized.includes("Lana Del Rey");
     const hasOldHero = parsed.config && parsed.config.heroImage && (parsed.config.heroImage.includes("23.23.50 (1).jpeg") || parsed.config.heroImage.includes("23.23.50 (2).jpeg"));
     const hasOldLocation = serialized.includes("Guarulhos - SP");
-    const hasOldGallery = !parsed.gallery || parsed.gallery.some(item => (item.id === "g6" && item.category === "ensaio") || (item.id === "g7" && item.category === "ensaio") || (item.image && item.image.includes("unsplash.com")));
+    const hasOldGallery = !parsed.gallery || parsed.gallery.some(item => (item.id === "g3" && item.category === "ensaio") || (item.id === "g4" && item.category === "ensaio") || (item.id === "g5" && item.category === "ensaio") || (item.id === "g6" && item.category === "ensaio") || (item.id === "g7" && item.category === "ensaio") || (item.image && item.image.includes("unsplash.com")));
     const hasOldPixKey = serialized.includes("lavinia15anos@pix.com.br");
     
     if (hasOldImages || hasOldMusic || hasOldHero || hasOldLocation || hasOldGallery || hasOldPixKey) {
