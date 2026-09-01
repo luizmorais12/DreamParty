@@ -505,7 +505,10 @@ function renderDynamicContentLocal() {
     { id: "g11", title: "Laços Eternos", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50.jpeg" },
     { id: "g12", title: "Conto de Fadas", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg", featured: true },
     { id: "g13", title: "Princesa do Palácio", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.25.42.jpeg" },
-    { id: "g14", title: "Brilho da Coroa", category: "ensaio", image: "assets/IMG/destaque 3.jpeg", featured: true }
+    { id: "g14", title: "Brilho da Coroa", category: "ensaio", image: "assets/IMG/destaque 3.jpeg", featured: true },
+    { id: "g15", title: "Passeio sob as Luzes", category: "familia", image: "assets/IMG/familia01.jpeg" },
+    { id: "g16", title: "Risos e Cumplicidade", category: "familia", image: "assets/IMG/familia02.jpeg" },
+    { id: "g17", title: "Alegria Compartilhada", category: "familia", image: "assets/IMG/familia03.jpeg" }
   ];
   dbCopy.gallery = updatedGallery;
   dbCopy.config.gallery = updatedGallery;
