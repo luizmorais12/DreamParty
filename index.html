@@ -304,58 +304,72 @@
     </div>
   </section>
 
-  <!-- SEÇÃO LISTA DE PRESENTES (PIX) -->
-  <section class="section-padding bg-light" id="presentes">
+  <!-- SEÇÃO LISTA DE PRESENTES (PIX COMPACTO) -->
+  <section class="section-padding bg-light" id="presentes" style="padding-top: 40px; padding-bottom: 50px;">
     <div class="container">
-      <div class="section-title-wrapper" data-aos="fade-up">
+      <div class="section-title-wrapper mb-3" data-aos="fade-up">
         <span class="section-subtitle">Gesto de Carinho</span>
-        <h2 class="section-title">Presente via Pix</h2>
-        <p class="text-muted mt-3">Sua presença é o nosso maior presente! Mas se você deseja nos homenagear com um mimo, você pode enviar qualquer valor via Pix de forma prática e rápida.</p>
+        <h2 class="section-title fs-3 mb-2">Presente via Pix</h2>
+        <p class="text-muted small mb-0" style="max-width: 600px; margin: 0 auto;">Sua presença é o maior presente! Mas se desejar nos homenagear com um mimo, você pode enviar qualquer valor via Pix:</p>
       </div>
 
-      <div class="row justify-content-center mt-2" data-aos="fade-up">
-        <div class="col-md-6 col-lg-5">
-          <div class="glass-panel p-4 text-center">
+      <div class="row justify-content-center" data-aos="fade-up">
+        <div class="col-lg-7 col-md-9">
+          <div class="glass-panel p-3 p-md-4" style="border-radius: 20px; box-shadow: 0 6px 22px rgba(183, 110, 121, 0.08);">
             
             <div id="pix-modal-form-wrapper">
-              <!-- QR Code & Chave -->
-              <div class="pix-qr-container mb-4">
-                <img src="" alt="QR Code Pix" id="pix-qrcode-img" class="img-fluid mb-3 p-2 bg-white rounded-3 shadow-sm" style="max-height: 180px;">
-                <div class="small text-muted mb-2">Chave Pix (Celular):</div>
-                <code class="d-block bg-white p-2 rounded border border-light-subtle text-break mb-3 font-monospace" id="pix-key-display">11963020240</code>
-                <button class="btn btn-sm btn-outline-gold px-3" onclick="copyPixKey()">
-                  <i class="fa-solid fa-copy me-1"></i> Copiar Chave Pix
-                </button>
-                <div class="text-success small mt-2 d-none" id="copy-success-msg">Chave copiada com sucesso!</div>
-              </div>
+              <div class="row g-3 align-items-center">
+                <!-- Coluna Esquerda: QR Code & Chave Copiável -->
+                <div class="col-md-5 text-center border-end-md pb-2 pb-md-0">
+                  <div class="d-flex flex-column align-items-center justify-content-center">
+                    <img src="" alt="QR Code Pix" id="pix-qrcode-img" class="img-fluid p-2 bg-white rounded-3 shadow-sm mb-2" style="max-height: 120px; width: 120px;">
+                    
+                    <div class="d-flex align-items-center justify-content-center gap-1 w-100">
+                      <code class="bg-white px-2 py-1 rounded border border-light-subtle small font-monospace text-truncate" id="pix-key-display" style="max-width: 130px; font-size: 0.75rem;">11963020240</code>
+                      <button class="btn btn-sm btn-outline-gold py-1 px-2" onclick="copyPixKey()" title="Copiar chave Pix" style="font-size: 0.75rem;">
+                        <i class="fa-solid fa-copy"></i>
+                      </button>
+                    </div>
+                    <div class="text-success small mt-1 d-none" id="copy-success-msg" style="font-size: 0.72rem;"><i class="fa-solid fa-check me-1"></i>Chave copiada!</div>
+                  </div>
+                </div>
 
-              <!-- Formulário -->
-              <form id="pix-confirm-form" onsubmit="handlePixContribution(event)">
-                <div class="mb-3 text-start">
-                  <label for="custom-pix-amount" class="form-label small fw-600 text-muted">Valor do Presente (R$)</label>
-                  <input type="number" class="form-control py-2" id="custom-pix-amount" placeholder="Qualquer valor (Livre)" min="1" step="any" oninput="updateCustomPixQrCode()">
+                <!-- Coluna Direita: Formulário Compacto -->
+                <div class="col-md-7 ps-md-3">
+                  <form id="pix-confirm-form" onsubmit="handlePixContribution(event)">
+                    <div class="row g-2 mb-2">
+                      <div class="col-6 text-start">
+                        <label for="custom-pix-amount" class="form-label small fw-600 text-muted mb-1" style="font-size: 0.76rem;">Valor (R$)</label>
+                        <input type="number" class="form-control form-control-sm py-2" id="custom-pix-amount" placeholder="Livre" min="1" step="any" oninput="updateCustomPixQrCode()">
+                      </div>
+                      <div class="col-6 text-start">
+                        <label for="pix-donor-name" class="form-label small fw-600 text-muted mb-1" style="font-size: 0.76rem;">Seu Nome *</label>
+                        <input type="text" class="form-control form-control-sm py-2" id="pix-donor-name" required placeholder="Seu nome">
+                      </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-rose w-100 py-2 mt-1 font-heading fw-600" style="font-size: 0.85rem; border-radius: 25px;">
+                      <i class="fa-solid fa-check me-2"></i>Confirmar no Site
+                    </button>
+                    <div class="text-center mt-2">
+                      <small class="text-muted" style="font-size: 0.7rem;"><i class="fa-solid fa-shield-halved text-gold me-1"></i>Ambiente 100% seguro e direto</small>
+                    </div>
+                  </form>
                 </div>
-                
-                <div class="mb-3 text-start">
-                  <label for="pix-donor-name" class="form-label small fw-600 text-muted">Seu Nome *</label>
-                  <input type="text" class="form-control py-2" id="pix-donor-name" required placeholder="Insira seu nome completo">
-                </div>
-                
-                <button type="submit" class="btn btn-rose w-100 py-3 mt-2 font-heading fw-600">
-                  <i class="fa-solid fa-check me-2"></i>Confirmar Presente
-                </button>
-              </form>
+              </div>
             </div>
 
             <!-- Tela de Sucesso -->
-            <div id="pix-modal-success-wrapper" class="d-none text-center py-4">
-              <div class="text-success fs-1 mb-3"><i class="fa-solid fa-circle-check"></i></div>
-              <h4 class="font-heading text-rose-gold mb-3">Pix Confirmado no Site!</h4>
-              <p class="text-muted small mb-4">Agradecemos de coração pelo presente! Deseja enviar o comprovante de transferência agora via WhatsApp?</p>
-              <a href="#" target="_blank" id="pix-modal-whatsapp-btn" class="btn btn-success w-100 py-3 mb-2 scale-hover font-heading fw-600" style="background-color: #25d366; border-color: #25d366; color: white;">
-                <i class="fa-brands fa-whatsapp me-2"></i>Enviar Comprovante
-              </a>
-              <button type="button" class="btn btn-outline-secondary w-100 py-2 mt-3" onclick="resetPixForm()">Fazer outra contribuição</button>
+            <div id="pix-modal-success-wrapper" class="d-none text-center py-3">
+              <div class="text-success fs-2 mb-2"><i class="fa-solid fa-circle-check"></i></div>
+              <h5 class="font-heading text-rose-gold mb-2">Pix Confirmado no Site!</h5>
+              <p class="text-muted small mb-3">Agradecemos de coração pelo presente! Deseja enviar o comprovante agora via WhatsApp?</p>
+              <div class="d-flex gap-2 justify-content-center flex-wrap">
+                <a href="#" target="_blank" id="pix-modal-whatsapp-btn" class="btn btn-success btn-sm py-2 px-4 scale-hover font-heading fw-600" style="background-color: #25d366; border-color: #25d366; color: white; border-radius: 20px;">
+                  <i class="fa-brands fa-whatsapp me-2"></i>Enviar Comprovante
+                </a>
+                <button type="button" class="btn btn-outline-secondary btn-sm py-2 px-3" onclick="resetPixForm()" style="border-radius: 20px;">Outro Valor</button>
+              </div>
             </div>
 
           </div>
