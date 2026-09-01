@@ -11,7 +11,7 @@ const defaultDatabase = {
     partyDate: "2026-11-02T21:00:00",
     birthdayDate: "2026-11-02T00:00:00",
     quote: "Cada sonho merece uma noite para se tornar realidade.",
-    heroImage: "assets/IMG/fundo_hero_azul.jpeg",
+    heroImage: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg",
     musicTracks: [
       { id: "1", title: "Video Games", artist: "Lana Del Rey", url: "https://archive.org/download/relax-fm-collection-vol.1-11/Relax%20FM%20-%20Collection%20%28Vol.1-11%29/2013%20-%20Relax%20FM%20-%20vol.11/09.%20Lana%20Del%20Rey%20-%20Video%20Games.mp3" }
     ],
@@ -275,7 +275,7 @@ function loadDBLocal() {
     const serialized = JSON.stringify(parsed);
     const hasOldImages = serialized.includes("Lavinia-");
     const hasOldMusic = !serialized.includes("Lana Del Rey");
-    const hasOldHero = parsed.config && parsed.config.heroImage && (parsed.config.heroImage.includes("23.23.50 (1).jpeg") || parsed.config.heroImage.includes("23.23.50 (2).jpeg"));
+    const hasOldHero = parsed.config && parsed.config.heroImage && (parsed.config.heroImage.includes("fundo_hero_azul.jpeg") || parsed.config.heroImage.includes("23.23.50 (1).jpeg") || parsed.config.heroImage.includes("23.23.50 (2).jpeg"));
     const hasOldGallery = !parsed.gallery || parsed.gallery.some(item => 
       (item.id === "g1" && item.category !== "ensaio") ||
       (item.id === "g2" && item.category !== "ensaio") ||
@@ -448,7 +448,7 @@ const DB = {
     // Sobrescrever imagens e atualizar galeria para as novas fotos locais da debutante
     if (data) {
       // 1. Hero
-      data.config.heroImage = "assets/IMG/fundo_hero_azul.jpeg";
+      data.config.heroImage = "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg";
       
       // 2. Linha do Tempo (Somente a foto dos 15 anos/hoje)
       if (data.timeline) {

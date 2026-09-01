@@ -69,7 +69,7 @@ insert into settings (key, value) values (
     "partyDate": "2026-11-02T21:00:00",
     "birthdayDate": "2026-11-02T00:00:00",
     "quote": "Cada sonho merece uma noite para se tornar realidade.",
-    "heroImage": "assets/IMG/fundo_hero_azul.jpeg",
+    "heroImage": "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg",
     "musicTracks": [
       {"id": "1", "title": "Video Games", "artist": "Lana Del Rey", "url": "https://archive.org/download/relax-fm-collection-vol.1-11/Relax%20FM%20-%20Collection%20%28Vol.1-11%29/2013%20-%20Relax%20FM%20-%20vol.11/09.%20Lana%20Del%20Rey%20-%20Video%20Games.mp3"}
     ],
