@@ -740,8 +740,8 @@ function renderGiftGuide(guideData) {
     if (elBag && guideData.sizes.bag) elBag.textContent = guideData.sizes.bag;
   }
 
-  // Grid de Marcas
-  const container = document.getElementById("brands-grid-container");
+  // Carrossel de Marcas
+  const container = document.getElementById("brands-carousel-container") || document.getElementById("brands-grid-container");
   if (!container || !guideData.brands) return;
   container.innerHTML = "";
 
@@ -760,7 +760,7 @@ function renderGiftGuide(guideData) {
         </div>
         <p class="brand-card-tips">${brand.tips}</p>
         <a href="${brand.url}" target="_blank" rel="noopener noreferrer" class="brand-card-btn">
-          <i class="fa-solid fa-bag-shopping me-1"></i> Acessar Loja Oficial <i class="fa-solid fa-arrow-up-right-from-square ms-1 small"></i>
+          <i class="fa-solid fa-bag-shopping me-1"></i> Acessar Loja <i class="fa-solid fa-arrow-up-right-from-square ms-1 small"></i>
         </a>
       </div>
     `;
@@ -768,6 +768,14 @@ function renderGiftGuide(guideData) {
   });
 }
 window.renderGiftGuide = renderGiftGuide;
+
+function scrollBrandsCarousel(direction) {
+  const track = document.getElementById("brands-carousel-container");
+  if (!track) return;
+  const cardWidth = 266; // card (250px) + gap (16px)
+  track.scrollBy({ left: cardWidth * direction, behavior: "smooth" });
+}
+window.scrollBrandsCarousel = scrollBrandsCarousel;
 
 let selectedPixAmount = 200;
 
