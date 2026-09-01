@@ -119,7 +119,8 @@
           <li class="nav-item"><a class="nav-link active" href="#inicio">Início</a></li>
           <li class="nav-item"><a class="nav-link" href="#sobre">Sobre</a></li>
           <li class="nav-item"><a class="nav-link" href="#galeria">Galeria</a></li>
-          <li class="nav-item"><a class="nav-link" href="#presentes">Presentes</a></li>
+          <li class="nav-item"><a class="nav-link" href="#sugestoes-presentes">Presentes</a></li>
+          <li class="nav-item"><a class="nav-link" href="#presentes">Pix</a></li>
           <li class="nav-item"><a class="nav-link" href="#local">Local</a></li>
           <li class="nav-item"><a class="nav-link" href="#cronograma">Cronograma</a></li>
           <li class="nav-item"><a class="nav-link" href="#rsvp">Confirmação</a></li>
@@ -239,6 +240,69 @@
     </div>
   </div>
 
+  <!-- SEÇÃO SUGESTÕES DE PRESENTES & MARCAS FAVORITAS -->
+  <section class="section-padding" id="sugestoes-presentes" style="background: linear-gradient(180deg, rgba(253, 243, 248, 0.4) 0%, rgba(251, 249, 246, 0.8) 100%);">
+    <div class="container">
+      <div class="section-title-wrapper" data-aos="fade-up">
+        <span class="section-subtitle" id="gift-guide-subtitle">Mimos & Preferências</span>
+        <h2 class="section-title" id="gift-guide-title">Sugestões de Presentes</h2>
+        <p class="text-muted mt-3" id="gift-guide-quote">O presente é você quem escolhe... mas separamos algumas dicas sobre os tamanhos e as lojas que a Lavínia mais ama para te ajudar!</p>
+      </div>
+
+      <!-- Banner de Tamanhos e Dicas da Debutante -->
+      <div class="gift-guide-banner p-4 p-md-5 mb-5" data-aos="fade-up">
+        <div class="d-flex align-items-center justify-content-center gap-2 mb-4 text-center">
+          <i class="fa-solid fa-sparkles text-gold fs-4"></i>
+          <h3 class="h4 mb-0 font-heading fw-600 text-rose-gold">Dicas & Tamanhos da Lavínia</h3>
+          <i class="fa-solid fa-sparkles text-gold fs-4"></i>
+        </div>
+
+        <div class="size-chips-grid" id="gift-guide-sizes-container">
+          <div class="size-chip-card">
+            <div class="size-chip-icon"><i class="fa-solid fa-shirt"></i></div>
+            <span class="size-chip-label">Vestuário</span>
+            <span class="size-chip-val" id="size-clothing-val">M / P</span>
+          </div>
+          <div class="size-chip-card">
+            <div class="size-chip-icon"><i class="fa-solid fa-shoe-prints"></i></div>
+            <span class="size-chip-label">Calçado</span>
+            <span class="size-chip-val" id="size-shoes-val">38</span>
+          </div>
+          <div class="size-chip-card">
+            <div class="size-chip-icon"><i class="fa-solid fa-ring"></i></div>
+            <span class="size-chip-label">Anel</span>
+            <span class="size-chip-val" id="size-ring-val">25</span>
+          </div>
+          <div class="size-chip-card">
+            <div class="size-chip-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            <span class="size-chip-label">Estilo & Acessórios</span>
+            <span class="size-chip-val" id="size-style-val">Dourado & Neutros</span>
+          </div>
+          <div class="size-chip-card">
+            <div class="size-chip-icon"><i class="fa-solid fa-spray-can-sparkles"></i></div>
+            <span class="size-chip-label">Perfumes</span>
+            <span class="size-chip-val" id="size-perfume-val">Florais & Doces</span>
+          </div>
+          <div class="size-chip-card">
+            <div class="size-chip-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+            <span class="size-chip-label">Bolsas</span>
+            <span class="size-chip-val" id="size-bag-val">Pequenas / Tiracolo</span>
+          </div>
+        </div>
+
+        <div class="text-center mt-4">
+          <a href="#presentes" class="btn btn-outline-gold btn-sm px-4 py-2" style="border-radius: 20px;">
+            <i class="fa-solid fa-qrcode me-2"></i>Prefere presentear via Pix? Clique aqui
+          </a>
+        </div>
+      </div>
+
+      <!-- Grid de Lojas & Marcas Favoritas -->
+      <div class="brands-grid" id="brands-grid-container" data-aos="fade-up" data-aos-delay="200">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+    </div>
+  </section>
 
   <!-- SEÇÃO LISTA DE PRESENTES (PIX) -->
   <section class="section-padding bg-light" id="presentes">

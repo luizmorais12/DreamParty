@@ -332,7 +332,70 @@
                   </div>
                 </div>
 
+                <!-- Configuração de Sugestões de Presentes & Tamanhos -->
+                <div class="col-12">
+                  <div class="card admin-card">
+                    <div class="admin-card-header font-heading d-flex justify-content-between align-items-center flex-wrap gap-2">
+                      <span><i class="fa-solid fa-gift me-2 text-rose-gold"></i>Sugestões de Presentes & Preferências da Debutante</span>
+                      <button class="btn btn-sm btn-outline-gold" type="button" onclick="openAddBrandModal()">
+                        <i class="fa-solid fa-plus me-1"></i> Adicionar Loja / Marca
+                      </button>
+                    </div>
+                    <div class="card-body p-4">
+                      <form id="form-config-gift-guide" onsubmit="saveGiftGuideConfig(event)">
+                        <div class="row g-3 mb-4">
+                          <div class="col-md-4">
+                            <label for="cfg-guide-clothing" class="form-label small fw-600">Tamanho Vestuário</label>
+                            <input type="text" class="form-control" id="cfg-guide-clothing" placeholder="Ex: M / P" required>
+                          </div>
+                          <div class="col-md-4">
+                            <label for="cfg-guide-shoes" class="form-label small fw-600">Tamanho Calçado / Sapato</label>
+                            <input type="text" class="form-control" id="cfg-guide-shoes" placeholder="Ex: 38" required>
+                          </div>
+                          <div class="col-md-4">
+                            <label for="cfg-guide-ring" class="form-label small fw-600">Tamanho Anel</label>
+                            <input type="text" class="form-control" id="cfg-guide-ring" placeholder="Ex: 25" required>
+                          </div>
+                          <div class="col-md-4">
+                            <label for="cfg-guide-style" class="form-label small fw-600">Estilo & Acessórios</label>
+                            <input type="text" class="form-control" id="cfg-guide-style" placeholder="Ex: Dourado, Tons Neutros & Brilho" required>
+                          </div>
+                          <div class="col-md-4">
+                            <label for="cfg-guide-perfume" class="form-label small fw-600">Perfumes Preferidos</label>
+                            <input type="text" class="form-control" id="cfg-guide-perfume" placeholder="Ex: Florais e Doces Suaves" required>
+                          </div>
+                          <div class="col-md-4">
+                            <label for="cfg-guide-bag" class="form-label small fw-600">Bolsas & Carteiras</label>
+                            <input type="text" class="form-control" id="cfg-guide-bag" placeholder="Ex: Pequenas / Tiracolo" required>
+                          </div>
+                          <div class="col-12">
+                            <label for="cfg-guide-quote" class="form-label small fw-600">Frase / Mensagem de Dica</label>
+                            <input type="text" class="form-control" id="cfg-guide-quote" placeholder="Mensagem aos convidados" required>
+                          </div>
+                        </div>
+                        <button type="submit" class="btn btn-rose py-2 px-4 mb-4">Salvar Tamanhos & Dicas</button>
+                      </form>
 
+                      <h6 class="font-heading fw-600 text-rose-gold mb-3"><i class="fa-solid fa-store me-2"></i>Lojas e Marcas Cadastradas</h6>
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="admin-brands-table">
+                          <thead class="table-light small">
+                            <tr>
+                              <th>Marca / Loja</th>
+                              <th>Categoria</th>
+                              <th>Dicas / Recomendações</th>
+                              <th>Link</th>
+                              <th class="text-end">Ações</th>
+                            </tr>
+                          </thead>
+                          <tbody id="admin-brands-tbody">
+                            <!-- Gerado via JS -->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 <!-- Integração Supabase -->
                 <div class="col-12">
@@ -419,6 +482,44 @@
               <textarea class="form-control" id="ag-message" rows="2"></textarea>
             </div>
             <button type="submit" class="btn btn-rose w-100 py-3">Salvar Convidado</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ADICIONAR / EDITAR MARCA -->
+  <div class="modal fade" id="brandModal" tabindex="-1" aria-labelledby="brandModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 glass-panel" style="border-radius: 20px; overflow: hidden; background: white;">
+        <div class="modal-header border-0 bg-light p-4">
+          <h5 class="modal-title font-heading fw-600 text-rose-gold" id="brandModalLabel">Adicionar Loja / Marca</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="form-brand-modal" onsubmit="handleSaveBrand(event)">
+            <input type="hidden" id="brand-edit-id" value="">
+            <div class="mb-3">
+              <label for="bm-name" class="form-label small fw-600">Nome da Marca / Loja *</label>
+              <input type="text" class="form-control" id="bm-name" required placeholder="Ex: Zara, Vivara, Sephora...">
+            </div>
+            <div class="mb-3">
+              <label for="bm-category" class="form-label small fw-600">Categoria *</label>
+              <input type="text" class="form-control" id="bm-category" required placeholder="Ex: Moda, Joias, Maquiagens...">
+            </div>
+            <div class="mb-3">
+              <label for="bm-url" class="form-label small fw-600">Link / URL da Loja Oficial *</label>
+              <input type="url" class="form-control" id="bm-url" required placeholder="https://...">
+            </div>
+            <div class="mb-3">
+              <label for="bm-image" class="form-label small fw-600">URL da Imagem / Foto *</label>
+              <input type="url" class="form-control" id="bm-image" required placeholder="https://...">
+            </div>
+            <div class="mb-4">
+              <label for="bm-tips" class="form-label small fw-600">Dica / Recomendação *</label>
+              <textarea class="form-control" id="bm-tips" rows="3" required placeholder="Ex: Vestidos modernos, tamanho P/M..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-rose w-100 py-3 font-heading fw-600">Salvar Marca</button>
           </form>
         </div>
       </div>

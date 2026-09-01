@@ -501,6 +501,34 @@ async function populateConfigForms() {
     videoUrlEl.value = db.videos[0].videoUrl;
   }
 
+  // Guia de Presentes & Marcas
+  if (db.giftGuide) {
+    if (db.giftGuide.sizes) {
+      const elCloth = document.getElementById("cfg-guide-clothing");
+      if (elCloth) elCloth.value = db.giftGuide.sizes.clothing || "M / P";
+
+      const elShoes = document.getElementById("cfg-guide-shoes");
+      if (elShoes) elShoes.value = db.giftGuide.sizes.shoes || "38";
+
+      const elRing = document.getElementById("cfg-guide-ring");
+      if (elRing) elRing.value = db.giftGuide.sizes.ring || "25";
+
+      const elStyle = document.getElementById("cfg-guide-style");
+      if (elStyle) elStyle.value = db.giftGuide.sizes.style || "";
+
+      const elPerfume = document.getElementById("cfg-guide-perfume");
+      if (elPerfume) elPerfume.value = db.giftGuide.sizes.perfume || "";
+
+      const elBag = document.getElementById("cfg-guide-bag");
+      if (elBag) elBag.value = db.giftGuide.sizes.bag || "";
+    }
+
+    const elQuote = document.getElementById("cfg-guide-quote");
+    if (elQuote) elQuote.value = db.giftGuide.quote || "";
+
+    renderAdminBrandsTable(db.giftGuide.brands || []);
+  }
+
   // Credenciais Supabase
   document.getElementById("cfg-sb-url").value = localStorage.getItem("supabase_url") || "";
   document.getElementById("cfg-sb-key").value = localStorage.getItem("supabase_anon_key") || "";
@@ -601,6 +629,154 @@ async function saveSupabaseConfig(event) {
   }
 }
 window.saveSupabaseConfig = saveSupabaseConfig;
+
+// Gravar configurações do Guia de Presentes
+async function saveGiftGuideConfig(event) {
+  event.preventDefault();
+  const db = await DB.get();
+  
+  if (!db.giftGuide) {
+    db.giftGuide = DB.getDefaults().giftGuide;
+  }
+
+  db.giftGuide.sizes = {
+    clothing: document.getElementById("cfg-guide-clothing").value.trim(),
+    shoes: document.getElementById("cfg-guide-shoes").value.trim(),
+    ring: document.getElementById("cfg-guide-ring").value.trim(),
+    style: document.getElementById("cfg-guide-style").value.trim(),
+    perfume: document.getElementById("cfg-guide-perfume").value.trim(),
+    bag: document.getElementById("cfg-guide-bag").value.trim()
+  };
+
+  db.giftGuide.quote = document.getElementById("cfg-guide-quote").value.trim();
+
+  const success = await DB.saveGiftGuide(db.giftGuide);
+  if (success) {
+    alert("Tamanhos e dicas do Guia de Presentes salvos com sucesso!");
+  } else {
+    alert("Erro ao salvar dados do guia de presentes.");
+  }
+}
+window.saveGiftGuideConfig = saveGiftGuideConfig;
+
+// Renderizar tabela de marcas cadastradas no painel
+function renderAdminBrandsTable(brands) {
+  const tbody = document.getElementById("admin-brands-tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  if (!brands || brands.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">Nenhuma marca cadastrada.</td></tr>`;
+    return;
+  }
+
+  brands.forEach(b => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>
+        <div class="d-flex align-items-center gap-2">
+          <img src="${b.image}" alt="${b.name}" class="rounded" style="width: 42px; height: 32px; object-fit: cover;">
+          <span class="fw-bold">${b.name}</span>
+        </div>
+      </td>
+      <td><span class="badge bg-light text-dark border">${b.category || 'Geral'}</span></td>
+      <td><small class="text-muted">${b.tips}</small></td>
+      <td><a href="${b.url}" target="_blank" class="small text-decoration-none text-rose-gold"><i class="fa-solid fa-arrow-up-right-from-square me-1"></i>Acessar</a></td>
+      <td class="text-end">
+        <button class="btn btn-sm btn-outline-secondary me-1" onclick="editBrand('${b.id}')" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteBrand('${b.id}')" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+window.renderAdminBrandsTable = renderAdminBrandsTable;
+
+let brandModalInstance = null;
+function getBrandModal() {
+  if (!brandModalInstance) {
+    brandModalInstance = new bootstrap.Modal(document.getElementById("brandModal"));
+  }
+  return brandModalInstance;
+}
+
+function openAddBrandModal() {
+  document.getElementById("brand-edit-id").value = "";
+  document.getElementById("brandModalLabel").textContent = "Adicionar Loja / Marca";
+  document.getElementById("form-brand-modal").reset();
+  getBrandModal().show();
+}
+window.openAddBrandModal = openAddBrandModal;
+
+async function editBrand(id) {
+  const db = await DB.get();
+  if (!db.giftGuide || !db.giftGuide.brands) return;
+  const brand = db.giftGuide.brands.find(b => b.id === id);
+  if (!brand) return;
+
+  document.getElementById("brand-edit-id").value = brand.id;
+  document.getElementById("brandModalLabel").textContent = "Editar Loja / Marca";
+  document.getElementById("bm-name").value = brand.name;
+  document.getElementById("bm-category").value = brand.category || "";
+  document.getElementById("bm-url").value = brand.url;
+  document.getElementById("bm-image").value = brand.image;
+  document.getElementById("bm-tips").value = brand.tips;
+
+  getBrandModal().show();
+}
+window.editBrand = editBrand;
+
+async function deleteBrand(id) {
+  if (confirm("Deseja realmente remover esta marca da lista de sugestões?")) {
+    const db = await DB.get();
+    if (!db.giftGuide || !db.giftGuide.brands) return;
+    db.giftGuide.brands = db.giftGuide.brands.filter(b => b.id !== id);
+    const success = await DB.saveGiftGuide(db.giftGuide);
+    if (success) {
+      renderAdminBrandsTable(db.giftGuide.brands);
+    } else {
+      alert("Erro ao excluir marca.");
+    }
+  }
+}
+window.deleteBrand = deleteBrand;
+
+async function handleSaveBrand(event) {
+  event.preventDefault();
+  const db = await DB.get();
+  if (!db.giftGuide) {
+    db.giftGuide = DB.getDefaults().giftGuide;
+  }
+  if (!db.giftGuide.brands) {
+    db.giftGuide.brands = [];
+  }
+
+  const editId = document.getElementById("brand-edit-id").value;
+  const name = document.getElementById("bm-name").value.trim();
+  const category = document.getElementById("bm-category").value.trim();
+  const url = document.getElementById("bm-url").value.trim();
+  const image = document.getElementById("bm-image").value.trim();
+  const tips = document.getElementById("bm-tips").value.trim();
+
+  if (editId) {
+    const idx = db.giftGuide.brands.findIndex(b => b.id === editId);
+    if (idx !== -1) {
+      db.giftGuide.brands[idx] = { id: editId, name, category, url, image, tips };
+    }
+  } else {
+    const newId = "b_" + Date.now();
+    db.giftGuide.brands.push({ id: newId, name, category, url, image, tips });
+  }
+
+  const success = await DB.saveGiftGuide(db.giftGuide);
+  if (success) {
+    getBrandModal().hide();
+    renderAdminBrandsTable(db.giftGuide.brands);
+  } else {
+    alert("Erro ao salvar marca.");
+  }
+}
+window.handleSaveBrand = handleSaveBrand;
 
 function clearSupabaseConfig() {
   if (confirm("Deseja mesmo remover a conexão com o Supabase? O site retornará a rodar em modo LocalStorage.")) {

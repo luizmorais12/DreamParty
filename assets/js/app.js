@@ -468,6 +468,7 @@ function applyDatabaseToDOM(db) {
   if (db.videos) renderVideos(db.videos);
   if (db.messages) renderMessages(db.messages);
   if (db.schedule) renderSchedule(db.schedule);
+  if (db.giftGuide) renderGiftGuide(db.giftGuide);
 }
 
 // Renderiza o conteúdo usando os valores locais padrão imediatamente
@@ -697,6 +698,76 @@ function renderVideos(videosData) {
     </div>
   `;
 }
+
+/* ==========================================================================
+   GUIA DE PRESENTES & MARCAS FAVORITAS
+   ========================================================================== */
+function renderGiftGuide(guideData) {
+  if (!guideData) return;
+
+  // Título, Subtítulo e Frase
+  if (guideData.title) {
+    const titleEl = document.getElementById("gift-guide-title");
+    if (titleEl) titleEl.textContent = guideData.title;
+  }
+  if (guideData.subtitle) {
+    const subtitleEl = document.getElementById("gift-guide-subtitle");
+    if (subtitleEl) subtitleEl.textContent = guideData.subtitle;
+  }
+  if (guideData.quote) {
+    const quoteEl = document.getElementById("gift-guide-quote");
+    if (quoteEl) quoteEl.textContent = guideData.quote;
+  }
+
+  // Tamanhos e Preferências
+  if (guideData.sizes) {
+    const elClothing = document.getElementById("size-clothing-val");
+    if (elClothing && guideData.sizes.clothing) elClothing.textContent = guideData.sizes.clothing;
+
+    const elShoes = document.getElementById("size-shoes-val");
+    if (elShoes && guideData.sizes.shoes) elShoes.textContent = guideData.sizes.shoes;
+
+    const elRing = document.getElementById("size-ring-val");
+    if (elRing && guideData.sizes.ring) elRing.textContent = guideData.sizes.ring;
+
+    const elStyle = document.getElementById("size-style-val");
+    if (elStyle && guideData.sizes.style) elStyle.textContent = guideData.sizes.style;
+
+    const elPerfume = document.getElementById("size-perfume-val");
+    if (elPerfume && guideData.sizes.perfume) elPerfume.textContent = guideData.sizes.perfume;
+
+    const elBag = document.getElementById("size-bag-val");
+    if (elBag && guideData.sizes.bag) elBag.textContent = guideData.sizes.bag;
+  }
+
+  // Grid de Marcas
+  const container = document.getElementById("brands-grid-container");
+  if (!container || !guideData.brands) return;
+  container.innerHTML = "";
+
+  guideData.brands.forEach(brand => {
+    const card = document.createElement("div");
+    card.className = "brand-card";
+    card.innerHTML = `
+      <div class="brand-card-img-wrap">
+        <img src="${brand.image}" alt="${brand.name}" loading="lazy">
+        <span class="brand-card-category-badge">${brand.category || 'Dica'}</span>
+      </div>
+      <div class="brand-card-body">
+        <div class="brand-card-title">
+          <span>${brand.name}</span>
+          <i class="fa-solid fa-gem text-rose-gold fs-6"></i>
+        </div>
+        <p class="brand-card-tips">${brand.tips}</p>
+        <a href="${brand.url}" target="_blank" rel="noopener noreferrer" class="brand-card-btn">
+          <i class="fa-solid fa-bag-shopping me-1"></i> Acessar Loja Oficial <i class="fa-solid fa-arrow-up-right-from-square ms-1 small"></i>
+        </a>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+window.renderGiftGuide = renderGiftGuide;
 
 let selectedPixAmount = 200;
 

@@ -131,6 +131,34 @@ insert into settings (key, value) values (
     "videos": [
       { "id": "v1", "title": "Teaser Oficial do Ensaio de 15 Anos", "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ", "type": "youtube" }
     ],
+    "giftGuide": {
+      "enabled": true,
+      "title": "Dicas de Presentes & Marcas Favoritas",
+      "subtitle": "Mimos & Inspirações da Debutante",
+      "quote": "O presente é você quem escolhe... mas separamos algumas dicas sobre os tamanhos e as lojas que a Lavínia mais ama para te ajudar!",
+      "sizes": {
+        "clothing": "M / P",
+        "shoes": "38",
+        "ring": "25",
+        "style": "Dourado, Tons Neutros & Brilho",
+        "perfume": "Florais e Doces Suaves",
+        "bag": "Pequenas / Tiracolo"
+      },
+      "brands": [
+        { "id": "b1", "name": "Zara", "category": "Moda & Looks", "image": "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=400", "tips": "Vestidos modernos, conjuntos elegantes e looks casuais. Tamanho: P / M.", "url": "https://www.zara.com/br/" },
+        { "id": "b2", "name": "Vivara", "category": "Joias & Acessórios", "image": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=400", "tips": "Anel tamanho 25, colares delicados, brincos e berloques Life by Vivara.", "url": "https://www.vivara.com.br/" },
+        { "id": "b3", "name": "Pandora", "category": "Joias & Charms", "image": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=400", "tips": "Anel tamanho 25, charms, braceletes e pingentes com brilho.", "url": "https://www.pandorajoias.com.br/" },
+        { "id": "b4", "name": "Sephora", "category": "Beleza & Perfumes", "image": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=400", "tips": "Skincare, maquiagens iluminadas e perfumes florais/adocicados importados.", "url": "https://www.sephora.com.br/" },
+        { "id": "b5", "name": "Schutz", "category": "Calçados & Bolsas", "image": "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=400", "tips": "Sandálias modernas, saltos confortáveis e bolsas pequenas. Calçado: 38.", "url": "https://www.schutz.com.br/" },
+        { "id": "b6", "name": "Farm Rio", "category": "Moda & Estilo", "image": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400", "tips": "Vestidos florais, croppeds e estampas coloridas. Tamanho: P / M.", "url": "https://www.farmrio.com.br/" },
+        { "id": "b7", "name": "Kiko Milano", "category": "Maquiagens", "image": "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=400", "tips": "Lip oils hidratantes, batons com acabamento gloss e blushes radiantes.", "url": "https://www.kikocosmetics.com/pt-br/" },
+        { "id": "b8", "name": "Arezzo", "category": "Calçados", "image": "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=400", "tips": "Rasteirinhas sofisticadas, mules e tênis casuais elegantes. Calçado: 38.", "url": "https://www.arezzo.com.br/" },
+        { "id": "b9", "name": "Beleza na Web", "category": "Cosméticos & Cabelo", "image": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?q=80&w=400", "tips": "Tratamentos capilares, óleos finalizadores e body splash.", "url": "https://www.belezanaweb.com.br/" },
+        { "id": "b10", "name": "Victor Hugo", "category": "Bolsas & Carteiras", "image": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=400", "tips": "Bolsas tiracolo compactas, carteiras e nécessaires estruturadas.", "url": "https://www.victorhugo.com.br/" },
+        { "id": "b11", "name": "Amazon & Livros", "category": "Livros & Lifestyle", "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=400", "tips": "Livros de ficção e romance jovem, itens de decoração e tecnologia.", "url": "https://www.amazon.com.br/" },
+        { "id": "b12", "name": "Adidas", "category": "Sneakers & Streetwear", "image": "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?q=80&w=400", "tips": "Sneakers icônicos (Samba, Campus, Gazelle). Calçado: 38.", "url": "https://www.adidas.com.br/" }
+      ]
+    },
     "schedule": [
       { "time": "18h00", "title": "Recepção dos convidados", "description": "Abertura da festa e recepção dos convidados.", "icon": "fa-door-open" },
       { "time": "18h30", "title": "Início da recepção e serviço", "description": "Momento para confraternizar, aproveitar as bebidas e os deliciosos quitutes preparados para a noite.", "icon": "fa-champagne-glasses" },
