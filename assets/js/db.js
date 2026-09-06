@@ -276,6 +276,7 @@ function loadDBLocal() {
     const hasOldImages = serialized.includes("Lavinia-");
     const hasOldMusic = !serialized.includes("Lana Del Rey");
     const hasOldHero = parsed.config && parsed.config.heroImage && (parsed.config.heroImage.includes("fundo_hero_azul.jpeg") || parsed.config.heroImage.includes("23.23.50 (1).jpeg") || parsed.config.heroImage.includes("23.23.50 (2).jpeg"));
+    const hasOldLocation = !serialized.includes("Buffet Venturi");
     const hasOldGallery = !parsed.gallery || parsed.gallery.some(item => 
       (item.id === "g1" && item.category !== "ensaio") ||
       (item.id === "g2" && item.category !== "ensaio") ||
