@@ -13,8 +13,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Verifica Autenticação
   await checkAuth();
 
-
+  // Atualização automática periódica no painel admin (a cada 15s)
+  setInterval(refreshActiveAdminSection, 15000);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) refreshActiveAdminSection();
+  });
 });
+
+async function refreshActiveAdminSection() {
+  const loggedIn = sessionStorage.getItem("lavinia_logged_in");
+  if (loggedIn !== "true") return;
+
+  const visibleSec = document.querySelector(".admin-section:not(.d-none)");
+  if (!visibleSec) return;
+
+  const id = visibleSec.id.replace("sec-", "");
+  if (id === "dashboard") {
+    await updateDashboardStats();
+  } else if (id === "convidados") {
+    await renderGuestTable();
+  } else if (id === "moderacao") {
+    await renderModerationGrid();
+  } else if (id === "fotos-convidados") {
+    await renderGuestPhotosAdmin();
+  }
+}
+window.refreshActiveAdminSection = refreshActiveAdminSection;
 
 /* ==========================================================================
    1. AUTENTICAÇÃO E LOGIN

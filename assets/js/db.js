@@ -70,7 +70,6 @@ const defaultDatabase = {
     { id: "g11", title: "Laços Eternos", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50.jpeg" },
     { id: "g12", title: "Conto de Fadas", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg", featured: true },
     { id: "g13", title: "Princesa do Palácio", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.25.42.jpeg" },
-    { id: "g14", title: "Brilho da Coroa", category: "ensaio", image: "assets/IMG/destaque 3.jpeg", featured: true },
     { id: "g15", title: "Passeio sob as Luzes", category: "familia", image: "assets/IMG/familia01.jpeg" },
     { id: "g16", title: "Risos e Cumplicidade", category: "familia", image: "assets/IMG/familia02.jpeg" },
     { id: "g17", title: "Alegria Compartilhada", category: "familia", image: "assets/IMG/familia03.jpeg" },
@@ -291,7 +290,6 @@ function loadDBLocal() {
       (item.id === "g11" && item.category !== "familia") ||
       (item.id === "g12" && item.category !== "ensaio") ||
       (item.id === "g13" && item.category !== "ensaio") ||
-      (item.id === "g14" && item.category !== "ensaio") ||
       (item.id === "g15" && item.category !== "familia") ||
       (item.id === "g16" && item.category !== "familia") ||
       (item.id === "g17" && item.category !== "familia") ||
@@ -300,13 +298,13 @@ function loadDBLocal() {
       (item.id === "g20" && item.category !== "ensaio") ||
       (item.image && item.image.includes("unsplash.com"))
     );
-    const has3Featured = parsed.gallery && parsed.gallery.filter(item => item.featured).length >= 3 && parsed.gallery.some(item => item.id === "g14");
+    const hasRemovedDestaque3 = serialized.includes("destaque 3") || (parsed.gallery && parsed.gallery.some(item => item.id === "g14"));
     const hasNewFamily = parsed.gallery && parsed.gallery.some(item => item.id === "g15") && parsed.gallery.some(item => item.id === "g16") && parsed.gallery.some(item => item.id === "g17");
     const hasNewEnsaio = parsed.gallery && parsed.gallery.some(item => item.id === "g18") && parsed.gallery.some(item => item.id === "g19") && parsed.gallery.some(item => item.id === "g20");
     const hasOldPixKey = serialized.includes("lavinia15anos@pix.com.br");
     const hasGiftGuide = parsed.giftGuide && parsed.giftGuide.sizes && parsed.giftGuide.sizes.shoes === "38" && parsed.giftGuide.sizes.ring === "25" && parsed.giftGuide.brands && parsed.giftGuide.brands.length >= 10;
     
-    if (hasOldImages || hasOldMusic || hasOldHero || hasOldLocation || hasOldGallery || hasOldPixKey || !hasGiftGuide || !has3Featured || !hasNewFamily || !hasNewEnsaio) {
+    if (hasOldImages || hasOldMusic || hasOldHero || hasOldLocation || hasOldGallery || hasOldPixKey || !hasGiftGuide || hasRemovedDestaque3 || !hasNewFamily || !hasNewEnsaio) {
       console.warn("Detectado banco de dados local desatualizado. Resetando para incluir novas fotos de ensaio...");
       localStorage.setItem(DB_KEY, JSON.stringify(defaultDatabase));
       return defaultDatabase;
@@ -477,7 +475,6 @@ const DB = {
         { id: "g11", title: "Laços Eternos", category: "familia", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50.jpeg" },
         { id: "g12", title: "Conto de Fadas", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.23.50 (3).jpeg", featured: true },
         { id: "g13", title: "Princesa do Palácio", category: "ensaio", image: "assets/IMG/WhatsApp Image 2026-08-10 at 23.25.42.jpeg" },
-        { id: "g14", title: "Brilho da Coroa", category: "ensaio", image: "assets/IMG/destaque 3.jpeg", featured: true },
         { id: "g15", title: "Passeio sob as Luzes", category: "familia", image: "assets/IMG/familia01.jpeg" },
         { id: "g16", title: "Risos e Cumplicidade", category: "familia", image: "assets/IMG/familia02.jpeg" },
         { id: "g17", title: "Alegria Compartilhada", category: "familia", image: "assets/IMG/familia03.jpeg" },
@@ -541,14 +538,14 @@ const DB = {
         const { error } = await DB.supabaseClient.from('rsvps').upsert({
           id: rsvp.id,
           name: rsvp.name,
-          phone: rsvp.phone,
-          email: rsvp.email,
-          adults_count: parseInt(rsvp.adultsCount),
-          kids_count: parseInt(rsvp.kidsCount),
-          companion_names: rsvp.companionNames,
-          dietary_restrictions: rsvp.dietaryRestrictions,
-          message: rsvp.message,
-          date_confirmed: rsvp.dateConfirmed
+          phone: rsvp.phone || "",
+          email: rsvp.email || "",
+          adults_count: parseInt(rsvp.adultsCount) || 0,
+          kids_count: parseInt(rsvp.kidsCount) || 0,
+          companion_names: rsvp.companionNames || "",
+          dietary_restrictions: rsvp.dietaryRestrictions || "Sem restrições",
+          message: rsvp.message || "",
+          date_confirmed: rsvp.dateConfirmed || new Date().toISOString()
         });
         if (error) throw error;
         return true;
@@ -597,10 +594,10 @@ const DB = {
         const { error } = await DB.supabaseClient.from('messages').upsert({
           id: msg.id,
           author: msg.author,
-          relation: msg.relation,
+          relation: msg.relation || "Convidado",
           text: msg.text,
-          date: msg.date,
-          approved: msg.approved
+          date: msg.date || new Date().toISOString(),
+          approved: msg.approved ?? false
         });
         if (error) throw error;
         return true;
