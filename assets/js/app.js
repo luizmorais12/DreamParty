@@ -510,7 +510,7 @@ function renderDynamicContentLocal() {
     { id: "g17", title: "Alegria Compartilhada", category: "familia", image: "assets/IMG/familia03.jpeg" },
     { id: "g18", title: "Estilo & Atitude", category: "ensaio", image: "assets/IMG/novo01.jpeg" },
     { id: "g19", title: "Realeza na Escadaria", category: "ensaio", image: "assets/IMG/novo02.jpeg" },
-    { id: "g20", title: "Valsa dos Ventos", category: "ensaio", image: "assets/IMG/novo03.jpeg" }
+    { id: "g20", title: "Valsa dos Ventos", category: "ensaio", image: "assets/IMG/novo03.jpeg", featured: true }
   ];
   dbCopy.gallery = updatedGallery;
   dbCopy.config.gallery = updatedGallery;

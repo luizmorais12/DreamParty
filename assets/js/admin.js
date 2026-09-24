@@ -535,7 +535,7 @@ async function populateConfigForms() {
       if (elShoes) elShoes.value = db.giftGuide.sizes.shoes || "38";
 
       const elRing = document.getElementById("cfg-guide-ring");
-      if (elRing) elRing.value = db.giftGuide.sizes.ring || "25";
+      if (elRing) elRing.value = db.giftGuide.sizes.ring || "19";
 
       const elStyle = document.getElementById("cfg-guide-style");
       if (elStyle) elStyle.value = db.giftGuide.sizes.style || "";

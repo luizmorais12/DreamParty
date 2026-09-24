@@ -75,7 +75,7 @@ const defaultDatabase = {
     { id: "g17", title: "Alegria Compartilhada", category: "familia", image: "assets/IMG/familia03.jpeg" },
     { id: "g18", title: "Estilo & Atitude", category: "ensaio", image: "assets/IMG/novo01.jpeg" },
     { id: "g19", title: "Realeza na Escadaria", category: "ensaio", image: "assets/IMG/novo02.jpeg" },
-    { id: "g20", title: "Valsa dos Ventos", category: "ensaio", image: "assets/IMG/novo03.jpeg" }
+    { id: "g20", title: "Valsa dos Ventos", category: "ensaio", image: "assets/IMG/novo03.jpeg", featured: true }
   ],
   videos: [
     { id: "v1", title: "Teaser Oficial do Ensaio de 15 Anos", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", type: "youtube" }
@@ -88,7 +88,7 @@ const defaultDatabase = {
     sizes: {
       clothing: "M / P",
       shoes: "38",
-      ring: "25",
+      ring: "19",
       style: "Dourado, Tons Neutros & Brilho",
       perfume: "Florais e Doces Suaves",
       bag: "Pequenas / Tiracolo"
@@ -107,7 +107,7 @@ const defaultDatabase = {
         name: "Vivara",
         category: "Joias & Acessórios",
         image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=400",
-        tips: "Anel tamanho 25, colares delicados, brincos e berloques Life by Vivara.",
+        tips: "Anel tamanho 19, colares delicados, brincos e berloques Life by Vivara.",
         url: "https://www.vivara.com.br/"
       },
       {
@@ -115,7 +115,7 @@ const defaultDatabase = {
         name: "Pandora",
         category: "Joias & Charms",
         image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=400",
-        tips: "Anel tamanho 25, charms, braceletes e pingentes com brilho.",
+        tips: "Anel tamanho 19, charms, braceletes e pingentes com brilho.",
         url: "https://www.pandorajoias.com.br/"
       },
       {
@@ -189,6 +189,22 @@ const defaultDatabase = {
         image: "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?q=80&w=400",
         tips: "Sneakers icônicos (Samba, Campus, Gazelle). Calçado: 38.",
         url: "https://www.adidas.com.br/"
+      },
+      {
+        id: "b13",
+        name: "Nike",
+        category: "Sneakers & Streetwear",
+        image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400",
+        tips: "Sneakers casuais e esportivos (Air Force 1, Dunk, Air Max) e roupas. Calçado: 38.",
+        url: "https://www.nike.com.br/"
+      },
+      {
+        id: "b14",
+        name: "Crocs",
+        category: "Calçados & Conforto",
+        image: "https://images.unsplash.com/photo-1560343090-f0409e92791a?q=80&w=400",
+        tips: "Crocs Classic Clog, Jibbitz charms decorativos e sandálias. Calçado: 38.",
+        url: "https://www.crocs.com.br/"
       }
     ]
   },
@@ -300,9 +316,9 @@ function loadDBLocal() {
     );
     const hasRemovedDestaque3 = serialized.includes("destaque 3") || (parsed.gallery && parsed.gallery.some(item => item.id === "g14"));
     const hasNewFamily = parsed.gallery && parsed.gallery.some(item => item.id === "g15") && parsed.gallery.some(item => item.id === "g16") && parsed.gallery.some(item => item.id === "g17");
-    const hasNewEnsaio = parsed.gallery && parsed.gallery.some(item => item.id === "g18") && parsed.gallery.some(item => item.id === "g19") && parsed.gallery.some(item => item.id === "g20");
+    const hasNewEnsaio = parsed.gallery && parsed.gallery.some(item => item.id === "g18") && parsed.gallery.some(item => item.id === "g19") && parsed.gallery.some(item => item.id === "g20" && item.featured);
     const hasOldPixKey = serialized.includes("lavinia15anos@pix.com.br");
-    const hasGiftGuide = parsed.giftGuide && parsed.giftGuide.sizes && parsed.giftGuide.sizes.shoes === "38" && parsed.giftGuide.sizes.ring === "25" && parsed.giftGuide.brands && parsed.giftGuide.brands.length >= 10;
+    const hasGiftGuide = parsed.giftGuide && parsed.giftGuide.sizes && parsed.giftGuide.sizes.shoes === "38" && parsed.giftGuide.sizes.ring === "19" && parsed.giftGuide.brands && parsed.giftGuide.brands.some(b => b.name === "Nike") && parsed.giftGuide.brands.some(b => b.name === "Crocs");
     
     if (hasOldImages || hasOldMusic || hasOldHero || hasOldLocation || hasOldGallery || hasOldPixKey || !hasGiftGuide || hasRemovedDestaque3 || !hasNewFamily || !hasNewEnsaio) {
       console.warn("Detectado banco de dados local desatualizado. Resetando para incluir novas fotos de ensaio...");
@@ -480,7 +496,7 @@ const DB = {
         { id: "g17", title: "Alegria Compartilhada", category: "familia", image: "assets/IMG/familia03.jpeg" },
         { id: "g18", title: "Estilo & Atitude", category: "ensaio", image: "assets/IMG/novo01.jpeg" },
         { id: "g19", title: "Realeza na Escadaria", category: "ensaio", image: "assets/IMG/novo02.jpeg" },
-        { id: "g20", title: "Valsa dos Ventos", category: "ensaio", image: "assets/IMG/novo03.jpeg" }
+        { id: "g20", title: "Valsa dos Ventos", category: "ensaio", image: "assets/IMG/novo03.jpeg", featured: true }
       ];
       
       // Anexar as fotos enviadas pelos convidados
